@@ -7,7 +7,7 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 
-import static characters.ElementalType.*;
+import static spells.ElementalType.*;
 import static characters.StatsType.*;
 
 @Getter

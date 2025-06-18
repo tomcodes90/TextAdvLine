@@ -5,6 +5,7 @@ import items.Armor;
 import items.Consumable;
 import items.Weapon;
 import lombok.*;
+import spells.ElementalType;
 import spells.Spell;
 import spells.SpellType;
 
@@ -19,10 +20,10 @@ public abstract class Entity {
 
     @Setter protected int level;
 
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     protected final EnumMap<StatsType, Integer> stats = new EnumMap<>(StatsType.class);
 
-    @Getter(AccessLevel.PROTECTED)
+    @Getter
     protected final EnumMap<SpellType, Spell> spells = new EnumMap<>(SpellType.class);
 
     @Setter protected Weapon weapon;

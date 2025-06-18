@@ -1,5 +1,6 @@
 package items;
 
+import characters.Entity;
 import characters.Player;
 import spells.Spell;
 import spells.SpellType;
@@ -14,8 +15,8 @@ private final SpellType spellType;
         this.spellType = spellType;
     }
 
-    public void use(Player player) {
-        player.addSpell(spellType, spell);
+    public void use(Entity entity) {
+        entity.getSpells().put(spellType, spell);
     }
 
     public Spell getSpell() {

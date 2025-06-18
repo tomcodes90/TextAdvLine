@@ -1,7 +1,5 @@
 package spells;
 
-import characters.ElementalType;
-
 public class Spell {
     static public int spellsCreated;
     private final SpellType name;

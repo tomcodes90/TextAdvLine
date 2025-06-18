@@ -1,4 +1,4 @@
-package characters;
+package spells;
 
 public enum ElementalType {
     FIRE,
