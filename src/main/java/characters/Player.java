@@ -4,6 +4,7 @@ import items.Consumable;
 import items.Item;
 import lombok.Getter;
 import lombok.Setter;
+import util.DeveloperLogger;
 
 import java.util.HashMap;
 
@@ -49,31 +50,37 @@ public class Player extends Entity {
         getConsumablesEquipped()[index] = consumable;
     }
 
-    public void levelUp() {
-        this.level++;
-        this.expToLevelUp *= 2;
+    private void levelUp() {
+        level++;
+        expToLevelUp *= 2;
 
-        getStats().forEach((statType, value) -> {
-            int increase = (statBoost == statType) ? 5 : 2;
-            getStats().put(statType, +increase);
+        getStats().forEach((type, val) -> {
+            int inc = (statBoost == type) ? 5 : 2;
+            getStats().put(type, val + inc);   // ← ADD, not replace
         });
     }
 
-    public void collectExp(int expCollected) {
-        this.exp += expCollected;
-        if (this.exp >= this.expToLevelUp) {
+    public void collectExp(int xp) {
+        exp += xp;
+        while (exp >= expToLevelUp) {
+            exp -= expToLevelUp;
             levelUp();
         }
     }
 
     public void addItemToInventory(Item item) {
-        inventory.put(item, +inventory.get(item));
+        inventory.put(item, inventory.getOrDefault(item, 0) + 1);
+        DeveloperLogger.log("Item " + item + "Added to Player");
+        
     }
 
     public void removeItemFromInventory(Item item) {
-        inventory.put(item, -inventory.get(item));
-        if (inventory.get(item) == 0) {
+        int current = inventory.getOrDefault(item, 0);
+        if (current <= 1) {
             inventory.remove(item);
+        } else {
+            inventory.put(item, current - 1);
         }
     }
+
 }

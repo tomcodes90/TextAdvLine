@@ -171,41 +171,57 @@ public class BattleUI {
     /*  RESULT SCREENS                                                     */
     /* ------------------------------------------------------------------ */
     private void finishBattle(BattleResult result, Enemy defeated) {
-        win.close(); // Close the battle window
+        win.close();
 
         String title;
-        String message;
+        Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
+        BasicWindow resultWindow = new BasicWindow(); // ✅ Declare early
 
         switch (result) {
             case VICTORY -> {
                 title = "Victory";
-                message = "You win!";
+                pane.addComponent(new Label("🏆 You win!"));
+
+                int xp = defeated.getExpReward();
+                player.collectExp(xp);
+                pane.addComponent(new Label("XP gained: " + xp));
+
+                if (!defeated.getLootReward().isEmpty()) {
+                    for (Item item : defeated.getLootReward()) {
+                        player.addItemToInventory(item); // Safe now
+                        pane.addComponent(new Label(" • " + item.getName()));
+                    }
+                } else {
+                    pane.addComponent(new Label("No loot."));
+                }
+
             }
+
             case DEFEAT -> {
                 title = "Defeat";
-                message = "You lose.";
+                pane.addComponent(new Label("☠ You were defeated…"));
             }
+
             case FLED -> {
                 title = "Fled";
-                message = "You fled the battle.";
+                pane.addComponent(new Label("🏃 You fled the battle."));
             }
+
             default -> {
                 title = "Battle Ended";
-                message = "Unknown result.";
+                pane.addComponent(new Label("The battle has ended."));
             }
         }
 
-        BasicWindow resultWindow = new BasicWindow(title);
-        Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-        pane.addComponent(new Label(message));
         pane.addComponent(new EmptySpace());
-
         Button close = new Button("Continue", resultWindow::close);
-        close.takeFocus();
         pane.addComponent(close);
+        close.takeFocus();
 
+        resultWindow.setTitle(title);
         resultWindow.setComponent(pane);
-        gui.addWindowAndWait(resultWindow); // Wait until user presses Continue
+
+        gui.addWindowAndWait(resultWindow);
 
         if (onBattleEnd != null) onBattleEnd.run();
     }
