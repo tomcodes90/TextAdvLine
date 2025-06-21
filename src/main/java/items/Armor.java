@@ -1,14 +1,22 @@
 package items;
 
-public class Armor extends Item {
-    private int defensePoints;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    public Armor(String id, String name, String description, int defensePoints) {
+public class Armor extends Item {
+    private final int defense;
+
+    @JsonCreator
+    public Armor(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("defense") int defense) {
         super(id, name, description);
-        this.defensePoints = defensePoints;
+        this.defense = defense;
     }
 
     public int getDefensePoints() {
-        return defensePoints;
+        return defense;
     }
 }

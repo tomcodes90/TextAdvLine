@@ -2,14 +2,21 @@ package ui;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.gui2.*;
+import lombok.Getter;
+import lombok.Lombok;
 
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class DevLogOverlay {
+    @Getter
     private static final Window devLogWindow = new BasicWindow();
     private static final List<String> buffer = new LinkedList<>();
+    @Getter
     private static TextBox logBox;
 
     public static void attach(WindowBasedTextGUI gui) {
@@ -18,6 +25,7 @@ public class DevLogOverlay {
 
         logBox = new TextBox(new TerminalSize(80, 10), TextBox.Style.MULTI_LINE);
         logBox.setReadOnly(true);
+        logBox.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         panel.addComponent(logBox);
 
         devLogWindow.setComponent(panel);

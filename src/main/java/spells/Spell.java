@@ -24,7 +24,7 @@ public class Spell {
         if (cooldownCounter > 0) cooldownCounter--;
     }
 
-    public void resetCooldown() {
+    public void setOnCooldown() {
         cooldownCounter = cooldown;
     }
 

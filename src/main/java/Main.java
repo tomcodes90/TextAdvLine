@@ -1,3 +1,4 @@
+import items.ItemRegistry;
 import ui.GameLoopManager;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
@@ -10,12 +11,15 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 
 public class Main {
     public static void main(String[] args) {
+
         try {
+            Thread.setDefaultUncaughtExceptionHandler((t, ex) -> ex.printStackTrace());
             Screen screen = new TerminalScreen(new DefaultTerminalFactory().createTerminal());
             screen.startScreen();
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
-
+            ItemRegistry.loadAllItems();
             DevLogOverlay.attach(gui);
+
 
             GameLoopManager loopManager = new GameLoopManager(gui);
             loopManager.showMainMenu();

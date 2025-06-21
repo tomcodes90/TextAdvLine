@@ -16,6 +16,8 @@ public class Player extends Entity {
     private final StatsType statBoost;
     private int exp;
     @Setter
+    private int gold;
+    @Setter
     private int expToLevelUp;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
 
@@ -23,6 +25,7 @@ public class Player extends Entity {
         super(name);
         this.statBoost = statBoost;
         this.level = 1;
+        this.gold = 100;
         this.exp = 0;
         this.expToLevelUp = 100;
 
@@ -50,7 +53,7 @@ public class Player extends Entity {
         getConsumablesEquipped()[index] = consumable;
     }
 
-    private void levelUp() {
+    public void levelUp() {
         level++;
         expToLevelUp *= 2;
 
@@ -69,10 +72,9 @@ public class Player extends Entity {
     }
 
     public void addItemToInventory(Item item) {
-        inventory.put(item, inventory.getOrDefault(item, 0) + 1);
-        DeveloperLogger.log("Item " + item + "Added to Player");
-        
+        inventory.merge(item, 1, Integer::sum); // adds 1 or initializes to 1
     }
+
 
     public void removeItemFromInventory(Item item) {
         int current = inventory.getOrDefault(item, 0);

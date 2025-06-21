@@ -31,7 +31,7 @@ public class BattleUI {
     private final BasicWindow win = new BasicWindow("Battle");
 
     private final TextBox logBox =
-            new TextBox(new TerminalSize(50, 15), TextBox.Style.MULTI_LINE);
+            new TextBox(new TerminalSize(50, 3), TextBox.Style.MULTI_LINE);
 
     private final Panel pCard = new Panel();                    // rebuilt every turn
     private final Panel eCard = new Panel();
@@ -101,13 +101,24 @@ public class BattleUI {
 
     private Component buildMiddlePane() {
         Panel mid = new Panel(new LinearLayout(Direction.VERTICAL));
-        mid.addComponent(new Label("Battle Log"));
+
+        Label logLabel = new Label("Battle Log");
+        logLabel.setForegroundColor(TextColor.ANSI.WHITE);
+        mid.addComponent(logLabel);
+
+        logBox.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         mid.addComponent(logBox);
+
         mid.addComponent(new Separator(Direction.HORIZONTAL));
-        action.setPreferredSize(new TerminalSize(50, 7));
+
+        action.setPreferredSize(new TerminalSize(50, 4));
+        // ❌ Don’t theme this — let Lanterna handle focus highlights!
+        // action.setTheme(...) ← REMOVE this line if you have it
         mid.addComponent(action);
+
         return mid;
     }
+
 
     /* ------------------------------------------------------------------ */
     /*  MENUS                                                              */
@@ -116,7 +127,7 @@ public class BattleUI {
         refreshCards();
         action.removeAllComponents();
 
-        ActionListBox menu = new ActionListBox(new TerminalSize(50, 7));
+        ActionListBox menu = new ActionListBox(new TerminalSize(50, 4));
         menu.addItem("Attack", () -> tm.queuePlayerAction(new AttackAction(player, enemy)));
         menu.addItem("Cast Spell", () -> showSpellMenu(tm));
         menu.addItem("Use Item", () -> showItemMenu(tm));
@@ -150,7 +161,6 @@ public class BattleUI {
         refreshSafe();
     }
 
-
     private void showItemMenu(TurnManager tm) {
         action.removeAllComponents();
         ActionListBox list = new ActionListBox(new TerminalSize(50, 7));
@@ -173,90 +183,56 @@ public class BattleUI {
     private void finishBattle(BattleResult result, Enemy defeated) {
         win.close();
 
-        String title;
+        boolean playerWon = result == BattleResult.VICTORY;
+        boolean fled = result == BattleResult.FLED;
+
+        BasicWindow resultWin = new BasicWindow(playerWon ? "Victory"
+                : fled ? "Fled"
+                : "Defeat");
+
+        /* ---------- content ---------- */
         Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-        BasicWindow resultWindow = new BasicWindow(); // ✅ Declare early
 
-        switch (result) {
-            case VICTORY -> {
-                title = "Victory";
-                pane.addComponent(new Label("🏆 You win!"));
+        if (fled) {
+            pane.addComponent(new Label("You fled the battle."));
+        } else {
+            pane.addComponent(new Label(playerWon ? "You win!" : "You lose."));
+        }
+        pane.addComponent(new EmptySpace());
 
-                int xp = defeated.getExpReward();
-                player.collectExp(xp);
-                pane.addComponent(new Label("XP gained: " + xp));
+        if (playerWon) {
+            int xp = defeated.getExpReward();
+            pane.addComponent(new Label("EXP gained: " + xp));
+            player.collectExp(xp);
 
-                if (!defeated.getLootReward().isEmpty()) {
-                    for (Item item : defeated.getLootReward()) {
-                        player.addItemToInventory(item); // Safe now
-                        pane.addComponent(new Label(" • " + item.getName()));
-                    }
-                } else {
-                    pane.addComponent(new Label("No loot."));
+            List<Item> loot = defeated.getLootReward();
+            if (!loot.isEmpty()) {
+                pane.addComponent(new Label("Loot:"));
+                for (Item it : loot) {
+                    player.addItemToInventory(it);
+                    pane.addComponent(new Label(" • " + it.getName()));
                 }
-
+            } else {
+                pane.addComponent(new Label("No loot found."));
             }
-
-            case DEFEAT -> {
-                title = "Defeat";
-                pane.addComponent(new Label("☠ You were defeated…"));
-            }
-
-            case FLED -> {
-                title = "Fled";
-                pane.addComponent(new Label("🏃 You fled the battle."));
-            }
-
-            default -> {
-                title = "Battle Ended";
-                pane.addComponent(new Label("The battle has ended."));
-            }
+            pane.addComponent(new EmptySpace());
         }
 
-        pane.addComponent(new EmptySpace());
-        Button close = new Button("Continue", resultWindow::close);
-        pane.addComponent(close);
-        close.takeFocus();
+        Button cont = new Button("Continue", resultWin::close);
+        cont.takeFocus();
+        pane.addComponent(cont);
 
-        resultWindow.setTitle(title);
-        resultWindow.setComponent(pane);
+        resultWin.setComponent(pane);
 
-        gui.addWindowAndWait(resultWindow);
+        /* ---------- centre the window ---------- */
+        resultWin.setHints(List.of(Window.Hint.CENTERED, Window.Hint.MODAL));
+        // give it a sensible size so CENTERED works
+        resultWin.setFixedSize(new TerminalSize(40, 12));   // ← key line
+
+        gui.addWindowAndWait(resultWin);
 
         if (onBattleEnd != null) onBattleEnd.run();
     }
-
-
-    private BasicWindow buildResultWindow(boolean playerWon, Enemy defeated) {
-        BasicWindow res = new BasicWindow(playerWon ? "Victory" : "Defeat");
-        Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-
-        if (playerWon) {
-            pane.addComponent(new Label("🏆  Victory!"));
-            pane.addComponent(new Label("XP gained: " + defeated.getExpReward()));
-            player.collectExp(defeated.getExpReward());
-            if (!defeated.getLootReward().isEmpty()) {
-                pane.addComponent(new Label("Loot:"));
-                defeated.getLootReward().forEach(i -> {
-                    pane.addComponent(new Label(" • " + i.getName()));
-                    player.addItemToInventory(i);
-                });
-            } else pane.addComponent(new Label("No loot."));
-        } else {
-            pane.addComponent(new Label("☠  You were defeated…"));
-        }
-
-        pane.addComponent(new EmptySpace());
-        pane.addComponent(new Button("Back to menu", () -> {
-            res.close();                    // close result window
-            if (onBattleEnd != null) onBattleEnd.run();   // show menu now
-        }));
-
-        res.setComponent(pane);
-        res.setHints(List.of(Window.Hint.CENTERED));
-        return res;
-    }
-
 
     /* ------------------------------------------------------------------ */
     /*  CARDS & HP BAR                                                     */
@@ -273,6 +249,7 @@ public class BattleUI {
         addRow(g, "Name", e.getName());
         addRow(g, "HP", hpBar(e));
         addRow(g, "ATK", e.getStat(StatsType.STRENGTH));
+        addRow(g, "INT", e.getStat(StatsType.INTELLIGENCE));
         addRow(g, "DEF", e.getStat(StatsType.DEFENSE));
         addRow(g, "SPD", e.getStat(StatsType.SPEED));
         return g.withBorder(Borders.singleLine(title));
@@ -283,22 +260,45 @@ public class BattleUI {
         p.addComponent(new Label(String.valueOf(v)));
     }
 
-    /**
-     * A simple coloured HP bar – green / yellow / red
-     */
-    /**
-     * 10-cell ASCII bar, no colour codes
-     */
-    private String hpBar(Entity e) {
+    private void addRow(Panel panel, String label, String value) {
+        panel.addComponent(new Label(label));
+        panel.addComponent(new Label(value));
+    }
+
+    private void addRow(Panel panel, String label, Component value) {
+        panel.addComponent(new Label(label));
+        panel.addComponent(value);
+    }
+
+    private Component hpBar(Entity e) {
         int hp = e.getStat(StatsType.HP);
         int max = e.getStat(StatsType.MAX_HP);
         int filled = (int) Math.round((hp / (double) max) * 10);
 
-        StringBuilder sb = new StringBuilder("[");
-        for (int i = 0; i < 10; i++) sb.append(i < filled ? "#" : "-");
-        sb.append("] ");
-        sb.append(hp).append("/").append(max);
-        return sb.toString();
+        /* ---------------- text parts ---------------- */
+        String hpText = hp + "/" + max + " ";
+        StringBuilder barSb = new StringBuilder("[");
+        for (int i = 0; i < 10; i++) barSb.append(i < filled ? "#" : "-");
+        barSb.append(']');
+
+        /* ---------------- choose bar colour ---------------- */
+        double pct = hp / (double) max;
+        TextColor barColour = (pct >= 0.6) ? TextColor.ANSI.GREEN
+                : (pct >= 0.3) ? TextColor.ANSI.CYAN
+                : TextColor.ANSI.RED;
+
+        /* ---------------- assemble component ---------------- */
+        Panel row = new Panel(new LinearLayout(Direction.HORIZONTAL));
+
+        // 1️⃣ hp/max in default colour
+        row.addComponent(new Label(hpText));
+
+        // 2️⃣ coloured bar
+        Label barLbl = new Label(barSb.toString());
+        barLbl.setForegroundColor(barColour);
+        row.addComponent(barLbl);
+
+        return row;
     }
 
 

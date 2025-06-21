@@ -1,21 +1,29 @@
 package items;
 
 import characters.Entity;
-import characters.StatsType;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import static characters.StatsType.HP;
 import static characters.StatsType.MAX_HP;
 
 public class Potion extends Consumable {
-    public Potion(String id, String name, String description, int pointsToApply) {
+
+    @JsonCreator
+    public Potion(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("pointsToApply") int pointsToApply
+    ) {
         super(id, name, description, pointsToApply);
     }
 
     @Override
     public void use(Entity entity) {
-        entity.setStat(HP, ++pointsToApply);
-        if (entity.getStat(HP) <= entity.getStat(StatsType.MAX_HP)) {
-            entity.setStat(HP, entity.getStat(MAX_HP));
-        }
+        int currentHp = entity.getStat(HP);
+        int maxHp = entity.getStat(MAX_HP);
+        int healedHp = Math.min(currentHp + pointsToApply, maxHp);
+        entity.setStat(HP, healedHp);
     }
 }

@@ -1,14 +1,17 @@
 [
   {
     "type": "weapon",
+    "id": "iron_sword",
     "name": "Iron Sword",
-    "statBoost": "STRENGTH",
-    "value": 10
+    "description": "A sturdy blade for melee combat",
+    "damage": 20,
+    "damageMultiplier": "STRENGTH"
   },
   {
     "type": "armor",
-    "name": "Leather Vest",
-    "statBoost": "DEFENSE",
-    "value": 5
+    "id": "leather_armor",
+    "name": "Leather Armor",
+    "description": "Basic protection gear",
+    "defense": 10
   }
 ]

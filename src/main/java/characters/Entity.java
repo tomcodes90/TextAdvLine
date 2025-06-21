@@ -18,7 +18,6 @@ import static characters.StatsType.*;
 public abstract class Entity {
     private final String name;
     private final EnumMap<StatsType, Integer> stats = new EnumMap<>(StatsType.class);
-    private final EnumMap<SpellType, Spell> availableSpells = new EnumMap<>(SpellType.class);
     private final HashMap<Item, Integer> inventory = new HashMap<>();
     private final Consumable[] consumablesEquipped = new Consumable[3];
     private final Spell[] spellsEquipped = new Spell[3];

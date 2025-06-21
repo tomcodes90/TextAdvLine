@@ -1,22 +1,31 @@
 package items;
 
 import characters.Entity;
-import characters.Player;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import spells.Spell;
+import spells.SpellFactory;
 import spells.SpellType;
 
 public class Book extends Item {
     private final Spell spell;
-    private final SpellType spellType;
+    private final SpellType spellType; // Useful to store what was used to create the spell
 
-    Book(String id, String name, String description, Spell spell, SpellType spellType) {
+    @JsonCreator
+    public Book(
+            @JsonProperty("id") String id,
+            @JsonProperty("name") String name,
+            @JsonProperty("description") String description,
+            @JsonProperty("spellType") SpellType spellType
+    ) {
         super(id, name, description);
-        this.spell = spell;
         this.spellType = spellType;
+        this.spell = SpellFactory.create(spellType);
     }
 
-    public void use(Entity entity) {
-        entity.getAvailableSpells().put(spellType, spell);
+    public void use(Entity entity, int slot) {
+        // You can improve this logic later to assign to next available slot
+        entity.getSpellsEquipped()[slot] = spell;
     }
 
     public Spell getSpell() {

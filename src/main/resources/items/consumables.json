@@ -1,13 +1,27 @@
 [
   {
     "type": "potion",
+    "id": "healing_potion",
     "name": "Healing Potion",
-    "healAmount": 50
+    "description": "Restores 50 HP",
+    "pointsToApply": 50
   },
   {
     "type": "statEnhancer",
+    "id": "sage_elixir",
+    "name": "Sage Elixir",
+    "description": "Temporarily boosts intelligence",
+    "pointsToApply": 5,
+    "statToBoost": "INTELLIGENCE",
+    "length": 3
+  },
+  {
+    "type": "statEnhancer",
+    "id": "power_elixir",
     "name": "Power Elixir",
-    "statToEnhance": "STRENGTH",
-    "amount": 1
+    "description": "Temporarily boosts strength",
+    "pointsToApply": 5,
+    "statToBoost": "STRENGTH",
+    "length": 3
   }
 ]

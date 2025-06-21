@@ -80,24 +80,19 @@ public class TurnManager {
 
 
     private void runLoop() {
-        PlayerLogger.log("⚔️  The battle begins between " + player.getName()
-                + " and " + enemy.getName());
 
         // ⬇️  show the very-first menu immediately
         if (promptCallback != null) {
             DeveloperLogger.log("[TurnManager] Showing INITIAL prompt");
             promptCallback.run();
         }
-        PlayerLogger.log("⚔️  start"); // ← Here
-        PlayerLogger.log("\u2694\ufe0f The battle begins between " + player.getName() + " and " + enemy.getName());
-        DeveloperLogger.log("[TurnManager] player HP=" + player.getStat(StatsType.HP) + " alive=" + player.isAlive());
-        DeveloperLogger.log("[TurnManager] enemy  HP=" + enemy.getStat(StatsType.HP) + " alive=" + enemy.isAlive());
+
+        PlayerLogger.log("\n         ⚔️ The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
 
         DeveloperLogger.log(Level.INFO, "loop entered"); // ← Here
 
         while (player.isAlive() && enemy.isAlive() && !battleOver) {
-            PlayerLogger.log("\n==== NEW TURN ====");
             playerActionQueue.clear();
 
             if (promptCallback != null) {
@@ -164,7 +159,7 @@ public class TurnManager {
     }
 
     private void execute(Entity actor, BattleAction action) {
-        PlayerLogger.log("👉 " + actor.getName() + " uses " + action.name());
+        PlayerLogger.log("\n         " + actor.getName() + " uses " + action.name());
         action.execute();
 
         DeveloperLogger.log("[TurnManager] After action: "

@@ -41,6 +41,9 @@ public final class DeveloperLogger {
     }
 
     public static void log(String msg) {
-        DevLogOverlay.log(msg);  // Push to overlay
+        
+        if (DevLogOverlay.getLogBox() != null) {
+            DevLogOverlay.log(msg);
+        }
     }
 }
