@@ -1,6 +1,7 @@
 package battle;
 
 import battle.actions.BattleAction;
+import battle.actions.BattleResult;
 import characters.*;
 import util.DeveloperLogger;
 import util.PlayerLogger;
@@ -29,6 +30,9 @@ public class TurnManager {
     private boolean battleOver = false;
     private final AtomicBoolean finished = new AtomicBoolean(false);
     private volatile boolean playerFled = false;
+    @Getter
+    private BattleResult result;
+
 
     public void onPlayerFlee() {
         playerFled = true;
@@ -146,17 +150,17 @@ public class TurnManager {
         }
 
         /* battle finished – decide result */
-        if (playerFled) {
-            PlayerLogger.log("🏃 The player fled the battle.");
-        } else if (player.isAlive()) {
-            PlayerLogger.log("🏆 " + player.getName() + " wins!");
-        } else {
-            PlayerLogger.log("💀 " + enemy.getName() + " wins!");
+        if (!player.isAlive()) {
+            result = BattleResult.DEFEAT;
+        } else if (!enemy.isAlive()) {
+            result = BattleResult.VICTORY;
+        } else if (battleOver) { // assuming flee sets this
+            result = BattleResult.FLED;
         }
 
         /* notify UI exactly once */
         if (onBattleEnd != null) onBattleEnd.run();
-        
+
     }
 
     private void execute(Entity actor, BattleAction action) {

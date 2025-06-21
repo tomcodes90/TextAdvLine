@@ -72,12 +72,11 @@ public class BattleUI {
                 gui.getGUIThread().invokeLater(() -> showMainMenu(tm))
         );
 
-        tm.setOnBattleEnd(() -> {
-                    DeveloperLogger.log("Finish battle invoked");
-                    gui.getGUIThread().invokeLater(() -> finishBattle(player.isAlive(), enemy));
-                }
+        tm.setOnBattleEnd(() ->
+                gui.getGUIThread().invokeLater(() ->
+                        finishBattle(tm.getResult(), enemy)
+                ));
 
-        );
 
         // Show battle UI (BLOCKS here!)
         new Thread(() -> {
@@ -171,21 +170,42 @@ public class BattleUI {
     /* ------------------------------------------------------------------ */
     /*  RESULT SCREENS                                                     */
     /* ------------------------------------------------------------------ */
-    private void finishBattle(boolean playerWon, Enemy defeated) {
-        win.close();
+    private void finishBattle(BattleResult result, Enemy defeated) {
+        win.close(); // Close the battle window
 
-        BasicWindow result = new BasicWindow(playerWon ? "Victory" : "Defeat");
+        String title;
+        String message;
+
+        switch (result) {
+            case VICTORY -> {
+                title = "Victory";
+                message = "You win!";
+            }
+            case DEFEAT -> {
+                title = "Defeat";
+                message = "You lose.";
+            }
+            case FLED -> {
+                title = "Fled";
+                message = "You fled the battle.";
+            }
+            default -> {
+                title = "Battle Ended";
+                message = "Unknown result.";
+            }
+        }
+
+        BasicWindow resultWindow = new BasicWindow(title);
         Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-
-        pane.addComponent(new Label(playerWon ? "You win!" : "You lose."));
+        pane.addComponent(new Label(message));
         pane.addComponent(new EmptySpace());
 
-        Button close = new Button("Continue", result::close);
-        close.takeFocus();  // ensures focus stays here
+        Button close = new Button("Continue", resultWindow::close);
+        close.takeFocus();
         pane.addComponent(close);
 
-        result.setComponent(pane);
-        gui.addWindowAndWait(result);
+        resultWindow.setComponent(pane);
+        gui.addWindowAndWait(resultWindow); // Wait until user presses Continue
 
         if (onBattleEnd != null) onBattleEnd.run();
     }

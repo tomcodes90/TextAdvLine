@@ -1,0 +1,46 @@
+Jun 21, 2025 8:26:26 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 21, 2025 8:26:26 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 21, 2025 8:26:29 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 21, 2025 8:26:29 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 21, 2025 8:26:29 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 21, 2025 8:26:30 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 21, 2025 8:26:30 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 21, 2025 8:26:30 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 21, 2025 8:26:32 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 21, 2025 8:26:32 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 21, 2025 8:26:32 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 21, 2025 8:26:33 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 21, 2025 8:26:33 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 21, 2025 8:26:37 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 21, 2025 8:26:37 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:43 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:43 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:44 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:44 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:44 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:45 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
+Jun 21, 2025 8:27:45 PM util.DeveloperLogger log
+INFO: [TurnManager] Queue FULL – click ignored
