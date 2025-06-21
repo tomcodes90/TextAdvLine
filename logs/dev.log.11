@@ -1,0 +1,396 @@
+Jun 20, 2025 9:20:00 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:20:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:02 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:05 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:06 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:07 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:08 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:10 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:11 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:45 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:20:45 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:46 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:48 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:49 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:50 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:53 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:53 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:53 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:54 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:54 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:58 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:20:58 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:20:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:00 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:01 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:02 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 20, 2025 9:21:05 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 20, 2025 9:23:14 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:23:14 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:23:17 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 20, 2025 9:23:17 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 20, 2025 9:23:17 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:23:23 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 20, 2025 9:23:23 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 20, 2025 9:23:23 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:23:28 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 20, 2025 9:23:28 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 20, 2025 9:23:28 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:23:47 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 20, 2025 9:23:47 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 20, 2025 9:23:51 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:23:51 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0

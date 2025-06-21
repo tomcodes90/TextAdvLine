@@ -1,0 +1,10 @@
+Jun 20, 2025 9:26:39 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 20, 2025 9:26:39 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 20, 2025 9:26:43 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 20, 2025 9:26:43 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 20, 2025 9:26:43 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
