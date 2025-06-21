@@ -21,16 +21,11 @@ public class FleeAction implements BattleAction {
 
     @Override
     public void execute() {
-        DeveloperLogger.log("[Battle] " + player.getName() + " attempts to flee...");
-        PlayerLogger.log(player.getName() + " attempts to flee...");
-
         if (Math.random() < 0.5) {
-            PlayerLogger.log("Successfully fled!");
-            DeveloperLogger.log("[Battle] Flee succeeded");
-            manager.setBattleOver(true);
+            PlayerLogger.log("✅ Successfully fled!");
+            manager.onPlayerFlee();              // <-- new helper
         } else {
-            PlayerLogger.log("Couldn't escape!");
-            DeveloperLogger.log("[Battle] Flee failed");
+            PlayerLogger.log("❌ Couldn't escape!");
         }
     }
 }

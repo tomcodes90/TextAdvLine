@@ -10,6 +10,7 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import items.Item;
+import util.DeveloperLogger;
 import util.PlayerLogger;
 
 import java.io.IOException;
@@ -71,8 +72,11 @@ public class BattleUI {
                 gui.getGUIThread().invokeLater(() -> showMainMenu(tm))
         );
 
-        tm.setOnBattleEnd(() ->
-                gui.getGUIThread().invokeLater(() -> finishBattle(player.isAlive(), enemy))
+        tm.setOnBattleEnd(() -> {
+                    DeveloperLogger.log("Finish battle invoked");
+                    gui.getGUIThread().invokeLater(() -> finishBattle(player.isAlive(), enemy));
+                }
+
         );
 
         // Show battle UI (BLOCKS here!)
@@ -168,44 +172,22 @@ public class BattleUI {
     /*  RESULT SCREENS                                                     */
     /* ------------------------------------------------------------------ */
     private void finishBattle(boolean playerWon, Enemy defeated) {
-        // 1. CLOSE the battle window
         win.close();
 
-        /* ------- build the result window ------- */
         BasicWindow result = new BasicWindow(playerWon ? "Victory" : "Defeat");
-        Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
+        Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        if (playerWon) {
-            root.addComponent(new Label("🏆  Victory!"));
-            root.addComponent(new Label("XP gained: " + defeated.getExpReward()));
-            player.collectExp(defeated.getExpReward());
+        pane.addComponent(new Label(playerWon ? "You win!" : "You lose."));
+        pane.addComponent(new EmptySpace());
 
-            if (!defeated.getLootReward().isEmpty()) {
-                root.addComponent(new Label("Loot:"));
-                for (Item it : defeated.getLootReward()) {
-                    root.addComponent(new Label(" • " + it.getName()));
-                    player.addItemToInventory(it);
-                }
-            } else root.addComponent(new Label("No loot."));
-        } else {
-            root.addComponent(new Label("☠  You were defeated…"));
-        }
+        Button close = new Button("Continue", result::close);
+        close.takeFocus();  // ensures focus stays here
+        pane.addComponent(close);
 
-        root.addComponent(new EmptySpace());
-        /* 2. use a real button so ENTER closes the window */
-        Button closeBtn = new Button("Continue", result::close);
-        closeBtn.takeFocus();
-        root.addComponent(closeBtn);
+        result.setComponent(pane);
+        gui.addWindowAndWait(result);
 
-        result.setComponent(root);
-
-        /* 3. show the window *asynchronously* and wait in a helper thread   */
-        gui.addWindow(result);               // show immediately (GUI thread)
-
-        new Thread(() -> {                   // wait WITHOUT blocking GUI thread
-            gui.waitForWindowToClose(result);
-            if (onBattleEnd != null) onBattleEnd.run();   // back to main menu
-        }, "result-waiter").start();
+        if (onBattleEnd != null) onBattleEnd.run();
     }
 
 

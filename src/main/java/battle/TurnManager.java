@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -26,6 +27,13 @@ public class TurnManager {
 
     @Setter
     private boolean battleOver = false;
+    private final AtomicBoolean finished = new AtomicBoolean(false);
+    private volatile boolean playerFled = false;
+
+    public void onPlayerFlee() {
+        playerFled = true;
+        battleOver = true;
+    }
 
     private final BlockingQueue<BattleAction> playerActionQueue = new ArrayBlockingQueue<>(1);
 
@@ -55,7 +63,7 @@ public class TurnManager {
 
 // Trigger UI callback
             if (onBattleEnd != null) {
-                onBattleEnd.run();
+                fireBattleEnd();
             }
 // ⬅ move the old body into this private method
         } catch (Throwable t) {      // *anything* that crosses this line is printed
@@ -137,23 +145,37 @@ public class TurnManager {
             }
         }
 
+        /* battle finished – decide result */
+        if (playerFled) {
+            PlayerLogger.log("🏃 The player fled the battle.");
+        } else if (player.isAlive()) {
+            PlayerLogger.log("🏆 " + player.getName() + " wins!");
+        } else {
+            PlayerLogger.log("💀 " + enemy.getName() + " wins!");
+        }
 
+        /* notify UI exactly once */
         if (onBattleEnd != null) onBattleEnd.run();
+        
     }
 
     private void execute(Entity actor, BattleAction action) {
         PlayerLogger.log("👉 " + actor.getName() + " uses " + action.name());
-        try {
-            action.execute(); // ✅ correct — this performs the action
-        } catch (Throwable t) {
-            DeveloperLogger.log(Level.SEVERE,
-                    "[TurnManager] execute() blew up: " + t);
-            throw t;
-        }
+        action.execute();
 
-        DeveloperLogger.log("[TurnManager] After action: " +
-                player.getName() + " HP=" + player.getStat(StatsType.HP) +
-                ", " + enemy.getName() + " HP=" + enemy.getStat(StatsType.HP));
+        DeveloperLogger.log("[TurnManager] After action: "
+                + player.getName() + " HP=" + player.getStat(StatsType.HP)
+                + ", " + enemy.getName() + " HP=" + enemy.getStat(StatsType.HP));
+
+        // stop the loop when someone’s HP ≤ 0
+        if (!player.isAlive() || !enemy.isAlive()) {
+            battleOver = true;
+        }
     }
 
+    private void fireBattleEnd() {
+        if (finished.compareAndSet(false, true) && onBattleEnd != null) {
+            fireBattleEnd();
+        }
+    }
 }
