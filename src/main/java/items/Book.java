@@ -6,8 +6,8 @@ import spells.Spell;
 import spells.SpellType;
 
 public class Book extends Item {
-private final Spell spell;
-private final SpellType spellType;
+    private final Spell spell;
+    private final SpellType spellType;
 
     Book(String id, String name, String description, Spell spell, SpellType spellType) {
         super(id, name, description);
@@ -16,7 +16,7 @@ private final SpellType spellType;
     }
 
     public void use(Entity entity) {
-        entity.getSpells().put(spellType, spell);
+        entity.getAvailableSpells().put(spellType, spell);
     }
 
     public Spell getSpell() {

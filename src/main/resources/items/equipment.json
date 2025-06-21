@@ -1,0 +1,14 @@
+[
+  {
+    "type": "weapon",
+    "name": "Iron Sword",
+    "statBoost": "STRENGTH",
+    "value": 10
+  },
+  {
+    "type": "armor",
+    "name": "Leather Vest",
+    "statBoost": "DEFENSE",
+    "value": 5
+  }
+]

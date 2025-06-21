@@ -1,0 +1,13 @@
+[
+  {
+    "type": "potion",
+    "name": "Healing Potion",
+    "healAmount": 50
+  },
+  {
+    "type": "statEnhancer",
+    "name": "Power Elixir",
+    "statToEnhance": "STRENGTH",
+    "amount": 1
+  }
+]

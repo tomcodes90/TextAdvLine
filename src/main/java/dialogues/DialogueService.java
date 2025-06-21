@@ -1,29 +1,27 @@
 package dialogues;
 
+import lombok.Getter;
+import ui.DialogueUI;
+
+import java.io.IOException;
 import java.util.List;
-import java.util.Scanner;
 
 public class DialogueService {
 
+    @Getter
     private static final DialogueService instance = new DialogueService();
+    private DialogueUI dialogueUI;
 
     private DialogueService() {
-        // private constructor
     }
 
-    public static DialogueService getInstance() {
-        return instance;
+    public void setUI(DialogueUI ui) {
+        this.dialogueUI = ui;
     }
 
-    public void runDialogues(List<Dialogue> dialogues) {
+    public void runDialogues(List<Dialogue> dialogues) throws IOException, InterruptedException {
         for (Dialogue d : dialogues) {
-            System.out.println(d.getSpeaker() + ": " + d.getText());
-            waitForUser();
+            dialogueUI.showDialogue(d.getSpeaker(), d.getPortrait(), d.getText());
         }
-    }
-
-    private void waitForUser() {
-        System.out.println("(Press Enter to continue)");
-        new Scanner(System.in).nextLine();
     }
 }

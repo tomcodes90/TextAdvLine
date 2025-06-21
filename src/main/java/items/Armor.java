@@ -3,8 +3,8 @@ package items;
 public class Armor extends Item {
     private int defensePoints;
 
-    Armor(String id, String name, String description, int defensePoints) {
-        super(id, name,description);
+    public Armor(String id, String name, String description, int defensePoints) {
+        super(id, name, description);
         this.defensePoints = defensePoints;
     }
 

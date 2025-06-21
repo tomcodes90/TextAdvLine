@@ -1,0 +1,12 @@
+[
+  {
+    "type": "keyItem",
+    "name": "Ancient Tablet",
+    "description": "A stone tablet covered in runes."
+  },
+  {
+    "type": "keyItem",
+    "name": "Guild Emblem",
+    "description": "Marks you as a member of the Adventurers' Guild."
+  }
+]

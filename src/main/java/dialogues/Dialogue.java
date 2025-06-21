@@ -3,10 +3,12 @@ package dialogues;
 public class Dialogue {
     private final String speaker;
     private final String text;
+    private final String portrait;
 
-    public Dialogue(String speaker, String text) {
+    public Dialogue(String speaker, String text, String portrait) {
         this.speaker = speaker;
         this.text = text;
+        this.portrait = portrait;
     }
 
     public String getSpeaker() {
@@ -15,5 +17,9 @@ public class Dialogue {
 
     public String getText() {
         return text;
+    }
+
+    public String getPortrait() {
+        return portrait;
     }
 }

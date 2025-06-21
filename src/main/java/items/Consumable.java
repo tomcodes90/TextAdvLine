@@ -3,11 +3,11 @@ package items;
 import characters.Entity;
 
 public abstract class Consumable extends Item {
-    int valueToApply;
+    int pointsToApply;
 
-    Consumable(String id, String name, String description, int valueToApply) {
+    Consumable(String id, String name, String description, int pointsToApply) {
         super(id, name, description);
-       this.valueToApply = valueToApply;
+        this.pointsToApply = pointsToApply;
     }
 
     public abstract void use(Entity target);

@@ -10,23 +10,24 @@ import java.util.List;
 public class Enemy extends Entity {
 
     private final StatsType statBoost;
-    private final AIRole aiRole;
-    private final List<Item> itemRewards;
+    private final List<Item> lootReward;
     private final int expReward;
+    private final AIRole aiRole;
 
-    public Enemy(String name, StatsType statBoost, int level, AIRole aiRole, List<Item> itemRewards, int expReward) {
+
+    public Enemy(String name, StatsType statBoost, int level, List<Item> lootReward, int expReward, AIRole aiRole) {
         super(name);
         this.statBoost = statBoost;
-        this.aiRole = aiRole;
-        this.itemRewards = itemRewards;
+        this.lootReward = lootReward;
         this.expReward = expReward;
-        simulateLevelUp(level);
+        this.aiRole = aiRole;
+        levelUpTo(level);
     }
 
-    private void simulateLevelUp(int levels) {
-        stats.forEach((type, value) -> {
-            int increase = (statBoost == type) ? 5 * levels : 2 * levels;
-            stats.put(type, value + increase);
+    private void levelUpTo(int level) {
+        getStats().forEach((type, value) -> {
+            int increase = (statBoost == type) ? 5 * level - 1 : 2 * level - 1;
+            getStats().put(type, value + increase);
         });
     }
 

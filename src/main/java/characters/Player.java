@@ -5,22 +5,18 @@ import items.Item;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import static spells.ElementalType.*;
 import static characters.StatsType.*;
 
 @Getter
 public class Player extends Entity {
-
     private final StatsType statBoost;
-
     private int exp;
-
     @Setter
     private int expToLevelUp;
-
-    private final ArrayList<Item> inventory = new ArrayList<>();
+    private final HashMap<Item, Integer> inventory = new HashMap<>();
 
     public Player(String name, StatsType statBoost) {
         super(name);
@@ -47,19 +43,19 @@ public class Player extends Entity {
 
     @Override
     public void assignConsumableToSlot(Consumable consumable, int index) {
-        if (consumables[index] != null) {
-            addItemToInventory(consumables[index]);
+        if (getConsumablesEquipped()[index] != null) {
+            addItemToInventory(getConsumablesEquipped()[index]);
         }
-        consumables[index] = consumable;
+        getConsumablesEquipped()[index] = consumable;
     }
 
     public void levelUp() {
         this.level++;
         this.expToLevelUp *= 2;
 
-        stats.forEach((statType, value) -> {
+        getStats().forEach((statType, value) -> {
             int increase = (statBoost == statType) ? 5 : 2;
-            stats.put(statType, +increase);
+            getStats().put(statType, +increase);
         });
     }
 
@@ -71,6 +67,13 @@ public class Player extends Entity {
     }
 
     public void addItemToInventory(Item item) {
-        inventory.add(item);
+        inventory.put(item, +inventory.get(item));
+    }
+
+    public void removeItemFromInventory(Item item) {
+        inventory.put(item, -inventory.get(item));
+        if (inventory.get(item) == 0) {
+            inventory.remove(item);
+        }
     }
 }
