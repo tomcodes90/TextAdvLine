@@ -19,7 +19,7 @@ public final class TestScenario {
     }          // utility class – no instances
 
     /* -----------------------------------------------------------
-       Factory helpers used by MainMenuUI or BattleUI
+       Factory helpers used by MainMenu or BattleUI
        ----------------------------------------------------------- */
 
     public static Player createPlayer() {
@@ -30,6 +30,7 @@ public final class TestScenario {
         player.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
         player.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
         player.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        player.getConsumablesEquipped()[0] = (items.StatEnhancer) ItemRegistry.getByName("Sage Elixir");
 
         return player;
     }

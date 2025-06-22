@@ -1,14 +1,14 @@
-package ui;
+package scenes;
 
 import com.googlecode.lanterna.gui2.*;
 
 import java.util.List;
 
-public class MainMenuUI {
+public class MainMenu {
     private final MultiWindowTextGUI gui;
     private final Runnable onStartBattle;
 
-    public MainMenuUI(MultiWindowTextGUI gui, Runnable onStartBattle) {
+    public MainMenu(MultiWindowTextGUI gui, Runnable onStartBattle) {
         this.gui = gui;
         this.onStartBattle = onStartBattle;
     }

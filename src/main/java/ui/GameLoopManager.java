@@ -4,6 +4,8 @@ import characters.Enemy;
 import characters.Player;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import missions.TestScenario;
+import scenes.MainMenu;
+import ui.battle.BattleUI;
 
 public class GameLoopManager {
     private final MultiWindowTextGUI gui;
@@ -22,7 +24,7 @@ public class GameLoopManager {
             battleUI.start();
         };
 
-        MainMenuUI menu = new MainMenuUI(gui, startBattle);
+        MainMenu menu = new MainMenu(gui, startBattle);
         gui.addWindowAndWait(menu.build());
     }
 }

@@ -69,8 +69,17 @@ public final class PlayerLogger {
      * ordinary call from game code
      */
     public static void log(String msg) {
-        typeWriter(msg);
+        typer.submit(() -> typeWriter(msg));
     }
+
+    public static void logBlocking(String msg) {
+        try {
+            typer.submit(() -> typeWriter(msg)).get();  // ensures the message finishes typing
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     /* ------------------------------------------------------------------ */
@@ -84,7 +93,10 @@ public final class PlayerLogger {
 
         for (char c : line.toCharArray()) {
             message.append(c);
-            if (logBox != null) logBox.setText(message.toString());
+            if (logBox != null) {
+                logBox.setText(message.toString());
+                logBox.setCaretPosition(message.length()); // 👈 this line scrolls to bottom
+            }
             if (refresher != null) refresher.run();
 
             try {
@@ -94,18 +106,18 @@ public final class PlayerLogger {
             }
         }
 
-        // Optional: add a blinking cursor or newline if you want
-        if (logBox != null) logBox.setText(message.toString());
+        // Final repaint after full message
+        if (logBox != null) {
+            logBox.setText(message.toString());
+            logBox.setCaretPosition(message.length()); // 👈 again after final render
+        }
         if (refresher != null) refresher.run();
 
         try {
-            Thread.sleep(MESSAGE_DELAY);  // short pause before next message
+            Thread.sleep(MESSAGE_DELAY);
         } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
-
-        // 🔄 Clear the log box after the message
-        if (logBox != null) logBox.setText("");
     }
 
 

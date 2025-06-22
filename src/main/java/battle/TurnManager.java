@@ -3,6 +3,7 @@ package battle;
 import battle.actions.BattleAction;
 import battle.actions.BattleResult;
 import characters.*;
+import spells.Spell;
 import util.DeveloperLogger;
 import util.PlayerLogger;
 import lombok.Getter;
@@ -34,11 +35,6 @@ public class TurnManager {
     private BattleResult result;
 
 
-    public void onPlayerFlee() {
-        playerFled = true;
-        battleOver = true;
-    }
-
     private final BlockingQueue<BattleAction> playerActionQueue = new ArrayBlockingQueue<>(1);
 
     public TurnManager(Player player, Enemy enemy) {
@@ -46,24 +42,11 @@ public class TurnManager {
         this.enemy = enemy;
     }
 
-    public void queuePlayerAction(BattleAction action) {
-        boolean ok = playerActionQueue.offer(action);
-        DeveloperLogger.log(Level.INFO,
-                ok ? "[TurnManager] Queued " + action.name()
-                        : "[TurnManager] Queue FULL – click ignored");
-    }
-
     public void startBattle() {
         try {
             runLoop();
             // Log outcome
-            if (battleOver) {
-                PlayerLogger.log("🏃 The player fled the battle.");
-            } else if (player.isAlive()) {
-                PlayerLogger.log("🏆 " + player.getName() + " wins!");
-            } else {
-                PlayerLogger.log("💀 " + enemy.getName() + " wins!");
-            }
+// TurnManager.java  – right at the end of the loop
 
 // Trigger UI callback
             if (onBattleEnd != null) {
@@ -78,6 +61,27 @@ public class TurnManager {
         }
     }
 
+    public void queuePlayerAction(BattleAction action) {
+        boolean ok = playerActionQueue.offer(action);
+        DeveloperLogger.log(Level.INFO,
+                ok ? "[TurnManager] Queued " + action.name()
+                        : "[TurnManager] Queue FULL – click ignored");
+    }
+
+    public void onPlayerFlee() {
+        playerFled = true;
+        battleOver = true;
+    }
+
+    private void tickCooldowns() {
+        for (Spell s : player.getSpellsEquipped()) {
+            if (s != null) s.tickCooldown();
+        }
+        for (Spell s : enemy.getSpellsEquipped()) {
+            if (s != null) s.tickCooldown();
+        }
+
+    }
 
     private void runLoop() {
 
@@ -89,7 +93,6 @@ public class TurnManager {
 
         PlayerLogger.log("\n         ⚔️ The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
-
         DeveloperLogger.log(Level.INFO, "loop entered"); // ← Here
 
         while (player.isAlive() && enemy.isAlive() && !battleOver) {
@@ -99,7 +102,7 @@ public class TurnManager {
                 DeveloperLogger.log("[TurnManager] Running promptCallback");
                 promptCallback.run();
             }
-
+            tickCooldowns();  // tick the spell cooldowns before giving the turn
             BattleAction playerAction;
             try {
                 DeveloperLogger.log(Level.INFO,
@@ -159,7 +162,7 @@ public class TurnManager {
     }
 
     private void execute(Entity actor, BattleAction action) {
-        PlayerLogger.log("\n         " + actor.getName() + " uses " + action.name());
+        PlayerLogger.logBlocking("\n         " + actor.getName() + " uses " + action.name());
         action.execute();
 
         DeveloperLogger.log("[TurnManager] After action: "
@@ -177,4 +180,6 @@ public class TurnManager {
             fireBattleEnd();
         }
     }
+
+
 }
