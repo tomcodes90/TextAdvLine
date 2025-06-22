@@ -19,7 +19,7 @@ public final class TestScenario {
     }          // utility class – no instances
 
     /* -----------------------------------------------------------
-       Factory helpers used by MainMenu or BattleUI
+       Factory helpers used by MainMenu or Battle
        ----------------------------------------------------------- */
 
     public static Player createPlayer() {

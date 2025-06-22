@@ -27,19 +27,15 @@ public class WorldHub implements Scene {
             SceneManager.get().switchTo(new Story(gui)); // placeholder
         }));
 
-        panel.addComponent(new Button("⚔️ Random Battle", () -> {
-            window.close();
-            SceneManager.get().switchTo(new RandomBattle(gui)); // placeholder
-        }));
 
         panel.addComponent(new Button("🛒 Visit Shop", () -> {
             window.close();
-            SceneManager.get().switchTo(new ShopScene(gui)); // placeholder
+            // placeholder
         }));
 
         panel.addComponent(new Button("🎒 Character Overview", () -> {
             window.close();
-            SceneManager.get().switchTo(new CharacterOverviewScene(gui)); // placeholder
+            // placeholder
         }));
 
         panel.addComponent(new Button("💾 Save Game", () -> {
@@ -48,7 +44,7 @@ public class WorldHub implements Scene {
 
         panel.addComponent(new Button("🏁 Exit to Main Menu", () -> {
             window.close();
-            SceneManager.get().switchTo(new StartMenuScene(gui)); // placeholder
+            // placeholder
         }));
 
         window.setComponent(panel);

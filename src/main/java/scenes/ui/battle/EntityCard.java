@@ -1,4 +1,4 @@
-package ui.battle;
+package scenes.ui.battle;
 
 import characters.Enemy;
 import characters.Entity;
@@ -7,10 +7,9 @@ import characters.StatsType;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import lombok.Getter;
-import lombok.Lombok;
 
 @Getter
-public class CardHelper {
+public class EntityCard {
     @Getter
     private static final Panel pCard = new Panel();
     @Getter

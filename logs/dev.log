@@ -274,3 +274,29 @@ Jun 22, 2025 9:09:55 PM util.DeveloperLogger log
 INFO: [TurnManager] Queued Flee
 Jun 22, 2025 9:09:55 PM util.DeveloperLogger log
 INFO: [TurnManager] …got FleeAction
+Jun 22, 2025 10:25:51 PM util.DeveloperLogger log
+INFO: loop entered
+Jun 22, 2025 10:25:51 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 22, 2025 10:25:54 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 22, 2025 10:25:54 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 22, 2025 10:25:58 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 22, 2025 10:25:59 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 22, 2025 10:25:59 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction
+Jun 22, 2025 10:26:03 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 22, 2025 10:26:05 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Cast FIREBALL
+Jun 22, 2025 10:26:05 PM util.DeveloperLogger log
+INFO: [TurnManager] …got CastSpellAction
+Jun 22, 2025 10:26:09 PM util.DeveloperLogger log
+INFO: [TurnManager] Waiting… queue size=0
+Jun 22, 2025 10:26:10 PM util.DeveloperLogger log
+INFO: [TurnManager] Queued Attack
+Jun 22, 2025 10:26:10 PM util.DeveloperLogger log
+INFO: [TurnManager] …got AttackAction

@@ -4,6 +4,7 @@ import battle.actions.BattleAction;
 import battle.actions.BattleResult;
 import characters.*;
 import spells.Spell;
+import scenes.ui.dev.DevLogOverlay;
 import util.DeveloperLogger;
 import util.PlayerLogger;
 import lombok.Getter;
@@ -13,7 +14,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 @Getter
 public class TurnManager {
@@ -54,7 +54,7 @@ public class TurnManager {
             }
 // ⬅ move the old body into this private method
         } catch (Throwable t) {      // *anything* that crosses this line is printed
-            DeveloperLogger.log(Level.SEVERE,
+            DeveloperLogger.log(
                     "[TurnManager] UNCAUGHT EXCEPTION – battle thread died:\n" +
                             t.getClass().getSimpleName() + ": " + t.getMessage());
             t.printStackTrace();     // still goes to your IDE / console
@@ -63,7 +63,7 @@ public class TurnManager {
 
     public void queuePlayerAction(BattleAction action) {
         boolean ok = playerActionQueue.offer(action);
-        DeveloperLogger.log(Level.INFO,
+        DeveloperLogger.log(
                 ok ? "[TurnManager] Queued " + action.name()
                         : "[TurnManager] Queue FULL – click ignored");
     }
@@ -93,7 +93,7 @@ public class TurnManager {
 
         PlayerLogger.log("\n         ⚔️ The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
-        DeveloperLogger.log(Level.INFO, "loop entered"); // ← Here
+        DeveloperLogger.log("loop entered"); // ← Here
 
         while (player.isAlive() && enemy.isAlive() && !battleOver) {
             playerActionQueue.clear();
@@ -105,12 +105,12 @@ public class TurnManager {
             tickCooldowns();  // tick the spell cooldowns before giving the turn
             BattleAction playerAction;
             try {
-                DeveloperLogger.log(Level.INFO,
+                DeveloperLogger.log(
                         "[TurnManager] Waiting… queue size=" + playerActionQueue.size());
 
                 playerAction = playerActionQueue.take();
 
-                DeveloperLogger.log(Level.INFO,
+                DeveloperLogger.log(
                         "[TurnManager] …got " + playerAction.getClass().getSimpleName());
 
             } catch (InterruptedException e) {
@@ -145,6 +145,7 @@ public class TurnManager {
                     promptCallback.run();
                 }
             }
+            DevLogOverlay.clearLog();
         }
 
         /* battle finished – decide result */

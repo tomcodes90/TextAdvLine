@@ -1,5 +1,8 @@
 package dialogues;
 
+import lombok.Getter;
+
+@Getter
 public class Dialogue {
     private final String speaker;
     private final String text;
@@ -11,15 +14,4 @@ public class Dialogue {
         this.portrait = portrait;
     }
 
-    public String getSpeaker() {
-        return speaker;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getPortrait() {
-        return portrait;
-    }
 }

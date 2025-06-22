@@ -1,4 +1,4 @@
-package ui;
+package scenes.ui.dialogue;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
@@ -53,17 +53,17 @@ public class DialogueUI {
     }
 
 
-    public void showChoices(DialogueWithInput input) {
+    public void showChoices(DialogueWithInput dialogueWithInput) {
         BasicWindow window = new BasicWindow("Make a Choice");
         Panel root = new Panel(new LinearLayout(Direction.VERTICAL));
         window.setHints(java.util.List.of(Window.Hint.CENTERED));
 
-        Label promptLabel = new Label(input.getPrompt());
+        Label promptLabel = new Label(dialogueWithInput.getText());
         promptLabel.setForegroundColor(TextColor.ANSI.CYAN);
         root.addComponent(promptLabel);
 
-        ActionListBox listBox = new ActionListBox(new TerminalSize(40, input.getOptions().size()));
-        for (ChoiceOption option : input.getOptions()) {
+        ActionListBox listBox = new ActionListBox(new TerminalSize(40, dialogueWithInput.getOptions().size()));
+        for (ChoiceOption option : dialogueWithInput.getOptions()) {
             listBox.addItem(option.getText(), option::execute);
         }
 

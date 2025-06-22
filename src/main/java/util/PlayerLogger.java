@@ -4,10 +4,8 @@ import com.googlecode.lanterna.gui2.TextBox;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.*;
 
 public final class PlayerLogger {
-    private static final Logger LOG = Logger.getLogger("player");
 
     /**
      * the TextBox on-screen that shows the battle log
@@ -29,33 +27,6 @@ public final class PlayerLogger {
      */
     private static final int LETTER_DELAY = 25;
     private static final int MESSAGE_DELAY = 700;
-
-    /* ------------------------------------------------------------------ */
-    /*  static init – hook Java util.logging to our TextBox               */
-    /* ------------------------------------------------------------------ */
-    static {
-        LOG.setUseParentHandlers(false);
-        LOG.setLevel(Level.ALL);
-
-        LOG.addHandler(new Handler() {
-            @Override
-            public void publish(LogRecord rec) {
-                if (logBox == null) return;     // not initialised yet
-
-                // Every log line is rendered with a type-writer effect
-                String msg = rec.getMessage();
-                typer.submit(() -> typeWriter(msg));
-            }
-
-            @Override
-            public void flush() {
-            }
-
-            @Override
-            public void close() {
-            }
-        });
-    }
 
     /* ------------------------------------------------------------------ */
     /*  public helpers                                                     */
@@ -80,14 +51,6 @@ public final class PlayerLogger {
         }
     }
 
-
-
-    /* ------------------------------------------------------------------ */
-    /*  INTERNAL: character-by-character writer                            */
-    /* ------------------------------------------------------------------ */
-
-    // delay after full message
-
     private static void typeWriter(String line) {
         StringBuilder message = new StringBuilder();
 
@@ -105,7 +68,6 @@ public final class PlayerLogger {
                 Thread.currentThread().interrupt();
             }
         }
-
         // Final repaint after full message
         if (logBox != null) {
             logBox.setText(message.toString());
@@ -119,6 +81,4 @@ public final class PlayerLogger {
             Thread.currentThread().interrupt();
         }
     }
-
-
 }

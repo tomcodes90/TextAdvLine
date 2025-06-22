@@ -1,9 +1,9 @@
 import items.ItemRegistry;
-import ui.GameLoopManager;
+import game.GameLoopManager;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import ui.DevLogOverlay;
+import scenes.ui.dev.DevLogOverlay;
 
 import java.io.IOException;
 

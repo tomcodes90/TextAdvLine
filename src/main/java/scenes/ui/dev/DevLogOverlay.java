@@ -1,12 +1,12 @@
-package ui;
+package scenes.ui.dev;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.gui2.*;
+
 import lombok.Getter;
-import lombok.Lombok;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -38,9 +38,16 @@ public class DevLogOverlay {
     public static void log(String msg) {
         synchronized (buffer) {
             buffer.add(msg);
-            if (buffer.size() > 15) buffer.remove(0);
-            logBox.setText(String.join("\n", buffer));
+            String fullText = String.join("\n", buffer);
+            logBox.setText(fullText);
         }
     }
+
+    public static void clearLog() {
+        synchronized (buffer) {
+            buffer.clear();
+        }
+    }
+
 }
 

@@ -1,11 +1,11 @@
-package ui;
+package game;
 
 import characters.Enemy;
 import characters.Player;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import missions.TestScenario;
 import scenes.MainMenu;
-import ui.battle.BattleUI;
+import scenes.ui.battle.Battle;
 
 public class GameLoopManager {
     private final MultiWindowTextGUI gui;
@@ -19,9 +19,9 @@ public class GameLoopManager {
             Player player = TestScenario.createPlayer();
             Enemy enemy = TestScenario.createEnemy();
 
-            BattleUI battleUI = new BattleUI(gui, player, enemy);
-            battleUI.setOnBattleEnd(this::showMainMenu);
-            battleUI.start();
+            Battle battle = new Battle(gui, player, enemy);
+            battle.setOnBattleEnd(this::showMainMenu);
+            battle.start();
         };
 
         MainMenu menu = new MainMenu(gui, startBattle);

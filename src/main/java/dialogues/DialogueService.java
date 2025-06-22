@@ -1,7 +1,7 @@
 package dialogues;
 
 import lombok.Getter;
-import ui.DialogueUI;
+import scenes.ui.dialogue.DialogueUI;
 
 import java.io.IOException;
 import java.util.List;

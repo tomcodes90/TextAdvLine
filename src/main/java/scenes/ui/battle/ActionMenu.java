@@ -1,4 +1,4 @@
-package ui.battle;
+package scenes.ui.battle;
 
 import battle.TurnManager;
 import battle.actions.AttackAction;
@@ -18,9 +18,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class BattleMenuHelper {
-    public static void showMainMenu(TurnManager tm, Player player, Enemy enemy, Panel action, WindowBasedTextGUI gui) {
-        CardHelper.refreshCards(player, enemy);
+public class ActionMenu {
+    public static void showActionsMenu(TurnManager tm, Player player, Enemy enemy, Panel action, WindowBasedTextGUI gui) {
+        EntityCard.refreshCards(player, enemy);
         action.removeAllComponents();
 
         SafeActionListBox menu = new SafeActionListBox(new TerminalSize(50, 4));
@@ -63,13 +63,12 @@ public class BattleMenuHelper {
 
                         // Queue and close menu
                         tm.queuePlayerAction(new CastSpellAction(player, spell, enemy));
-                        // optional: if you want to close the spell menu after selection
                     };
 
                     list.addItem(label, itemAction);
                 });
 
-        list.addItem("Back", () -> showMainMenu(tm, player, enemy, action, gui));
+        list.addItem("Back", () -> showActionsMenu(tm, player, enemy, action, gui));
 
         action.addComponent(list);
         gui.getGUIThread().invokeLater(list::takeFocus);
@@ -87,7 +86,7 @@ public class BattleMenuHelper {
                         list.addItem(item.getName(),
                                 () -> tm.queuePlayerAction(new UseItemAction(player, item))));
 
-        list.addItem("Back", () -> showMainMenu(tm, player, enemy, action, gui));
+        list.addItem("Back", () -> showActionsMenu(tm, player, enemy, action, gui));
         action.addComponent(list);
         gui.getGUIThread().invokeLater(list::takeFocus);
         refreshSafe(gui);

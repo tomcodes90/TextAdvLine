@@ -1,4 +1,4 @@
-package ui.battle;
+package scenes.ui.battle;
 
 import battle.TurnManager;
 import battle.actions.*;
@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class BattleUI {
+public class Battle {
 
     /* ------------------------------------------------------------------ */
     /*  FIELDS                                                             */
@@ -32,7 +32,7 @@ public class BattleUI {
     private final Panel action = new Panel(new LinearLayout(Direction.VERTICAL));
 
     /**
-     * Called by whoever created the BattleUI when the fight finishes
+     * Called by whoever created the Battle when the fight finishes
      */
     private Runnable onBattleEnd;
 
@@ -41,7 +41,7 @@ public class BattleUI {
     }
 
     /* ------------------------------------------------------------------ */
-    public BattleUI(WindowBasedTextGUI gui, Player player, Enemy enemy) {
+    public Battle(WindowBasedTextGUI gui, Player player, Enemy enemy) {
         this.gui = gui;
         this.player = player;
         this.enemy = enemy;
@@ -50,7 +50,7 @@ public class BattleUI {
         logBox.setTheme(new SimpleTheme(TextColor.ANSI.DEFAULT, TextColor.ANSI.BLACK));
 
         // tie PlayerLogger to the on-screen battle log
-        PlayerLogger.init(logBox, () -> BattleMenuHelper.refreshSafe(gui));
+        PlayerLogger.init(logBox, () -> ActionMenu.refreshSafe(gui));
     }
 
     /* ------------------------------------------------------------------ */
@@ -63,7 +63,7 @@ public class BattleUI {
         TurnManager tm = new TurnManager(player, enemy);
 
         tm.setPromptCallback(() ->
-                gui.getGUIThread().invokeLater(() -> BattleMenuHelper.showMainMenu(tm, player, enemy, action, gui))
+                gui.getGUIThread().invokeLater(() -> ActionMenu.showActionsMenu(tm, player, enemy, action, gui))
         );
 
         tm.setOnBattleEnd(() ->
@@ -87,9 +87,9 @@ public class BattleUI {
     /* ------------------------------------------------------------------ */
     private Component buildRoot() {
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        root.addComponent(CardHelper.getPCard());
+        root.addComponent(EntityCard.getPCard());
         root.addComponent(buildMiddlePane());
-        root.addComponent(CardHelper.getECard());
+        root.addComponent(EntityCard.getECard());
         return root;
     }
 
@@ -113,12 +113,6 @@ public class BattleUI {
         return mid;
     }
 
-
-    /* ------------------------------------------------------------------ */
-    /*  MENUS                                                              */
-    /* ------------------------------------------------------------------ */
-
-
     /* ------------------------------------------------------------------ */
     /*  RESULT SCREENS                                                     */
     /* ------------------------------------------------------------------ */
@@ -126,9 +120,9 @@ public class BattleUI {
     private void finishBattle(BattleResult result, Enemy defeated) {
         // 1️⃣ Final log line
         String msg = switch (result) {
-            case FLED -> "🏃  You fled the battle.";
-            case VICTORY -> "🏆  " + player.getName() + " wins!";
-            case DEFEAT -> "💀  " + enemy.getName() + " wins!";
+            case FLED -> "\n🏃  You fled the battle.";
+            case VICTORY -> "\n🏆  " + player.getName() + " wins!";
+            case DEFEAT -> "\n💀  " + enemy.getName() + " wins!";
         };
         PlayerLogger.logBlocking(msg);           // waits for typing to finish
 
@@ -201,13 +195,4 @@ public class BattleUI {
             pane.addComponent(new Label(" • " + item.getName()));
         }
     }
-
-
-    /* ------------------------------------------------------------------ */
-    /*  CARDS & HP BAR                                                     */
-    /* ------------------------------------------------------------------ */
-
-
-    /* ------------------------------------------------------------------ */
-
 }

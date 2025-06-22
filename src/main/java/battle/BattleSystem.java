@@ -34,7 +34,6 @@ public class BattleSystem {
         target.modifyStat(HP, -amount);
         if (target.getStat(HP) <= 0) {
             target.setAlive(false);
-            DeveloperLogger.log("☠️ " + target.getName() + " has been defeated.");
         }
     }
 }
