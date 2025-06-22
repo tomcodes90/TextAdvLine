@@ -18,10 +18,11 @@ public class MainMenu {
         Panel root = new Panel();
         root.setLayoutManager(new LinearLayout(Direction.VERTICAL));
 
-        Button startBtn = new Button("Start Battle", () -> {
+        Button startBtn = new Button("New Game", () -> {
             win.close(); // close the menu window first
             onStartBattle.run();
         });
+
 
         root.addComponent(startBtn);
         win.setComponent(root);
