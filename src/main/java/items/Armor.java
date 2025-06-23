@@ -10,9 +10,10 @@ public class Armor extends Item {
     public Armor(
             @JsonProperty("id") String id,
             @JsonProperty("name") String name,
+            @JsonProperty("price") int price,
             @JsonProperty("description") String description,
             @JsonProperty("defense") int defense) {
-        super(id, name, description);
+        super(id, name, description, price);
         this.defense = defense;
     }
 

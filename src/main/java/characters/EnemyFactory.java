@@ -13,17 +13,35 @@ import java.util.Random;
 public class EnemyFactory {
 
     /* ------------ presets ------------ */
+    public static Enemy createBandit() {
+        Enemy bandit = new Enemy(
+                "Theo",
+                StatsType.INTELLIGENCE,
+                1,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.BERSERKER
+        );
 
+        bandit.getLootReward().add(ItemRegistry.getByName("Healing Potion"));
+        bandit.getLootReward().add(ItemRegistry.getByName("Book of Energyblast"));
+        bandit.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        bandit.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+
+        return bandit;
+    }
     public static Enemy createDarkMage() {
         Enemy mage = new Enemy(
                 "Dark Mage",
                 StatsType.INTELLIGENCE,
-                2,
+                1,
                 new ArrayList<>(),
+                40,
                 40,
                 AIRole.MAGE
         );
-        ItemRegistry.loadAllItems();
+
         Item item = ItemRegistry.getByName("Healing Potion");
         mage.getLootReward().add(item);
         mage.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
@@ -40,6 +58,7 @@ public class EnemyFactory {
 
     public static Enemy createRandomEnemy() {
         return switch (RNG.nextInt(2)) {
+            case 1 -> createBandit();
             default -> createDarkMage();
         };
     }

@@ -3,6 +3,7 @@
     "type": "weapon",
     "id": "iron_sword",
     "name": "Iron Sword",
+    "price": 100,
     "description": "A sturdy blade for melee combat",
     "damage": 20,
     "damageMultiplier": "STRENGTH"
@@ -11,7 +12,59 @@
     "type": "armor",
     "id": "leather_armor",
     "name": "Leather Armor",
+    "price": 100,
     "description": "Basic protection gear",
     "defense": 10
+  },
+  {
+    "type": "weapon",
+    "id": "steel_sword",
+    "name": "Steel Sword",
+    "price": 250,
+    "description": "Forged from hardened steel, this blade cuts deeper.",
+    "damage": 35,
+    "damageMultiplier": "STRENGTH"
+  },
+  {
+    "type": "armor",
+    "id": "chainmail_armor",
+    "name": "Chainmail Armor",
+    "price": 250,
+    "description": "Provides solid defense against blades and claws.",
+    "defense": 20
+  },
+  {
+    "type": "weapon",
+    "id": "crimson_blade",
+    "name": "Crimson Blade",
+    "price": 500,
+    "description": "A blood-red sword once wielded by a knight commander.",
+    "damage": 50,
+    "damageMultiplier": "STRENGTH"
+  },
+  {
+    "type": "armor",
+    "id": "plate_armor",
+    "name": "Plate Armor",
+    "price": 500,
+    "description": "Heavy armor offering maximum body protection.",
+    "defense": 35
+  },
+  {
+    "type": "weapon",
+    "id": "dragonfang_sword",
+    "name": "Dragonfang Sword",
+    "price": 800,
+    "description": "Forged with dragon tooth — few can wield its full might.",
+    "damage": 70,
+    "damageMultiplier": "STRENGTH"
+  },
+  {
+    "type": "armor",
+    "id": "dragon_scale_armor",
+    "name": "Dragon Scale Armor",
+    "price": 800,
+    "description": "Armor crafted from rare dragon scales. Incredibly durable.",
+    "defense": 50
   }
 ]

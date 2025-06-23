@@ -2,6 +2,7 @@ package items;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
 
 
 @JsonSubTypes({
@@ -14,25 +15,20 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 
 public abstract class Item {
+    @Getter
     private final String id;
+    @Getter
     private final String name;
+    @Getter
     private final String description;
+    @Getter
+    private final int price;
 
-    Item(String id, String name, String description) {
+    Item(String id, String name, String description, int price) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.price = price;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }

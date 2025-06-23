@@ -1,14 +1,14 @@
 package scenes.missions;
 
-import characters.Enemy;
 import characters.EnemyFactory;
 import characters.Player;
 import characters.StatsType;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import dialogues.*;
-import scenes.Scene;
-import scenes.SceneManager;
-import scenes.WorldHub;
+import state.GameState;
+import scenes.manager.Scene;
+import scenes.manager.SceneManager;
+import scenes.worldhub.WorldHub;
 import scenes.ui.Battle;
 import scenes.ui.DialogueUI;
 import util.DeveloperLogger;
@@ -86,11 +86,13 @@ public class Tutorial implements Scene {
                         new ChoiceOption("I hit enemies like a bull!", () -> {
                             player = new Player(pendingName, StatsType.STRENGTH);
                             DeveloperLogger.log("Creating player " + pendingName + " with boost " + StatsType.STRENGTH);
+                            GameState.get().setPlayer(player);
                             nextStep();
                         }),
                         new ChoiceOption("I prefer to set them on fire.", () -> {
                             player = new Player(pendingName, StatsType.INTELLIGENCE);
                             DeveloperLogger.log("Creating player " + pendingName + " with boost " + StatsType.INTELLIGENCE);
+                            GameState.get().setPlayer(player);
                             nextStep();
                         })
                 ),
@@ -110,16 +112,31 @@ public class Tutorial implements Scene {
     }
 
     private void startBattle() {
-        Enemy tutorialEnemy = EnemyFactory.createDarkMage();
-        Battle battle = new Battle(gui, player, tutorialEnemy);
-        battle.setOnBattleEnd(() -> {
-            SceneManager.get().switchTo(this);
-            this.enter(); // resume after battle
-        });
-        SceneManager.get().switchTo(battle);
-        
+        Battle battle = new Battle(gui, player, EnemyFactory.createBandit());
 
+        battle.setOnBattleEnd(result -> {
+            switch (result) {
+                case VICTORY ->
+                    // Resume the tutorial sequence
+                {
+                    DeveloperLogger.log("you won");
+                    SceneManager.get().switchTo(this);
+                }
+
+                case DEFEAT, FLED ->
+                    // Show alternate dialogue and go to WorldHub
+                        dialogueService.runDialogues(List.of(
+                                new Dialogue("Mentor", "You... lost. But you’re still breathing somehow.", "🧙"),
+                                new Dialogue("Mentor", "We’ll need to train harder next time.", "🧙")
+                        ), () -> SceneManager.get().switchTo(new WorldHub(gui, player)));
+
+                default -> throw new IllegalStateException("Unexpected value: " + result);
+            }
+        });
+
+        SceneManager.get().switchTo(battle);
     }
+
 
     private void showPostBattleDialogue() {
         dialogueService.runDialogues(List.of(
@@ -129,6 +146,6 @@ public class Tutorial implements Scene {
     }
 
     private void goToWorldHub() {
-        SceneManager.get().switchTo(new WorldHub(gui));
+        SceneManager.get().switchTo(new WorldHub(gui, player));
     }
 }

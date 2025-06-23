@@ -32,7 +32,7 @@ public class Player extends Entity {
 
         switch (statBoost) {
             case STRENGTH -> {
-                modifyStat(STRENGTH, 5);
+                modifyStat(STRENGTH, 100);
                 setElementalWeakness(NATURE);
             }
             case INTELLIGENCE -> {
@@ -72,10 +72,17 @@ public class Player extends Entity {
         }
     }
 
+    public void collectGold(int gold) {
+        this.gold += gold;
+    }
+
     public void addItemToInventory(Item item) {
         inventory.merge(item, 1, Integer::sum); // adds 1 or initializes to 1
     }
 
+    public void decreaseGold(int amount) {
+        gold -= amount;
+    }
 
     public void removeItemFromInventory(Item item) {
         int current = inventory.getOrDefault(item, 0);

@@ -20,8 +20,8 @@ public class TurnManager {
 
     private final Player player;
     private final Enemy enemy;
-    @Setter
-    private Runnable onBattleEnd;
+
+    private Consumer<BattleResult> onBattleEnd;
     @Setter
     private Runnable promptCallback;
 
@@ -31,8 +31,11 @@ public class TurnManager {
     private volatile boolean playerFled = false;
     @Getter
     private BattleResult result;
+ ;
 
-
+    public void setOnBattleEnd(Consumer<BattleResult> onBattleEnd) {
+        this.onBattleEnd = onBattleEnd;
+    }
     private final BlockingQueue<BattleAction> playerActionQueue = new ArrayBlockingQueue<>(1);
 
     public TurnManager(Player player, Enemy enemy) {
@@ -43,19 +46,11 @@ public class TurnManager {
     public void startBattle() {
         try {
             runLoop();
-            // Log outcome
-// TurnManager.java  – right at the end of the loop
-
-// Trigger UI callback
-            if (onBattleEnd != null) {
-                fireBattleEnd();
-            }
-// ⬅ move the old body into this private method
-        } catch (Throwable t) {      // *anything* that crosses this line is printed
+        } catch (Throwable t) {
             DeveloperLogger.log(
                     "[TurnManager] UNCAUGHT EXCEPTION – battle thread died:\n" +
                             t.getClass().getSimpleName() + ": " + t.getMessage());
-            t.printStackTrace();     // still goes to your IDE / console
+            t.printStackTrace();
         }
     }
 
@@ -78,12 +73,9 @@ public class TurnManager {
         for (Spell s : enemy.getSpellsEquipped()) {
             if (s != null) s.tickCooldown();
         }
-
     }
 
     private void runLoop() {
-
-        // ⬇️  show the very-first menu immediately
         if (promptCallback != null) {
             DeveloperLogger.log("[TurnManager] Showing INITIAL prompt");
             promptCallback.run();
@@ -91,7 +83,7 @@ public class TurnManager {
 
         PlayerLogger.log("\n         ⚔️ The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
-        DeveloperLogger.log("loop entered"); // ← Here
+        DeveloperLogger.log("loop entered");
 
         while (player.isAlive() && enemy.isAlive() && !battleOver) {
             playerActionQueue.clear();
@@ -100,17 +92,14 @@ public class TurnManager {
                 DeveloperLogger.log("[TurnManager] Running promptCallback");
                 promptCallback.run();
             }
-            tickCooldowns();  // tick the spell cooldowns before giving the turn
+
+            tickCooldowns();
+
             BattleAction playerAction;
             try {
-                DeveloperLogger.log(
-                        "[TurnManager] Waiting… queue size=" + playerActionQueue.size());
-
+                DeveloperLogger.log("[TurnManager] Waiting… queue size=" + playerActionQueue.size());
                 playerAction = playerActionQueue.take();
-
-                DeveloperLogger.log(
-                        "[TurnManager] …got " + playerAction.getClass().getSimpleName());
-
+                DeveloperLogger.log("[TurnManager] …got " + playerAction.getClass().getSimpleName());
             } catch (InterruptedException e) {
                 DeveloperLogger.log("[TurnManager] Battle interrupted");
                 return;
@@ -136,28 +125,25 @@ public class TurnManager {
             player.tickStatusEffects();
             enemy.tickStatusEffects();
 
-            // 🟡 This is the key: re-prompt for next turn!
             if (!battleOver && player.isAlive() && enemy.isAlive()) {
                 if (promptCallback != null) {
                     DeveloperLogger.log("[TurnManager] Re-displaying prompt after actions");
                     promptCallback.run();
                 }
             }
+
             DevLogOverlay.clearLog();
         }
 
-        /* battle finished – decide result */
         if (!player.isAlive()) {
             result = BattleResult.DEFEAT;
         } else if (!enemy.isAlive()) {
             result = BattleResult.VICTORY;
-        } else if (battleOver) { // assuming flee sets this
+        } else if (battleOver) {
             result = BattleResult.FLED;
         }
 
-        /* notify UI exactly once */
-        if (onBattleEnd != null) onBattleEnd.run();
-
+        if (onBattleEnd != null) onBattleEnd.accept(result);
     }
 
     private void execute(Entity actor, BattleAction action) {
@@ -168,17 +154,8 @@ public class TurnManager {
                 + player.getName() + " HP=" + player.getStat(StatsType.HP)
                 + ", " + enemy.getName() + " HP=" + enemy.getStat(StatsType.HP));
 
-        // stop the loop when someone’s HP ≤ 0
         if (!player.isAlive() || !enemy.isAlive()) {
             battleOver = true;
         }
     }
-
-    private void fireBattleEnd() {
-        if (finished.compareAndSet(false, true) && onBattleEnd != null) {
-            onBattleEnd.run();
-        }
-    }
-
-
 }

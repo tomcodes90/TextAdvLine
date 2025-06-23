@@ -2,7 +2,43 @@
   {
     "id": "emblem",
     "name": "Emblem",
+    "price": 0,
     "description": "An Emblem",
     "keyItemMission": "MISSION_3"
+  },
+  {
+    "id": "ancient_scroll",
+    "name": "Ancient Scroll",
+    "price": 0,
+    "description": "A mysterious scroll containing lost knowledge.",
+    "keyItemMission": "MISSION_4"
+  },
+  {
+    "id": "black_pearl",
+    "name": "Black Pearl",
+    "price": 0,
+    "description": "A dark gem said to amplify magical power.",
+    "keyItemMission": "MISSION_5"
+  },
+  {
+    "id": "sky_medal",
+    "name": "Sky Medal",
+    "price": 0,
+    "description": "A badge of honor from the sky temples.",
+    "keyItemMission": "MISSION_6"
+  },
+  {
+    "id": "crystal_heart",
+    "name": "Crystal Heart",
+    "price": 0,
+    "description": "A magical heart-shaped crystal radiating warmth.",
+    "keyItemMission": "MISSION_7"
+  },
+  {
+    "id": "phoenix_feather",
+    "name": "Phoenix Feather",
+    "price": 0,
+    "description": "A rare feather said to be from a phoenix reborn.",
+    "keyItemMission": "MISSION_8"
   }
 ]

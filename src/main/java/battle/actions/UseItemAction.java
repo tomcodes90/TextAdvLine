@@ -20,5 +20,13 @@ public class UseItemAction implements BattleAction {
     @Override
     public void execute() {
         item.use(user);
+
+        for (int i = 0; i < user.getConsumablesEquipped().length; i++) {
+            if (user.getConsumablesEquipped()[i] == item) {
+                user.getConsumablesEquipped()[i] = null;
+                break;
+            }
+        }
     }
+
 }

@@ -1,4 +1,4 @@
-package scenes;
+package scenes.manager;
 
 public interface Scene {
     void enter();          // Called when the scene starts

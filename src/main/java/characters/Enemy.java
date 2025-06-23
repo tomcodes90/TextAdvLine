@@ -12,14 +12,16 @@ public class Enemy extends Entity {
     private final StatsType statBoost;
     private final List<Item> lootReward;
     private final int expReward;
+    private final int goldReward;
     private final AIRole aiRole;
 
 
-    public Enemy(String name, StatsType statBoost, int level, List<Item> lootReward, int expReward, AIRole aiRole) {
+    public Enemy(String name, StatsType statBoost, int level, List<Item> lootReward, int expReward, int goldReward, AIRole aiRole) {
         super(name);
         this.statBoost = statBoost;
         this.lootReward = lootReward;
         this.expReward = expReward;
+        this.goldReward = goldReward;
         this.aiRole = aiRole;
         levelUpTo(level);
     }

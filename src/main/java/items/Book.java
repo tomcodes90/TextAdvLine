@@ -18,7 +18,7 @@ public class Book extends Item {
             @JsonProperty("description") String description,
             @JsonProperty("spellType") SpellType spellType
     ) {
-        super(id, name, description);
+        super(id, name, description, 0);
         this.spellType = spellType;
         this.spell = SpellFactory.create(spellType);
     }

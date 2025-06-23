@@ -1,0 +1,72 @@
+[
+  {
+    "id": "book_energyblast",
+    "name": "Book of Energyblast",
+    "price": 0,
+    "description": "A crackling tome that teaches the Energyblast spell.",
+    "spellType": "ENERGYBLAST"
+  },
+  {
+    "id": "book_flare",
+    "name": "Book of Flare",
+    "price": 0,
+    "description": "A radiant scroll that teaches the Flare spell.",
+    "spellType": "FLARE"
+  },
+  {
+    "id": "book_fireball",
+    "name": "Book of Fireball",
+    "price": 0,
+    "description": "A scorched book that teaches the Fireball spell.",
+    "spellType": "FIREBALL"
+  },
+  {
+    "id": "book_inferno",
+    "name": "Book of Inferno",
+    "price": 0,
+    "description": "An ominous volume containing the Inferno spell.",
+    "spellType": "INFERNO"
+  },
+  {
+    "id": "book_frostbite",
+    "name": "Book of Frostbite",
+    "price": 0,
+    "description": "An icy grimoire inscribed with the Frostbite spell.",
+    "spellType": "FROSTBITE"
+  },
+  {
+    "id": "book_glacialspike",
+    "name": "Book of Glacial Spike",
+    "price": 0,
+    "description": "A chilling tome teaching the Glacial Spike spell.",
+    "spellType": "GLACIALSPIKE"
+  },
+  {
+    "id": "book_vinewhip",
+    "name": "Book of Vinewhip",
+    "price": 0,
+    "description": "A nature-bound volume containing the Vinewhip spell.",
+    "spellType": "VINEWHIP"
+  },
+  {
+    "id": "book_thornsurge",
+    "name": "Book of Thornsurge",
+    "price": 0,
+    "description": "A leafy tome that teaches the Thornsurge spell.",
+    "spellType": "THORNSURGE"
+  },
+  {
+    "id": "book_heal",
+    "name": "Book of Heal",
+    "price": 0,
+    "description": "A glowing manual that teaches the healing spell Heal.",
+    "spellType": "HEAL"
+  },
+  {
+    "id": "book_curestatus",
+    "name": "Book of Cure Status",
+    "price": 0,
+    "description": "A cleansing scroll that teaches how to cure ailments.",
+    "spellType": "CURESTATUS"
+  }
+]

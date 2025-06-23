@@ -10,12 +10,16 @@ import com.googlecode.lanterna.gui2.*;
 import items.Item;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import scenes.Scene;
+import scenes.manager.Scene;
+import scenes.manager.SceneManager;
+import scenes.menu.MainMenu;
+import scenes.worldhub.WorldHub;
 import util.DeveloperLogger;
 import util.PlayerLogger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Battle implements Scene {
 
@@ -27,7 +31,7 @@ public class Battle implements Scene {
     private final TextBox logBox = new TextBox(new TerminalSize(50, 3), TextBox.Style.MULTI_LINE);
     private final Panel action = new Panel(new LinearLayout(Direction.VERTICAL));
     @Setter
-    private Runnable onBattleEnd;
+    private Consumer<BattleResult> onBattleEnd;
 
     public Battle(MultiWindowTextGUI gui, Player player, Enemy enemy) {
         this.gui = gui;
@@ -54,9 +58,11 @@ public class Battle implements Scene {
                         ActionMenu.showActionsMenu(tm, player, enemy, action, gui)
                 )
         );
-        tm.setOnBattleEnd(() ->
-                gui.getGUIThread().invokeLater(() -> finishBattle(tm.getResult(), enemy))
+        tm.setOnBattleEnd(result ->
+
+                gui.getGUIThread().invokeLater(() -> finishBattle(result, enemy))
         );
+
 
         new Thread(tm::startBattle, "battle-loop").start(); // ✅ logic thread
 
@@ -67,9 +73,7 @@ public class Battle implements Scene {
 
     @Override
     public void handleInput() {
-
     }
-
     @Override
     public void exit() {
 
@@ -101,6 +105,7 @@ public class Battle implements Scene {
 
     @SneakyThrows
     private void finishBattle(BattleResult result, Enemy defeated) {
+
         String msg = switch (result) {
             case FLED -> "\n🏃  You fled the battle.";
             case VICTORY -> "\n🏆  " + player.getName() + " wins!";
@@ -149,15 +154,33 @@ public class Battle implements Scene {
         resultWin.setFixedSize(new TerminalSize(40, 12));
 
         gui.addWindowAndWait(resultWin);
+        if (result != BattleResult.DEFEAT && player.isAlive()) {
+            restorePlayerHealth(player);
+        }
 
         // ✅ Go back to MainMenu
-        if (onBattleEnd != null) onBattleEnd.run();
+        switch (result) {
+            case VICTORY, FLED -> {
+                restorePlayerHealth(player);
+                if (onBattleEnd != null) {
+                    onBattleEnd.accept(result); // 👈 this was missing!
+                } else {
+                    SceneManager.get().switchTo(new WorldHub(gui, player));
+                }
+            }
+            case DEFEAT -> {
+                SceneManager.get().switchTo(new MainMenu(gui)); // ✅ Game Over → Main Menu
+            }
+        }
     }
 
     private void addExpAndLootToPanel(Panel pane, Enemy defeated) {
         int xp = defeated.getExpReward();
         pane.addComponent(new Label("EXP gained: " + xp));
         player.collectExp(xp);
+        int gold = defeated.getGoldReward();
+        pane.addComponent(new Label("GOLD gained: " + xp));
+        player.collectGold(gold);
 
         List<Item> loot = defeated.getLootReward();
         if (loot.isEmpty()) {
@@ -171,4 +194,9 @@ public class Battle implements Scene {
             pane.addComponent(new Label(" • " + item.getName()));
         }
     }
+
+    public static void restorePlayerHealth(Player p) {
+        p.setStat(StatsType.HP, p.getStat(StatsType.MAX_HP));
+    }
+
 }

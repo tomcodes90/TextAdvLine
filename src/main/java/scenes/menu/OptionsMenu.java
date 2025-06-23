@@ -1,4 +1,4 @@
-package scenes;
+package scenes.menu;
 
 public class OptionsMenu {
 }

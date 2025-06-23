@@ -14,7 +14,7 @@ public class BattleSystem {
 
     public static void castSpell(Entity caster, Spell spell, Entity target) {
         if (!spell.isReady()) {
-            DeveloperLogger.log("❌ Spell " + spell.getName() + " is on cooldown.");
+            DeveloperLogger.log("Spell " + spell.getName() + " is on cooldown.");
             return;
         }
 

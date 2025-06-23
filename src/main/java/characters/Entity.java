@@ -1,10 +1,7 @@
 package characters;
 
 
-import items.Armor;
-import items.Consumable;
-import items.Item;
-import items.Weapon;
+import items.*;
 import lombok.*;
 import spells.ElementalType;
 import spells.Spell;
@@ -95,4 +92,9 @@ public abstract class Entity {
     public boolean isAlive() {
         return getStat(StatsType.HP) > 0;
     }
+    public boolean hasItem(String itemName) {
+        Item item = ItemRegistry.getByName(itemName);
+        return inventory.containsKey(item);
+    }
+
 }

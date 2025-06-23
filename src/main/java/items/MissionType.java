@@ -1,6 +1,8 @@
 package items;
 
-public enum KeyItemsMissions {
+public enum MissionType {
+    MISSION_1,
+    MISSION_2,
     MISSION_3,
     MISSION_4,
     MISSION_5,

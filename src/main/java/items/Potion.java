@@ -14,9 +14,10 @@ public class Potion extends Consumable {
             @JsonProperty("id") String id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
+            @JsonProperty("gold") int price,
             @JsonProperty("pointsToApply") int pointsToApply
     ) {
-        super(id, name, description, pointsToApply);
+        super(id, name, description, pointsToApply, price);
     }
 
     @Override

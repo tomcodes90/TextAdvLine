@@ -1,8 +1,9 @@
-package scenes;
+package scenes.menu;
 
 import com.googlecode.lanterna.gui2.*;
+import scenes.manager.Scene;
+import scenes.manager.SceneManager;
 import scenes.missions.Tutorial;
-import scenes.ui.Battle;
 import util.DeveloperLogger;
 
 import java.util.List;
@@ -33,7 +34,6 @@ public class MainMenu implements Scene {
 
     @Override
     public void handleInput() {
-
     }
 
     @Override

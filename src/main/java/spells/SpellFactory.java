@@ -38,9 +38,4 @@ public class SpellFactory {
         return Spell.copyOf(base);              // fresh copy
     }
 
-    public static Spell[] getAllCopies() {
-        return template.values().stream()
-                .map(Spell::copyOf)
-                .toArray(Spell[]::new);
-    }
 }

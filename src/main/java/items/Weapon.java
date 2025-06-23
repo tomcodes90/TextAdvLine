@@ -15,10 +15,11 @@ public class Weapon extends Item {
             @JsonProperty("id") String id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
+            @JsonProperty("gold") int price,
             @JsonProperty("damage") int damage,
             @JsonProperty("damageMultiplier") StatsType damageMultiplier
     ) {
-        super(id, name, description);
+        super(id, name, description, price);
         this.damage = damage;
         this.damageMultiplier = damageMultiplier;
     }

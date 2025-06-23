@@ -1,5 +1,5 @@
 // File: scenes/SceneManager.java
-package scenes;
+package scenes.manager;
 
 public class SceneManager {
     private static SceneManager instance;

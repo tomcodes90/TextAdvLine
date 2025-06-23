@@ -17,11 +17,12 @@ public class StatEnhancer extends Consumable {
             @JsonProperty("id") String id,
             @JsonProperty("name") String name,
             @JsonProperty("description") String description,
+            @JsonProperty("gold") int price,
             @JsonProperty("pointsToApply") int pointsToApply,
             @JsonProperty("statToBoost") StatsType statToBoost,
             @JsonProperty("length") int length
     ) {
-        super(id, name, description, pointsToApply);
+        super(id, name, description, pointsToApply, price);
         this.statToBoost = statToBoost;
         this.length = length;
     }
