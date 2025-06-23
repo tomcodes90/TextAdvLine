@@ -93,7 +93,7 @@ public class Shop implements Scene {
                         }
                     }));
                 });
-
+//
         panel.addComponent(new EmptySpace());
         panel.addComponent(new Button("⬅ Back", buyWindow::close));
         buyWindow.setComponent(panel);
