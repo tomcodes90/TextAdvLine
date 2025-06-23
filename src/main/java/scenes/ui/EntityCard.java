@@ -1,4 +1,4 @@
-package scenes.ui.battle;
+package scenes.ui;
 
 import characters.Enemy;
 import characters.Entity;

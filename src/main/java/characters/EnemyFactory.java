@@ -30,7 +30,6 @@ public class EnemyFactory {
         mage.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
         mage.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
         mage.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
-        mage.getSpellsEquipped()[2] = SpellFactory.create(SpellType.THORNSURGE);
 
         return mage;
     }

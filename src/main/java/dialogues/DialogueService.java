@@ -1,12 +1,14 @@
 package dialogues;
 
 import lombok.Getter;
-import scenes.ui.dialogue.DialogueUI;
+import scenes.ui.DialogueUI;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 public class DialogueService {
+
 
     @Getter
     private static final DialogueService instance = new DialogueService();
@@ -19,9 +21,39 @@ public class DialogueService {
         this.dialogueUI = ui;
     }
 
-    public void runDialogues(List<Dialogue> dialogues) throws IOException, InterruptedException {
-        for (Dialogue d : dialogues) {
-            dialogueUI.showDialogue(d.getSpeaker(), d.getPortrait(), d.getText());
+    public void runDialogues(List<Dialogue> dialogues, Runnable onFinish) {
+        try {
+            for (Dialogue d : dialogues) {
+                dialogueUI.showDialogue(d.getSpeaker(), d.getPortrait(), d.getText());
+            }
+            onFinish.run();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
     }
+
+
+    public void runDialogueWithInput(DialogueWithInput dialogue) {
+        try {
+            if (dialogue.getInputType() == DialogueInputType.TEXT_INPUT) {
+                dialogueUI.showInputDialogue(
+                        dialogue.getSpeaker(),
+                        dialogue.getPortrait(),
+                        dialogue.getText(),
+                        dialogue.getOptions()
+                );
+            } else {
+                dialogueUI.showDialogueWithInput(
+                        dialogue.getSpeaker(),
+                        dialogue.getPortrait(),
+                        dialogue.getText(),
+                        dialogue.getOptions()
+                );
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

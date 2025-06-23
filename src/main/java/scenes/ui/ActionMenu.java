@@ -1,4 +1,4 @@
-package scenes.ui.battle;
+package scenes.ui;
 
 import battle.TurnManager;
 import battle.actions.AttackAction;

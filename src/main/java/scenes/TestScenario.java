@@ -1,16 +1,12 @@
-package missions;
+package scenes;
 
 import characters.*;
 import items.Armor;
-import items.Book;
 import items.ItemRegistry;
 import items.Weapon;
 import spells.SpellFactory;
 import spells.SpellType;
 
-import java.util.ArrayList;
-
-import static characters.AIRole.BERSERKER;
 import static characters.StatsType.*;
 
 public final class TestScenario {

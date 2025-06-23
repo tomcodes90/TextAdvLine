@@ -1,4 +1,4 @@
-package scenes.ui.battle;
+package scenes.ui;
 
 import battle.TurnManager;
 import battle.actions.*;
@@ -8,83 +8,73 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.gui2.*;
 import items.Item;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import scenes.Scene;
+import util.DeveloperLogger;
 import util.PlayerLogger;
 
 import java.io.IOException;
 import java.util.List;
 
+public class Battle implements Scene {
 
-public class Battle {
-
-    /* ------------------------------------------------------------------ */
-    /*  FIELDS                                                             */
-    /* ------------------------------------------------------------------ */
-    private final WindowBasedTextGUI gui;
+    private final MultiWindowTextGUI gui;
     private final Player player;
     private final Enemy enemy;
 
     private final BasicWindow win = new BasicWindow("Battle");
-
-    private final TextBox logBox =
-            new TextBox(new TerminalSize(50, 3), TextBox.Style.MULTI_LINE);
-
+    private final TextBox logBox = new TextBox(new TerminalSize(50, 3), TextBox.Style.MULTI_LINE);
     private final Panel action = new Panel(new LinearLayout(Direction.VERTICAL));
-
-    /**
-     * Called by whoever created the Battle when the fight finishes
-     */
+    @Setter
     private Runnable onBattleEnd;
 
-    public void setOnBattleEnd(Runnable cb) {
-        this.onBattleEnd = cb;
-    }
-
-    /* ------------------------------------------------------------------ */
-    public Battle(WindowBasedTextGUI gui, Player player, Enemy enemy) {
+    public Battle(MultiWindowTextGUI gui, Player player, Enemy enemy) {
         this.gui = gui;
         this.player = player;
         this.enemy = enemy;
 
         logBox.setReadOnly(true);
         logBox.setTheme(new SimpleTheme(TextColor.ANSI.DEFAULT, TextColor.ANSI.BLACK));
-
-        // tie PlayerLogger to the on-screen battle log
-        PlayerLogger.init(logBox, () -> ActionMenu.refreshSafe(gui));
+        PlayerLogger.init(logBox, gui, () -> ActionMenu.refreshSafe(gui));
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  PUBLIC ENTRY POINT                                                 */
-    /* ------------------------------------------------------------------ */
-    public void start() {
+    @Override
+
+    public void enter() {
+        DeveloperLogger.log("entered battle");
+
         win.setHints(List.of(Window.Hint.CENTERED));
         win.setComponent(buildRoot());
+        PlayerLogger.init(logBox, gui, () -> ActionMenu.refreshSafe(gui));
 
         TurnManager tm = new TurnManager(player, enemy);
-
         tm.setPromptCallback(() ->
-                gui.getGUIThread().invokeLater(() -> ActionMenu.showActionsMenu(tm, player, enemy, action, gui))
+                gui.getGUIThread().invokeLater(() ->
+                        ActionMenu.showActionsMenu(tm, player, enemy, action, gui)
+                )
+        );
+        tm.setOnBattleEnd(() ->
+                gui.getGUIThread().invokeLater(() -> finishBattle(tm.getResult(), enemy))
         );
 
-        tm.setOnBattleEnd(() ->
-                gui.getGUIThread().invokeLater(() ->
-                        finishBattle(tm.getResult(), enemy)
-                ));
+        new Thread(tm::startBattle, "battle-loop").start(); // ✅ logic thread
 
-
-        // Show battle UI (BLOCKS here!)
-        new Thread(() -> {
-            gui.getGUIThread().invokeLater(() -> gui.addWindowAndWait(win));
-        }, "gui-thread").start();
-
-        // Run battle loop
-        new Thread(tm::startBattle, "battle-thread").start();
+        // 👇 This MUST stay on the main thread!
+        gui.addWindowAndWait(win); // ✅ actual UI loop
     }
 
 
-    /* ------------------------------------------------------------------ */
-    /*  BUILD ROOT LAYOUT                                                  */
-    /* ------------------------------------------------------------------ */
+    @Override
+    public void handleInput() {
+
+    }
+
+    @Override
+    public void exit() {
+
+    }
+
     private Component buildRoot() {
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
         root.addComponent(EntityCard.getPCard());
@@ -100,33 +90,24 @@ public class Battle {
         logLabel.setForegroundColor(TextColor.ANSI.WHITE);
         mid.addComponent(logLabel);
 
-        logBox.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         mid.addComponent(logBox);
-
         mid.addComponent(new Separator(Direction.HORIZONTAL));
 
         action.setPreferredSize(new TerminalSize(50, 4));
-        // ❌ Don’t theme this — let Lanterna handle focus highlights!
-        // action.setTheme(...) ← REMOVE this line if you have it
         mid.addComponent(action);
 
         return mid;
     }
 
-    /* ------------------------------------------------------------------ */
-    /*  RESULT SCREENS                                                     */
-    /* ------------------------------------------------------------------ */
     @SneakyThrows
     private void finishBattle(BattleResult result, Enemy defeated) {
-        // 1️⃣ Final log line
         String msg = switch (result) {
             case FLED -> "\n🏃  You fled the battle.";
             case VICTORY -> "\n🏆  " + player.getName() + " wins!";
             case DEFEAT -> "\n💀  " + enemy.getName() + " wins!";
         };
-        PlayerLogger.logBlocking(msg);           // waits for typing to finish
+        PlayerLogger.logBlocking(msg);
 
-        // 2️⃣ Force one repaint so the line is visible
         try {
             gui.getGUIThread().invokeAndWait(() -> {
                 try {
@@ -138,10 +119,8 @@ public class Battle {
         } catch (Exception ignored) {
         }
 
-        // 3️⃣ Close battle window & continue with your result modal …
         win.close();
 
-        // 3️⃣ Setup result modal window
         boolean playerWon = result == BattleResult.VICTORY;
         boolean fled = result == BattleResult.FLED;
 
@@ -149,8 +128,6 @@ public class Battle {
         BasicWindow resultWin = new BasicWindow(title);
 
         Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-
-        // Outcome text
         if (fled) {
             pane.addComponent(new Label("You fled the battle."));
         } else {
@@ -158,13 +135,11 @@ public class Battle {
         }
         pane.addComponent(new EmptySpace());
 
-        // Rewards if player won
         if (playerWon) {
             addExpAndLootToPanel(pane, defeated);
             pane.addComponent(new EmptySpace());
         }
 
-        // Continue button
         Button cont = new Button("Continue", resultWin::close);
         cont.takeFocus();
         pane.addComponent(cont);
@@ -175,6 +150,7 @@ public class Battle {
 
         gui.addWindowAndWait(resultWin);
 
+        // ✅ Go back to MainMenu
         if (onBattleEnd != null) onBattleEnd.run();
     }
 

@@ -1,9 +1,10 @@
 import items.ItemRegistry;
-import game.GameLoopManager;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
-import scenes.ui.dev.DevLogOverlay;
+import scenes.MainMenu;
+import scenes.SceneManager;
+import scenes.ui.DevLogOverlay;
 
 import java.io.IOException;
 
@@ -19,10 +20,7 @@ public class Main {
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
             ItemRegistry.loadAllItems();
             DevLogOverlay.attach(gui);
-
-
-            GameLoopManager loopManager = new GameLoopManager(gui);
-            loopManager.showMainMenu();
+            SceneManager.get().switchTo(new MainMenu(gui));
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -1,6 +1,6 @@
 package util;
 
-import scenes.ui.dev.DevLogOverlay;
+import scenes.ui.DevLogOverlay;
 
 public final class DeveloperLogger {
 

@@ -1,4 +1,4 @@
-package scenes.ui.dev;
+package scenes.ui;
 
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TerminalSize;
@@ -23,7 +23,7 @@ public class DevLogOverlay {
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(new Label(" Developer Log"));
 
-        logBox = new TextBox(new TerminalSize(80, 10), TextBox.Style.MULTI_LINE);
+        logBox = new TextBox(new TerminalSize(80, 20), TextBox.Style.MULTI_LINE);
         logBox.setReadOnly(true);
         logBox.setTheme(new SimpleTheme(TextColor.ANSI.WHITE, TextColor.ANSI.BLACK));
         panel.addComponent(logBox);

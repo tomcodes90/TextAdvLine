@@ -49,7 +49,7 @@ public class WorldHub implements Scene {
 
         window.setComponent(panel);
         window.setHints(List.of(Window.Hint.CENTERED));
-        gui.addWindow(window);
+        gui.addWindowAndWait(window);
     }
 
     @Override

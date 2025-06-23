@@ -4,7 +4,7 @@ import battle.actions.BattleAction;
 import battle.actions.BattleResult;
 import characters.*;
 import spells.Spell;
-import scenes.ui.dev.DevLogOverlay;
+import scenes.ui.DevLogOverlay;
 import util.DeveloperLogger;
 import util.PlayerLogger;
 import lombok.Getter;
@@ -24,8 +24,6 @@ public class TurnManager {
     private Runnable onBattleEnd;
     @Setter
     private Runnable promptCallback;
-    @Setter
-    private Consumer<Runnable> endCallback;
 
     @Setter
     private boolean battleOver = false;
@@ -178,7 +176,7 @@ public class TurnManager {
 
     private void fireBattleEnd() {
         if (finished.compareAndSet(false, true) && onBattleEnd != null) {
-            fireBattleEnd();
+            onBattleEnd.run();
         }
     }
 

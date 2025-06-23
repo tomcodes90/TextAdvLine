@@ -1,33 +1,44 @@
 package scenes;
 
 import com.googlecode.lanterna.gui2.*;
+import scenes.missions.Tutorial;
+import scenes.ui.Battle;
+import util.DeveloperLogger;
 
 import java.util.List;
 
-public class MainMenu {
+public class MainMenu implements Scene {
+    private final Window window = new BasicWindow("Main Menu");
     private final MultiWindowTextGUI gui;
-    private final Runnable onStartBattle;
 
-    public MainMenu(MultiWindowTextGUI gui, Runnable onStartBattle) {
+    public MainMenu(MultiWindowTextGUI gui) {
         this.gui = gui;
-        this.onStartBattle = onStartBattle;
+        Panel panel = new Panel();
+        panel.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        window.setHints(List.of(Window.Hint.CENTERED));
+        panel.addComponent(new Label("Welcome to the Main Menu"));
+        panel.addComponent(new Button("Start Game", () -> {
+            DeveloperLogger.log("Start Game Clicked");
+            SceneManager.get().switchTo(new Tutorial(gui));
+            window.close();// or switch scene
+        }));
+
+        window.setComponent(panel);
     }
 
-    public Window build() {
-        BasicWindow win = new BasicWindow("Main Menu");
-        Panel root = new Panel();
-        root.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+    @Override
+    public void enter() {
+        gui.addWindowAndWait(window); // This keeps the app alive
+    }
 
-        Button startBtn = new Button("New Game", () -> {
-            win.close(); // close the menu window first
-            onStartBattle.run();
-        });
+    @Override
+    public void handleInput() {
 
+    }
 
-        root.addComponent(startBtn);
-        win.setComponent(root);
-        win.setHints(List.of(Window.Hint.CENTERED));
+    @Override
+    public void exit() {
 
-        return win;
     }
 }
+

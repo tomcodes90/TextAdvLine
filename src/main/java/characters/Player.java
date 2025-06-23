@@ -1,9 +1,10 @@
 package characters;
 
-import items.Consumable;
-import items.Item;
+import items.*;
 import lombok.Getter;
 import lombok.Setter;
+import spells.SpellFactory;
+import spells.SpellType;
 import util.DeveloperLogger;
 
 import java.util.HashMap;
@@ -38,11 +39,11 @@ public class Player extends Entity {
                 modifyStat(INTELLIGENCE, 5);
                 setElementalWeakness(ICE);
             }
-            case DEFENSE -> {
-                modifyStat(DEFENSE, 5);
-                setElementalWeakness(FIRE);
-            }
         }
+
+        setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
     }
 
     @Override
@@ -58,7 +59,7 @@ public class Player extends Entity {
         expToLevelUp *= 2;
 
         getStats().forEach((type, val) -> {
-            int inc = (statBoost == type) ? 5 : 2;
+            int inc = (statBoost == type) ? 5 : 3;
             getStats().put(type, val + inc);   // ← ADD, not replace
         });
     }
