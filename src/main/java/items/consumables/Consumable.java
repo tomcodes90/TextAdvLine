@@ -1,11 +1,12 @@
-package items;
+package items.consumables;
 
 import characters.Entity;
+import items.Item;
 
 public abstract class Consumable extends Item {
-    int pointsToApply;
+    protected int pointsToApply;
 
-    Consumable(String id, String name, String description, int pointsToApply, int price) {
+    protected Consumable(String id, String name, String description, int pointsToApply, int price) {
         super(id, name, description, price);
         this.pointsToApply = pointsToApply;
     }

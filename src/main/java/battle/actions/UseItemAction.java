@@ -1,7 +1,7 @@
 package battle.actions;
 
 import characters.Entity;
-import items.Consumable;
+import items.consumables.Consumable;
 
 public class UseItemAction implements BattleAction {
     private final Entity user;

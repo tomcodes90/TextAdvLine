@@ -2,7 +2,7 @@
 package scenes.worldhub;
 
 import com.googlecode.lanterna.gui2.*;
-import items.MissionType;
+import scenes.missions.MissionType;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import scenes.missions.*;
@@ -49,7 +49,8 @@ public class Story implements Scene {
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

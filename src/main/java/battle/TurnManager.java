@@ -31,11 +31,12 @@ public class TurnManager {
     private volatile boolean playerFled = false;
     @Getter
     private BattleResult result;
- ;
+    ;
 
     public void setOnBattleEnd(Consumer<BattleResult> onBattleEnd) {
         this.onBattleEnd = onBattleEnd;
     }
+
     private final BlockingQueue<BattleAction> playerActionQueue = new ArrayBlockingQueue<>(1);
 
     public TurnManager(Player player, Enemy enemy) {
@@ -81,7 +82,7 @@ public class TurnManager {
             promptCallback.run();
         }
 
-        PlayerLogger.log("\n         ⚔️ The battle begins!");
+        PlayerLogger.log("\n         \u2694 The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
         DeveloperLogger.log("loop entered");
 

@@ -24,7 +24,7 @@ public class DialogueService {
     public void runDialogues(List<Dialogue> dialogues, Runnable onFinish) {
         try {
             for (Dialogue d : dialogues) {
-                dialogueUI.showDialogue(d.getSpeaker(), d.getPortrait(), d.getText());
+                dialogueUI.showDialogue(d.getSpeaker(), d.getText());
             }
             onFinish.run();
         } catch (IOException | InterruptedException e) {
@@ -38,7 +38,6 @@ public class DialogueService {
             if (dialogue.getInputType() == DialogueInputType.TEXT_INPUT) {
                 dialogueUI.showInputDialogue(
                         dialogue.getSpeaker(),
-                        dialogue.getPortrait(),
                         dialogue.getText(),
                         dialogue.getOptions()
                 );
@@ -46,7 +45,6 @@ public class DialogueService {
                 dialogueUI.showDialogueWithInput(
                         dialogue.getSpeaker(),
                         dialogue.getPortrait(),
-                        dialogue.getText(),
                         dialogue.getOptions()
                 );
             }

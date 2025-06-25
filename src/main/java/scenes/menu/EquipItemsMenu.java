@@ -3,7 +3,7 @@ package scenes.menu;
 import characters.Player;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import items.Consumable;
+import items.consumables.Consumable;
 import items.Item;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
@@ -118,7 +118,8 @@ public class EquipItemsMenu implements Scene {
 
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

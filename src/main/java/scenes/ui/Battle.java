@@ -70,10 +70,10 @@ public class Battle implements Scene {
         gui.addWindowAndWait(win); // ✅ actual UI loop
     }
 
-
     @Override
     public void handleInput() {
     }
+
     @Override
     public void exit() {
 
@@ -133,21 +133,30 @@ public class Battle implements Scene {
         BasicWindow resultWin = new BasicWindow(title);
 
         Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-        if (fled) {
-            pane.addComponent(new Label("You fled the battle."));
-        } else {
-            pane.addComponent(new Label(playerWon ? "You win!" : "You lose."));
-        }
-        pane.addComponent(new EmptySpace());
+        pane.setPreferredSize(new TerminalSize(40, 12)); // Fixed size
+
+// Create a vertically centered inner panel
+        Panel content = new Panel(new LinearLayout(Direction.VERTICAL));
+        content.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+
+// === Add centered content to `content` panel ===
+        content.addComponent(centeredLabel(playerWon ? "You win!" : fled ? "You fled the battle." : "You lose."));
+        content.addComponent(new EmptySpace());
 
         if (playerWon) {
-            addExpAndLootToPanel(pane, defeated);
-            pane.addComponent(new EmptySpace());
+            addExpAndLootToPanel(content, defeated);
+            content.addComponent(new EmptySpace());
         }
 
         Button cont = new Button("Continue", resultWin::close);
         cont.takeFocus();
-        pane.addComponent(cont);
+        content.addComponent(cont);
+
+// === Add the content panel to the outer pane ===
+        pane.addComponent(new EmptySpace()); // top padding
+        pane.addComponent(content);
+        pane.addComponent(new EmptySpace()); // bottom padding
+
 
         resultWin.setComponent(pane);
         resultWin.setHints(List.of(Window.Hint.CENTERED, Window.Hint.MODAL));
@@ -163,7 +172,7 @@ public class Battle implements Scene {
             case VICTORY, FLED -> {
                 restorePlayerHealth(player);
                 if (onBattleEnd != null) {
-                    onBattleEnd.accept(result); // 👈 this was missing!
+                    onBattleEnd.accept(result); // don't touch
                 } else {
                     SceneManager.get().switchTo(new WorldHub(gui, player));
                 }
@@ -176,10 +185,11 @@ public class Battle implements Scene {
 
     private void addExpAndLootToPanel(Panel pane, Enemy defeated) {
         int xp = defeated.getExpReward();
-        pane.addComponent(new Label("EXP gained: " + xp));
+        pane.addComponent(new Label("EXP +" + xp));
         player.collectExp(xp);
         int gold = defeated.getGoldReward();
-        pane.addComponent(new Label("GOLD gained: " + xp));
+        pane.addComponent(new Label("GOLD +" + gold));
+        pane.addComponent(new Label(" "));
         player.collectGold(gold);
 
         List<Item> loot = defeated.getLootReward();
@@ -188,15 +198,21 @@ public class Battle implements Scene {
             return;
         }
 
-        pane.addComponent(new Label("Loot:"));
+        pane.addComponent(new Label("Loot \n"));
         for (Item item : loot) {
             player.addItemToInventory(item);
-            pane.addComponent(new Label(" • " + item.getName()));
+            pane.addComponent(new Label(" => " + item.getName()));
         }
     }
 
     public static void restorePlayerHealth(Player p) {
         p.setStat(StatsType.HP, p.getStat(StatsType.MAX_HP));
+    }
+
+    private Label centeredLabel(String text) {
+        Label label = new Label(text);
+        label.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        return label;
     }
 
 }

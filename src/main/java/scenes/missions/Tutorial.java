@@ -54,9 +54,9 @@ public class Tutorial implements Scene {
 
     private void showIntroDialogue() {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator", "You wake up in a quiet village...", "📜"),
-                new Dialogue("Narrator", "The world is at war, but you were kept hidden.", "📜"),
-                new Dialogue("Narrator", "Today, everything will change.", "📜")
+                new Dialogue("nonna", "You wake up in a quiet village...", "📜"),
+                new Dialogue("nonna", "The world is at war, but you were kept hidden.", "📜"),
+                new Dialogue("nonna", "Today, everything will change.", "📜")
         ), this::nextStep);
     }
 
@@ -64,7 +64,7 @@ public class Tutorial implements Scene {
 
     private void askNameAndCreatePlayer() {
         DialogueWithInput askName = new DialogueWithInput(
-                "Narrator",
+                "nonna",
                 "What is your name?",
                 "📜",
                 List.of(new ChoiceOption("Continue", () -> {
@@ -79,11 +79,11 @@ public class Tutorial implements Scene {
 
     private void askForStatPreference() {
         DialogueWithInput statChoice = new DialogueWithInput(
-                "Narrator",
+                "nonna",
                 "And what kind of fighter are you?",
-                "📜",
+                "⚔",
                 List.of(
-                        new ChoiceOption("I hit enemies like a bull!", () -> {
+                        new ChoiceOption("=> I hit enemies like a bull!", () -> {
                             player = new Player(pendingName, StatsType.STRENGTH);
                             DeveloperLogger.log("Creating player " + pendingName + " with boost " + StatsType.STRENGTH);
                             GameState.get().setPlayer(player);
@@ -105,9 +105,9 @@ public class Tutorial implements Scene {
 
     private void showPreBattleDialogue() {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator", "A scream echoes outside...", "📜"),
-                new Dialogue("Narrator", "You're under attack! Grab a weapon!", "📜"),
-                new Dialogue("Mentor", "I'll teach you how to fight.", "🧙")
+                new Dialogue("nonna", "A scream echoes outside...", "📜"),
+                new Dialogue("nonna", "You're under attack! Grab a weapon!", "📜"),
+                new Dialogue("nonna", "I'll teach you how to fight.", "🧙")
         ), this::nextStep);
     }
 
@@ -117,7 +117,7 @@ public class Tutorial implements Scene {
         battle.setOnBattleEnd(result -> {
             switch (result) {
                 case VICTORY ->
-                    // Resume the tutorial sequence
+                // Resume the tutorial sequence
                 {
                     DeveloperLogger.log("you won");
                     SceneManager.get().switchTo(this);

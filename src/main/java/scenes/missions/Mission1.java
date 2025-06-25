@@ -1,7 +1,6 @@
 package scenes.missions;
 
 
-
 import characters.EnemyFactory;
 import characters.Player;
 import com.googlecode.lanterna.gui2.*;
@@ -13,7 +12,6 @@ import scenes.menu.MainMenu;
 import scenes.ui.Battle;
 import scenes.worldhub.WorldHub;
 import state.GameState;
-import items.MissionType;
 import util.DeveloperLogger;
 
 
@@ -61,7 +59,8 @@ public class Mission1 implements Scene {
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

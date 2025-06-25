@@ -1,6 +1,6 @@
 package characters;
 
-import items.Consumable;
+import items.consumables.Consumable;
 import items.Item;
 import lombok.Getter;
 

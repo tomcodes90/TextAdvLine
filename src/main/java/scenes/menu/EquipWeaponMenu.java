@@ -4,7 +4,7 @@ import characters.Player;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import items.Item;
-import items.Weapon;
+import items.equip.Weapon;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import scenes.worldhub.CharacterOverview;
@@ -72,7 +72,8 @@ public class EquipWeaponMenu implements Scene {
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

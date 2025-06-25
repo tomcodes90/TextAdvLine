@@ -1,8 +1,8 @@
 package characters;
 
 import battle.actions.*;
-import items.Consumable;
-import items.StatEnhancer;
+import items.consumables.Consumable;
+import items.consumables.StatEnhancer;
 import spells.ElementalType;
 import spells.Spell;
 

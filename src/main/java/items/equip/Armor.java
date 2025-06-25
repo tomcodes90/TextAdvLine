@@ -1,7 +1,8 @@
-package items;
+package items.equip;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import items.Item;
 
 public class Armor extends Item {
     private final int defense;

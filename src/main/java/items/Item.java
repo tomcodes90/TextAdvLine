@@ -1,7 +1,10 @@
 package items;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import items.consumables.Potion;
+import items.consumables.StatEnhancer;
+import items.equip.Armor;
+import items.equip.Weapon;
 import lombok.Getter;
 
 
@@ -24,7 +27,7 @@ public abstract class Item {
     @Getter
     private final int price;
 
-    Item(String id, String name, String description, int price) {
+    protected Item(String id, String name, String description, int price) {
         this.id = id;
         this.name = name;
         this.description = description;

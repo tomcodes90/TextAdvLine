@@ -4,8 +4,8 @@ import characters.Player;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import items.Item;
-import items.ItemRegistry;
-import items.MissionType;
+import util.ItemRegistry;
+import scenes.missions.MissionType;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import state.GameState;
@@ -138,7 +138,8 @@ public class Shop implements Scene {
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

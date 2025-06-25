@@ -1,11 +1,14 @@
 package characters;
 
 import items.*;
+import items.consumables.Consumable;
+import items.equip.Armor;
+import items.equip.Weapon;
 import lombok.Getter;
 import lombok.Setter;
 import spells.SpellFactory;
 import spells.SpellType;
-import util.DeveloperLogger;
+import util.ItemRegistry;
 
 import java.util.HashMap;
 

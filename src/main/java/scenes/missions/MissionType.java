@@ -1,4 +1,4 @@
-package items;
+package scenes.missions;
 
 public enum MissionType {
     MISSION_1,

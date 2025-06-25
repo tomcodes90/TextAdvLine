@@ -1,12 +1,9 @@
 package state;
 
 import characters.Player;
-import items.MissionType;
+import scenes.missions.MissionType;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.EnumMap;
-import java.util.Map;
 
 @Setter
 @Getter
@@ -17,14 +14,15 @@ public class GameState {
 
     private MissionType missionFlag;
 
-    private GameState() {}
+    private GameState() {
+    }
 
     public static GameState get() {
         return INSTANCE;
     }
 
     public void completeMission(MissionType mission) {
- missionFlag = mission;
+        missionFlag = mission;
     }
     // You can also store:
     // - Inventory

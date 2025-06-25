@@ -1,8 +1,9 @@
-package items;
+package items.equip;
 
 import characters.StatsType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import items.Item;
 
 import java.util.EnumMap;
 

@@ -3,6 +3,7 @@ package items;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import scenes.missions.MissionType;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NONE)
 public class KeyItem extends Item {

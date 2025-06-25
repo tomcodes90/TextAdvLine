@@ -1,11 +1,14 @@
-package items;
+package util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import items.*;
+import items.consumables.Potion;
+import items.consumables.StatEnhancer;
+import items.equip.Armor;
+import items.equip.Weapon;
 import lombok.Getter;
-import lombok.Lombok;
-import util.DeveloperLogger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemRegistry {
-   @Getter
+    @Getter
     private static final Map<String, Item> ITEMS = new HashMap<>();
 
     public static void loadAllItems() {
@@ -67,7 +70,6 @@ public final class ItemRegistry {
             throw new RuntimeException("Failed to load item JSON files", e);
         }
     }
-
 
 
     public static Item getByName(String name) {

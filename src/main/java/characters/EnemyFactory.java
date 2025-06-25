@@ -1,13 +1,13 @@
 package characters;
 
 import items.*;
-import spells.Spell;
+import items.equip.Armor;
+import items.equip.Weapon;
 import spells.SpellFactory;
 import spells.SpellType;
-import util.DeveloperLogger;
+import util.ItemRegistry;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class EnemyFactory {
@@ -31,6 +31,7 @@ public class EnemyFactory {
 
         return bandit;
     }
+
     public static Enemy createDarkMage() {
         Enemy mage = new Enemy(
                 "Dark Mage",

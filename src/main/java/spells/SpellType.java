@@ -2,23 +2,34 @@ package spells;
 
 public enum SpellType {
     // Non-elemental
-    ENERGYBLAST,
-    FLARE,
+    ENERGYBLAST("Energy Blast"),
+    FLARE("Flare"),
 
     // Fire
-    FIREBALL,
-    INFERNO,
+    FIREBALL("Fireball"),
+    INFERNO("Inferno"),
 
     // Ice
-    FROSTBITE,
-    GLACIALSPIKE,
+    FROSTBITE("Frostbite"),
+    GLACIALSPIKE("Glacial Spike"),
 
     // Nature
-    VINEWHIP,
-    THORNSURGE,
+    VINEWHIP("Vine Whip"),
+    THORNSURGE("Thorn Surge"),
 
     // Healing / Utility
-    HEAL,
-    CURESTATUS
+    HEAL("Heal"),
+    CURESTATUS("Cure Status");
+
+    private final String displayName;
+
+    SpellType(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
+    }
 }
 

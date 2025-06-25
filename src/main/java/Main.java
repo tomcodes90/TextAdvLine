@@ -1,23 +1,28 @@
+
+
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.gui2.DefaultWindowManager;
+import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
-import items.ItemRegistry;
-import scenes.menu.MainMenu;
 import scenes.manager.SceneManager;
+import scenes.menu.MainMenu;
 import scenes.ui.DevLogOverlay;
+import util.ItemRegistry;
+import util.PortraitRegistry;
 
 import java.awt.*;
-import java.io.IOException;
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
         try {
             Thread.setDefaultUncaughtExceptionHandler((t, ex) -> ex.printStackTrace());
 
-            // ✅ Set up terminal emulator (works on all platforms)
-            Font font = new Font("Consolas", Font.PLAIN, 18);
+            Font font = chooseMono(18);
             SwingTerminalFontConfiguration fontConfig =
                     SwingTerminalFontConfiguration.newInstance(font);
 
@@ -30,15 +35,35 @@ public class Main {
             Screen screen = factory.createScreen();
             screen.startScreen();
 
-            MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
+            MultiWindowTextGUI gui = new MultiWindowTextGUI(
+                    screen,
+                    new DefaultWindowManager(),
+                    new EmptySpace(TextColor.ANSI.WHITE) // background filler
+            );
 
-            // ✅ Setup game
+            // Load content
             ItemRegistry.loadAllItems();
-            DevLogOverlay.attach(gui);
+            PortraitRegistry.loadAllPortraits();
+
+            // Start main menu
             SceneManager.get().switchTo(new MainMenu(gui));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static Font chooseMono(float size) {
+        String[] candidates = {"Consolas", "Menlo", "Monaco", "Courier New", "Monospaced"};
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+
+        for (String name : candidates) {
+            if (Arrays.asList(ge.getAvailableFontFamilyNames()).contains(name)) {
+                return new Font(name, Font.PLAIN, (int) size);
+            }
+        }
+
+        // fallback
+        return new Font(Font.MONOSPACED, Font.PLAIN, (int) size);
     }
 }
