@@ -38,7 +38,7 @@ public class Main {
             MultiWindowTextGUI gui = new MultiWindowTextGUI(
                     screen,
                     new DefaultWindowManager(),
-                    new EmptySpace(TextColor.ANSI.WHITE) // background filler
+                    new EmptySpace(TextColor.ANSI.WHITE_BRIGHT) // background filler
             );
 
             // Load content

@@ -23,5 +23,6 @@ public class CastSpellAction implements BattleAction {
     @Override
     public void execute() {
         BattleSystem.castSpell(caster, spell, target);
+        spell.setOnCooldown();
     }
 }

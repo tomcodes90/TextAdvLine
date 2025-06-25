@@ -17,15 +17,12 @@ public class BattleSystem {
             DeveloperLogger.log("Spell " + spell.getName() + " is on cooldown.");
             return;
         }
-
         int spellPower = spell.getDamage() + caster.getStat(INTELLIGENCE);
         if (spell.getElement() == target.getElementalWeakness()) {
             spellPower *= 1.25;
         }
-
         applyDamage(target, spellPower);
         spell.setOnCooldown(); // ⏳ Start cooldown after casting
-
         DeveloperLogger.log("🔥 " + caster.getName() + " casts " + spell.getName() +
                 " on " + target.getName() + " for " + spellPower + " damage.");
     }

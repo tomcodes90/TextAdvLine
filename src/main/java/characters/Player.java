@@ -6,6 +6,7 @@ import items.equip.Armor;
 import items.equip.Weapon;
 import lombok.Getter;
 import lombok.Setter;
+import spells.ElementalType;
 import spells.SpellFactory;
 import spells.SpellType;
 import util.ItemRegistry;
@@ -25,22 +26,21 @@ public class Player extends Entity {
     private int expToLevelUp;
     private final HashMap<Item, Integer> inventory = new HashMap<>();
 
-    public Player(String name, StatsType statBoost) {
+    public Player(String name, StatsType statBoost, ElementalType weakness) {
         super(name);
         this.statBoost = statBoost;
         this.level = 1;
         this.gold = 100;
         this.exp = 0;
         this.expToLevelUp = 100;
+        this.elementalWeakness = weakness;
 
         switch (statBoost) {
             case STRENGTH -> {
-                modifyStat(STRENGTH, 100);
-                setElementalWeakness(NATURE);
+                modifyStat(STRENGTH, 5);
             }
             case INTELLIGENCE -> {
                 modifyStat(INTELLIGENCE, 5);
-                setElementalWeakness(ICE);
             }
         }
 
@@ -62,7 +62,7 @@ public class Player extends Entity {
         expToLevelUp *= 2;
 
         getStats().forEach((type, val) -> {
-            int inc = (statBoost == type) ? 5 : 3;
+            int inc = (statBoost == type) ? 5 : 4;
             getStats().put(type, val + inc);   // ← ADD, not replace
         });
     }

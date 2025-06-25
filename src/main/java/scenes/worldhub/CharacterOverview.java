@@ -31,9 +31,11 @@ public class CharacterOverview implements Scene {
 
         Panel mainPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
 
-        // LEFT PANEL (Info + Menu)
+        /* --------------------------------------------------
+         * LEFT PANEL (Info + Menu)
+         * -------------------------------------------------- */
         Panel leftPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        leftPanel.setPreferredSize(new TerminalSize(25, 30));
+        leftPanel.setPreferredSize(new TerminalSize(25, 23));
         leftPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
         Panel leftContent = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -62,44 +64,57 @@ public class CharacterOverview implements Scene {
         leftPanel.addComponent(leftContent);
         leftPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)), LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
 
-        // RIGHT PANEL (Stats + Equipment + Spells + Consumables)
-        Panel rightPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        rightPanel.setPreferredSize(new TerminalSize(55, 40));
+        /* --------------------------------------------------
+         * RIGHT PANEL (split in two: Stats | Equipment)
+         * -------------------------------------------------- */
+        Panel rightPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        rightPanel.setPreferredSize(new TerminalSize(45, 23));
         rightPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        Panel rightContent = new Panel(new LinearLayout(Direction.VERTICAL));
-        rightContent.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        /* --- Stats Sub‑Panel --- */
+        Panel statsPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        statsPanel.setPreferredSize(new TerminalSize(20, 21));
+        statsPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        rightContent.addComponent(textBlock("HP", player.getStat(characters.StatsType.HP) + "/" + player.getStat(characters.StatsType.MAX_HP)));
-        rightContent.addComponent(textBlock("STR", String.valueOf(player.getStat(characters.StatsType.STRENGTH))));
-        rightContent.addComponent(textBlock("INT", String.valueOf(player.getStat(characters.StatsType.INTELLIGENCE))));
-        rightContent.addComponent(textBlock("DEF", String.valueOf(player.getStat(characters.StatsType.DEFENSE))));
-        rightContent.addComponent(textBlock("SPD", String.valueOf(player.getStat(characters.StatsType.SPEED))));
-        rightContent.addComponent(textBlock("Weakness", player.getElementalWeakness().toString()));
-        rightContent.addComponent(new EmptySpace());
+        statsPanel.addComponent(textBlock("HP", player.getStat(characters.StatsType.HP) + "/" + player.getStat(characters.StatsType.MAX_HP)));
+        statsPanel.addComponent(textBlock("STR", String.valueOf(player.getStat(characters.StatsType.STRENGTH))));
+        statsPanel.addComponent(textBlock("INT", String.valueOf(player.getStat(characters.StatsType.INTELLIGENCE))));
+        statsPanel.addComponent(textBlock("DEF", String.valueOf(player.getStat(characters.StatsType.DEFENSE))));
+        statsPanel.addComponent(textBlock("SPD", String.valueOf(player.getStat(characters.StatsType.SPEED))));
+        statsPanel.addComponent(textBlock("Weakness", player.getElementalWeakness().toString()));
 
-        rightContent.addComponent(textBlock("Armor", (player.getArmor() != null ? player.getArmor().getName() : "None")));
-        rightContent.addComponent(textBlock("Weapon", (player.getWeapon() != null ? player.getWeapon().getName() : "None")));
-        rightContent.addComponent(new EmptySpace());
+        /* --- Equipment Sub‑Panel --- */
+        Panel equipPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        equipPanel.setPreferredSize(new TerminalSize(25, 21));
+        equipPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
+        equipPanel.addComponent(textBlock("Armor", (player.getArmor() != null ? player.getArmor().getName() : "None")));
+        equipPanel.addComponent(textBlock("Weapon", (player.getWeapon() != null ? player.getWeapon().getName() : "None")));
+        equipPanel.addComponent(new EmptySpace());
 
-        rightContent.addComponent(horizontalListBlock("Spells Equipped",
+        equipPanel.addComponent(horizontalListBlock("Spells Equipped",
                 Arrays.stream(player.getSpellsEquipped())
                         .filter(spell -> spell != null)
-                        .map(spell -> "- " + spell.getName())
+                        .map(Spell::getName)
+                        .map(name -> name + " ")
                         .collect(Collectors.toList())));
 
-        rightContent.addComponent(horizontalListBlock("Consumables Equipped",
+        equipPanel.addComponent(horizontalListBlock("Consumables Equipped",
                 Arrays.stream(player.getConsumablesEquipped())
                         .filter(consumable -> consumable != null)
-                        .map(consumable -> "- " + consumable.getName())
+                        .map(Consumable::getName)
+                        .map(name -> " " + name)
                         .collect(Collectors.toList())));
 
+        /* Add sub‑panels to right panel */
         rightPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)), LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
-        rightPanel.addComponent(rightContent);
+        rightPanel.addComponent(statsPanel);
+        rightPanel.addComponent(equipPanel);
         rightPanel.addComponent(new EmptySpace(new TerminalSize(1, 1)), LinearLayout.createLayoutData(LinearLayout.Alignment.Fill));
 
-        // Add both panels to main
+        /* --------------------------------------------------
+         * Build the screen
+         * -------------------------------------------------- */
         mainPanel.addComponent(leftPanel);
         mainPanel.addComponent(rightPanel);
 
@@ -110,6 +125,7 @@ public class CharacterOverview implements Scene {
 
     @Override
     public void handleInput() {
+        // No additional input handling required for this scene.
     }
 
     @Override

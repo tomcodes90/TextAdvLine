@@ -82,7 +82,7 @@ public class TurnManager {
             promptCallback.run();
         }
 
-        PlayerLogger.log("\n         \u2694 The battle begins!");
+        PlayerLogger.log("\n         The battle begins!");
         DeveloperLogger.log("[TurnManager] battleOver=" + battleOver);
         DeveloperLogger.log("loop entered");
 

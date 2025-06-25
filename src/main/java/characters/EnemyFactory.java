@@ -15,9 +15,9 @@ public class EnemyFactory {
     /* ------------ presets ------------ */
     public static Enemy createBandit() {
         Enemy bandit = new Enemy(
-                "Theo",
+                "Limoniris",
                 StatsType.INTELLIGENCE,
-                1,
+                0,
                 new ArrayList<>(),
                 40,
                 40,
@@ -34,7 +34,7 @@ public class EnemyFactory {
 
     public static Enemy createDarkMage() {
         Enemy mage = new Enemy(
-                "Dark Mage",
+                "Rigatonius",
                 StatsType.INTELLIGENCE,
                 1,
                 new ArrayList<>(),

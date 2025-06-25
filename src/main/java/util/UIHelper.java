@@ -1,5 +1,6 @@
 package util;
 
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
@@ -14,14 +15,13 @@ public class UIHelper {
     public static Panel textBlock(String label, String value) {
         Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
         block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        labelComponent.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT);
 
-        Label labelComponent = new Label(label);
-        labelComponent.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
         Label valueComponent = new Label(value);
         valueComponent.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        block.addComponent(labelComponent);
+        block.addComponent(centeredLabel(label));
         block.addComponent(valueComponent);
 
         return block;
@@ -34,6 +34,7 @@ public class UIHelper {
 
     public static Panel horizontalListBlock(String title, java.util.List<String> items) {
         Panel outer = new Panel(new LinearLayout(Direction.VERTICAL));
+
         outer.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         outer.addComponent(centeredLabel(title));
 

@@ -44,7 +44,7 @@ public class DialogueService {
             } else {
                 dialogueUI.showDialogueWithInput(
                         dialogue.getSpeaker(),
-                        dialogue.getPortrait(),
+                        dialogue.getText(),
                         dialogue.getOptions()
                 );
             }

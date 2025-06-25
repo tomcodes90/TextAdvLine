@@ -20,14 +20,4 @@ public class SceneManager {
         currentScene = newScene;
         currentScene.enter();
     }
-
-    public void update() {
-        if (currentScene != null) {
-            currentScene.handleInput();
-        }
-    }
-
-    public Scene getCurrentScene() {
-        return currentScene;
-    }
 }

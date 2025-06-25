@@ -32,9 +32,9 @@ public class Mission1 implements Scene {
 
 
         DialogueService.getInstance().runDialogues(List.of(
-                new Dialogue("Narrator", "You head out into the forest near the village...", "H"),
-                new Dialogue("Narrator", "Suddenly, a shadow jumps out from the trees!", "H"),
-                new Dialogue("???", "Grrr... this is my territory!", "🐺")
+                new Dialogue("Narrator", "You head out into the forest near the village..."),
+                new Dialogue("Narrator", "Suddenly, a shadow jumps out from the trees!"),
+                new Dialogue("Bandit", "Grrr... this is my territory!")
         ), this::startBattle);
     }
 
@@ -49,8 +49,14 @@ public class Mission1 implements Scene {
                     DeveloperLogger.log("Mission 1 has been completed" + GameState.get().getMissionFlag().toString());
                     SceneManager.get().switchTo(new WorldHub(gui, player));
                 }
-                case DEFEAT, FLED -> {
+                case DEFEAT -> {
                     SceneManager.get().switchTo(new MainMenu((MultiWindowTextGUI) gui));
+                }
+                case FLED -> {
+                    SceneManager.get().switchTo(new WorldHub(gui, player));
+                }
+                default -> {
+                    DeveloperLogger.log("There was an Error");
                 }
             }
         });

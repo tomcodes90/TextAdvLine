@@ -9,14 +9,14 @@ public class SpellFactory {
     static {
         // Non-elemental
         template.put(SpellType.ENERGYBLAST, new Spell(SpellType.ENERGYBLAST, ElementalType.NONE, 10, 2));
-        template.put(SpellType.FLARE, new Spell(SpellType.FLARE, ElementalType.NONE, 6, 1));
+        template.put(SpellType.FLARE, new Spell(SpellType.FLARE, ElementalType.NONE, 6, 3));
 
         // Fire
         template.put(SpellType.FIREBALL, new Spell(SpellType.FIREBALL, ElementalType.FIRE, 12, 2));
         template.put(SpellType.INFERNO, new Spell(SpellType.INFERNO, ElementalType.FIRE, 20, 3));
 
         // Ice
-        template.put(SpellType.FROSTBITE, new Spell(SpellType.FROSTBITE, ElementalType.ICE, 8, 1));
+        template.put(SpellType.FROSTBITE, new Spell(SpellType.FROSTBITE, ElementalType.ICE, 8, 2));
         template.put(SpellType.GLACIALSPIKE, new Spell(SpellType.GLACIALSPIKE, ElementalType.ICE, 16, 3));
 
         // Nature

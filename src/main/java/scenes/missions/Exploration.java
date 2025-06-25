@@ -35,9 +35,9 @@ public class Exploration implements Scene {
 
     private void showExplorationStart() {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator", "You head out into the wilderness...", "🧭"),
-                new Dialogue("Narrator", "The wind howls... You sense danger nearby.", "🌫️"),
-                new Dialogue("Narrator", "Suddenly, an enemy leaps out!", "⚔️")
+                new Dialogue("Narrator", "You head out into the wilderness..."),
+                new Dialogue("Narrator", "The wind howls... You sense danger nearby."),
+                new Dialogue("Narrator", "Suddenly, an enemy leaps out! Mamma Mia!")
         ), this::startBattle);
     }
 
@@ -48,8 +48,10 @@ public class Exploration implements Scene {
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
-    public void exit() {}
+    public void exit() {
+    }
 }
