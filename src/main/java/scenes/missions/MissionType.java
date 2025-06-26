@@ -1,6 +1,7 @@
 package scenes.missions;
 
 public enum MissionType {
+    TUTORIAL,
     MISSION_1,
     MISSION_2,
     MISSION_3,

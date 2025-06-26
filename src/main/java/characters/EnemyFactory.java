@@ -13,7 +13,7 @@ import java.util.Random;
 public class EnemyFactory {
 
     /* ------------ presets ------------ */
-    public static Enemy createBandit() {
+    public static Enemy createBandit(int level) {
         Enemy bandit = new Enemy(
                 "Limoniris",
                 StatsType.INTELLIGENCE,
@@ -32,11 +32,11 @@ public class EnemyFactory {
         return bandit;
     }
 
-    public static Enemy createDarkMage() {
-        Enemy mage = new Enemy(
+    public static Enemy createMage(int level) {
+        Enemy enemy = new Enemy(
                 "Rigatonius",
                 StatsType.INTELLIGENCE,
-                1,
+                level,
                 new ArrayList<>(),
                 40,
                 40,
@@ -44,23 +44,361 @@ public class EnemyFactory {
         );
 
         Item item = ItemRegistry.getByName("Healing Potion");
-        mage.getLootReward().add(item);
-        mage.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
-        mage.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
-        mage.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
-        mage.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
 
-        return mage;
+        return enemy;
     }
+
+    public static Enemy createParmesaniGoon(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createRicottelliScout(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createRicottelliPriest(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createBasilCultist(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createParmesaniCaptain(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createPestoMonkBoss(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createCheeseGuardian(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createLinguiniGoon(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createRicottelliChef(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createLinguiniKnight(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createLinguiniChampion(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createBoarHunter(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createLinguiniMatriarch(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createRicottelliPatriarch(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createParmesaniDon(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+    public static Enemy createPigGuardian(int level) {
+        Enemy enemy = new Enemy(
+                "Padanis",
+                StatsType.INTELLIGENCE,
+                level,
+                new ArrayList<>(),
+                40,
+                40,
+                AIRole.MAGE
+        );
+
+        Item item = ItemRegistry.getByName("Healing Potion");
+        enemy.getLootReward().add(item);
+        enemy.setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
+        enemy.setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
+        enemy.getSpellsEquipped()[0] = SpellFactory.create(SpellType.FIREBALL);
+        enemy.getSpellsEquipped()[1] = SpellFactory.create(SpellType.FROSTBITE);
+
+        return enemy;
+    }
+
+
 
     /* ------------ random helper ------------ */
 
     private static final Random RNG = new Random();
 
-    public static Enemy createRandomEnemy() {
+    public static Enemy createRandomEnemy(int level) {
         return switch (RNG.nextInt(2)) {
-            case 1 -> createBandit();
-            default -> createDarkMage();
+            case 1 -> createBandit(level);
+            default -> createMage(level);
         };
     }
 }

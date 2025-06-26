@@ -45,6 +45,9 @@ public class Main {
             ItemRegistry.loadAllItems();
             PortraitRegistry.loadAllPortraits();
 
+            //Display Developer Log
+            //DevLogOverlay.attach(gui);
+
             // Start main menu
             SceneManager.get().switchTo(new MainMenu(gui));
 

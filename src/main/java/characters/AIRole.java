@@ -46,22 +46,6 @@ public enum AIRole {
         }
     },
 
-    PRIEST {
-        @Override
-        public BattleAction play(Entity self, Entity target) {
-            Spell heal = self.getEquippedSpell(HEAL);
-            Spell offensive = self.getEquippedSpell(NONE);
-
-            if (self.getStat(HP) < self.getStat(StatsType.MAX_HP) / 2 && heal != null && heal.isReady()) {
-                return new CastSpellAction(self, heal, self);
-            } else if (offensive != null && offensive.isReady()) {
-                return new CastSpellAction(self, offensive, target);
-            } else {
-                return new AttackAction(self, target);
-            }
-        }
-    },
-
     KNIGHT {
         @Override
         public BattleAction play(Entity self, Entity target) {

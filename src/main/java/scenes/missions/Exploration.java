@@ -42,7 +42,7 @@ public class Exploration implements Scene {
     }
 
     private void startBattle() {
-        Enemy enemy = EnemyFactory.createRandomEnemy(); // you can define this method
+        Enemy enemy = EnemyFactory.createRandomEnemy(player.getLevel()); // you can define this method
         Battle battle = new Battle(gui, player, enemy);
         SceneManager.get().switchTo(battle);
     }

@@ -14,7 +14,7 @@
     "name": "Leather Armor",
     "price": 100,
     "description": "Basic protection gear",
-    "defense": 10
+    "defensePoints": 10
   },
   {
     "type": "weapon",
@@ -30,8 +30,8 @@
     "id": "chainmail_armor",
     "name": "Chainmail Armor",
     "price": 250,
-    "description": "Provides solid defense against blades and claws.",
-    "defense": 20
+    "description": "Provides solid defensePoints against blades and claws.",
+    "defensePoints": 20
   },
   {
     "type": "weapon",
@@ -48,7 +48,7 @@
     "name": "Plate Armor",
     "price": 500,
     "description": "Heavy armor offering maximum body protection.",
-    "defense": 35
+    "defensePoints": 35
   },
   {
     "type": "weapon",
@@ -65,6 +65,6 @@
     "name": "Dragon Scale Armor",
     "price": 800,
     "description": "Armor crafted from rare dragon scales. Incredibly durable.",
-    "defense": 50
+    "defensePoints": 50
   }
 ]

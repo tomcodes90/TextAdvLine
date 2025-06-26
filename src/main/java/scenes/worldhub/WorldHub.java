@@ -1,7 +1,8 @@
-// File: scenes/MainMenuScene.java
+// File: scenes/worldhub/WorldHub.java
 package scenes.worldhub;
 
 import characters.Player;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import scenes.manager.Scene;
@@ -13,11 +14,12 @@ import util.DeveloperLogger;
 
 import java.util.List;
 
+import static util.UIHelper.*;
+
 public class WorldHub implements Scene {
     private final WindowBasedTextGUI gui;
     private BasicWindow window;
     private final Player player;
-
 
     public WorldHub(WindowBasedTextGUI gui, Player player) {
         this.gui = gui;
@@ -26,59 +28,76 @@ public class WorldHub implements Scene {
 
     @Override
     public void enter() {
-        window = new BasicWindow("🌍 Main Menu");
-        Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
+        /* ---------- Window ---------- */
+        window = new BasicWindow("World Hub");
+        window.setHints(List.of(Window.Hint.CENTERED));
 
-        panel.addComponent(new Label("What would you like to do?"));
-        panel.addComponent(new EmptySpace());
+        /* ---------- Root (horizontal) ---------- */
+        Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        root.setPreferredSize(new TerminalSize(60, 18));   // more space
 
-        panel.addComponent(new Button("📖 Continue Story", () -> {
+        /* ---------- INFO Column ---------- */
+        Panel infoPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        infoPanel.addComponent(centeredLabel("Player Info"));
+        infoPanel.addComponent(textBlock("Name", player.getName()));
+        infoPanel.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
+        infoPanel.addComponent(textBlock("Mission", GameState.get().getMissionFlag() != null
+                ? GameState.get().getMissionFlag().name()
+                : "—"));
+        Component borderedInfo = withBorder("Info", infoPanel);
+
+        /* ---------- MENU Column ---------- */
+        Panel menuButtons = new Panel(new LinearLayout(Direction.VERTICAL));
+        menuButtons.addComponent(new Button("Continue Story", () -> {
             window.close();
-            SceneManager.get().switchTo(new Story(gui)); // placeholder
+            SceneManager.get().switchTo(new Story(gui));   // replace if you have chapter selector
         }));
-        panel.addComponent(new Button("🧭 Explore (Random Battle)", () -> {
+        menuButtons.addComponent(new Button("Explore (Random Battle)", () -> {
             window.close();
             SceneManager.get().switchTo(new Exploration((MultiWindowTextGUI) gui, player));
         }));
-
-
-        panel.addComponent(new Button("🛒 Visit Shop", () -> {
+        menuButtons.addComponent(new Button("Visit Shop", () -> {
             window.close();
             SceneManager.get().switchTo(new Shop(gui, player));
         }));
-
-        panel.addComponent(new Button("🎒 Character Overview", () -> {
+        menuButtons.addComponent(new Button("Character Overview", () -> {
             window.close();
             SceneManager.get().switchTo(new CharacterOverview(gui, player));
-            // placeholder
         }));
 
-        panel.addComponent(new Button("💾 Save Game", () -> {
-            MessageDialog.showMessageDialog(gui, "Save", "Game saved! (not really yet)");
+        menuButtons.addComponent(new Button("Save Game", () -> {
+            GameState.get().getPlayer().rebuildSpellsFromIds();       // ensure arrays in sync
+            GameState.get().getPlayer().rebuildConsumablesFromIds();  // (not mandatory if already synced)W
+            boolean success = GameState.get().saveToFile();
+            MessageDialog.showMessageDialog(gui, "Save Game",
+                    success ? "Game saved successfully!" : "Failed to save game.");
         }));
-
-        panel.addComponent(new Button("🏁 Exit to Main Menu", () -> {
-
+        menuButtons.addComponent(new Button("Exit to Main Menu", () -> {
             window.close();
             SceneManager.get().switchTo(new MainMenu((MultiWindowTextGUI) gui));
-            // placeholder
         }));
+        Component borderedMenu = withBorder("Menu", menuButtons);
 
-        window.setComponent(panel);
-        window.setHints(List.of(Window.Hint.CENTERED));
+        /* ---------- Assemble ---------- */
+        root.addComponent(borderedInfo);
+        root.addComponent(new EmptySpace(new TerminalSize(2, 1)));
+        root.addComponent(borderedMenu);
+
+        window.setComponent(root);
         gui.addWindowAndWait(window);
-        DeveloperLogger.log("WorldHub has been entered." + GameState.get().getMissionFlag().toString());
+
+        // Debug log
+        DeveloperLogger.log("WorldHub entered, mission flag: "
+                + (GameState.get().getMissionFlag() != null
+                ? GameState.get().getMissionFlag()
+                : "NONE"));
     }
 
     @Override
-    public void handleInput() {
-        // No polling logic needed unless you implement non-blocking input
-    }
+    public void handleInput() { /* blocking */ }
 
     @Override
     public void exit() {
-        if (window != null) {
-            gui.removeWindow(window);
-        }
+        if (window != null) gui.removeWindow(window);
     }
 }

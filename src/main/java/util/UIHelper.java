@@ -5,48 +5,56 @@ import com.googlecode.lanterna.gui2.*;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 
+import java.util.List;
+import java.util.Objects;
 
 public class UIHelper {
-
-    public static Label centeredLabel(String text) {
-        return new Label(text).setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-    }
-
-    public static Panel textBlock(String label, String value) {
-        Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
-        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        labelComponent.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT);
-
-
-        Label valueComponent = new Label(value);
-        valueComponent.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-
-        block.addComponent(centeredLabel(label));
-        block.addComponent(valueComponent);
-
-        return block;
-    }
-
     public static void openSubmenu(Scene submenu, BasicWindow window) {
         window.close();
         SceneManager.get().switchTo(submenu);
     }
 
-    public static Panel horizontalListBlock(String title, java.util.List<String> items) {
-        Panel outer = new Panel(new LinearLayout(Direction.VERTICAL));
+    public static Label centeredLabel(String text) {
+        Label label = new Label(text);
+        label.setForegroundColor(TextColor.ANSI.BLUE_BRIGHT);
+        label.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        return label;
+    }
 
-        outer.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        outer.addComponent(centeredLabel(title));
 
-        Panel row = new Panel(new LinearLayout(Direction.HORIZONTAL));
+    public static Label valueLabel(String text) {
+        Label label = new Label(text);
+        label.setForegroundColor(TextColor.ANSI.BLACK_BRIGHT);
+        label.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        return label;
+    }
+
+    public static Panel textBlock(String label, String value) {
+        Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
+        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        block.addComponent(centeredLabel(label));
+        block.addComponent(valueLabel(value));
+        return block;
+    }
+
+    public static Component withBorder(String title, Panel panel) {
+        Border border = Borders.singleLine(title); // create empty border
+        border.setComponent(panel);                // attach the panel inside
+        return border;                             // return as Component
+
+    }
+
+
+    public static Panel verticalListBlock(String title, List<String> items) {
+        Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
+        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        block.addComponent(centeredLabel(title));
+
         for (String item : items) {
-            Label label = new Label(item);
-            label.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-            row.addComponent(label);
-            row.addComponent(new EmptySpace()); // Optional spacing
+            block.addComponent(valueLabel(item));
         }
 
-        outer.addComponent(row);
-        return outer;
+        return block;
     }
+
 }

@@ -62,8 +62,8 @@ public class EntityCard {
         /* ---------------- choose bar colour ---------------- */
         double pct = hp / (double) max;
         TextColor barColour = (pct >= 0.6) ? TextColor.ANSI.GREEN
-                : (pct >= 0.3) ? TextColor.ANSI.CYAN
-                : TextColor.ANSI.RED;
+                : (pct >= 0.3) ? TextColor.ANSI.YELLOW_BRIGHT
+                : TextColor.ANSI.RED_BRIGHT;
 
         /* ---------------- assemble component ---------------- */
         Panel row = new Panel(new LinearLayout(Direction.HORIZONTAL));

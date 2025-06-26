@@ -1,13 +1,15 @@
 package characters;
 
-
-import items.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import items.consumables.Consumable;
 import items.equip.Armor;
 import items.equip.Weapon;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import spells.ElementalType;
 import spells.Spell;
+import spells.SpellFactory;
 import spells.SpellType;
 import util.ItemRegistry;
 
@@ -15,27 +17,43 @@ import java.util.*;
 
 import static characters.StatsType.*;
 
+/**
+ * Base class for Player & Enemy
+ */
 @Getter
 public abstract class Entity {
+
+    /* ── Core fields ───────────────────────────────────────────── */
     private final String name;
     private final EnumMap<StatsType, Integer> stats = new EnumMap<>(StatsType.class);
-    private final HashMap<Item, Integer> inventory = new HashMap<>();
-    private final Consumable[] consumablesEquipped = new Consumable[3];
-    private final Spell[] spellsEquipped = new Spell[3];
+
+    /* Runtime spell & consumable objects (Jackson IGNORE) */
+    @JsonIgnore
+    protected final Spell[] spellsEquipped = new Spell[3];
+    @JsonIgnore
+    protected final Consumable[] consumablesEquipped = new Consumable[3];
+
+    /* IDs persisted in JSON */
+    @JsonProperty("equippedSpellTypes")
+    protected final SpellType[] equippedSpellTypes = new SpellType[3];
+    @JsonProperty("equippedConsumableIds")
+    protected final String[] equippedConsumableIds = new String[3];
+
     private final List<TemporaryStatBoost> tempBoosts = new ArrayList<>();
 
     @Setter
-    int level;
+    protected int level = 1;
     @Setter
-    Weapon weapon;
+    protected Weapon weapon;
     @Setter
-    Armor armor;
+    protected Armor armor;
     @Setter
-    boolean isAlive;
+    protected boolean isAlive = true;
     @Setter
-    ElementalType elementalWeakness;
+    protected ElementalType elementalWeakness = ElementalType.FIRE;
 
-    Entity(String name) {
+    /* ── Constructors ─────────────────────────────────────────── */
+    protected Entity(String name) {
         this.name = name;
         stats.put(MAX_HP, 100);
         stats.put(HP, 100);
@@ -43,63 +61,83 @@ public abstract class Entity {
         stats.put(INTELLIGENCE, 10);
         stats.put(DEFENSE, 10);
         stats.put(SPEED, 10);
-        this.isAlive = true;
-
     }
 
-    public void addTemporaryBoost(TemporaryStatBoost boost) {
-        tempBoosts.add(boost);
+    /* ── Spell helpers ────────────────────────────────────────── */
+    public void equipSpell(int slot, SpellType type) {
+        if (slot < 0 || slot >= spellsEquipped.length) return;
+        equippedSpellTypes[slot] = type;
+        spellsEquipped[slot] = (type != null) ? SpellFactory.create(type) : null;
     }
 
-    public void removeTemporaryBoost(TemporaryStatBoost boost) {
-        tempBoosts.remove(boost);
+    public void rebuildSpellsFromIds() {
+        for (int i = 0; i < equippedSpellTypes.length; i++) {
+            SpellType t = equippedSpellTypes[i];
+            spellsEquipped[i] = (t != null) ? SpellFactory.create(t) : null;
+        }
+    }
+
+    /* ── Consumable helpers ───────────────────────────────────── */
+    public void equipConsumable(int slot, Consumable c) {
+        if (slot < 0 || slot >= consumablesEquipped.length) return;
+        consumablesEquipped[slot] = c;
+        equippedConsumableIds[slot] = (c != null) ? c.getId() : null;
+    }
+
+    public void rebuildConsumablesFromIds() {
+        for (int i = 0; i < equippedConsumableIds.length; i++) {
+            String id = equippedConsumableIds[i];
+            consumablesEquipped[i] = (id != null) ? (Consumable) ItemRegistry.getItemById(id) : null;
+        }
+    }
+
+    public abstract void assignConsumableToSlot(Consumable consumable, int slot);
+
+    /* ── Quick selectors ─────────────────────────────────────── */
+    public Spell getEquippedSpell(SpellType type) {
+        return Arrays.stream(spellsEquipped)
+                .filter(s -> s != null && s.getName() == type)
+                .findFirst().orElse(null);
+    }
+
+    public Spell getEquippedSpell(ElementalType elem) {
+        return Arrays.stream(spellsEquipped)
+                .filter(s -> s != null && s.getElement() == elem)
+                .findFirst().orElse(null);
+    }
+
+    /* ── Stats & boosts ───────────────────────────────────────── */
+    public void addTemporaryBoost(TemporaryStatBoost b) {
+        tempBoosts.add(b);
+    }
+
+    public void removeTemporaryBoost(TemporaryStatBoost b) {
+        tempBoosts.remove(b);
     }
 
     public void tickStatusEffects() {
         new ArrayList<>(tempBoosts).forEach(TemporaryStatBoost::tick);
     }
 
-    public abstract void assignConsumableToSlot(Consumable consumable, int index);
-
-    // Spell selector for Player
-    public Spell getEquippedSpell(SpellType type) {
-        return Arrays.stream(spellsEquipped)
-                .filter(s -> s != null && s.getName() == type)
-                .findFirst()
-                .orElse(null);
+    public int getStat(StatsType t) {
+        return stats.getOrDefault(t, 0);
     }
 
-    // Spell selector for Enemy
-    public Spell getEquippedSpell(ElementalType element) {
-        return Arrays.stream(spellsEquipped)
-                .filter(s -> s != null && s.getElement() == element)
-                .findFirst()
-                .orElse(null);
+    public void setStat(StatsType t, int v) {
+        stats.put(t, v);
     }
 
+    public void modifyStat(StatsType t, int d) {
+        stats.put(t, getStat(t) + d);
+    }
+
+    @JsonIgnore
     public int getEffectiveDefense() {
         return getStat(DEFENSE) + armor.getDefensePoints();
     }
 
-    public int getStat(StatsType type) {
-        return stats.getOrDefault(type, 0);
-    }
-
-    public void setStat(StatsType type, int value) {
-        stats.put(type, value);
-    }
-
-    public void modifyStat(StatsType type, int delta) {
-        stats.put(type, getStat(type) + delta);
-    }
 
     public boolean isAlive() {
-        return getStat(StatsType.HP) > 0;
+        return getStat(HP) > 0;
     }
-
-    public boolean hasItem(String itemName) {
-        Item item = ItemRegistry.getByName(itemName);
-        return inventory.containsKey(item);
-    }
-
 }

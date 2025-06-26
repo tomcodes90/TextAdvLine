@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import items.Item;
 
 public class Armor extends Item {
+    @JsonProperty("defensePoints")
     private final int defense;
+
 
     @JsonCreator
     public Armor(
@@ -13,7 +15,7 @@ public class Armor extends Item {
             @JsonProperty("name") String name,
             @JsonProperty("price") int price,
             @JsonProperty("description") String description,
-            @JsonProperty("defense") int defense) {
+            @JsonProperty("defensePoints") int defense) {
         super(id, name, description, price);
         this.defense = defense;
     }

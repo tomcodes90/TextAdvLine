@@ -17,29 +17,36 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemRegistry {
+
+    /* name  -> item (for UI) */
     @Getter
-    private static final Map<String, Item> ITEMS = new HashMap<>();
+    private static final Map<String, Item> ITEMS_BY_NAME = new HashMap<>();
+
+    /* id -> item (for save/load) */
+    @Getter
+    private static final Map<String, Item> ITEMS_BY_ID = new HashMap<>();
 
     public static void loadAllItems() {
         ObjectMapper mapper = new ObjectMapper();
 
-        try (
-                InputStream keyStream = ItemRegistry.class.getResourceAsStream("/items/key_items.json");
-                InputStream equipStream = ItemRegistry.class.getResourceAsStream("/items/equipment.json");
-                InputStream consStream = ItemRegistry.class.getResourceAsStream("/items/consumables.json");
-                InputStream booksStream = ItemRegistry.class.getResourceAsStream("/items/books.json")  // 🆕
-        ) {
-            /* ---------- 🔑 Key items ------------------------------ */
-            for (KeyItem k : mapper.readValue(keyStream, KeyItem[].class)) {
-                ITEMS.put(k.getName(), k);
-            }
+        try (InputStream keyStream = ItemRegistry.class.getResourceAsStream("/items/key_items.json");
+             InputStream equipStream = ItemRegistry.class.getResourceAsStream("/items/equipment.json");
+             InputStream consStream = ItemRegistry.class.getResourceAsStream("/items/consumables.json");
+             InputStream booksStream = ItemRegistry.class.getResourceAsStream("/items/books.json")) {
 
-            /* ---------- 📚 Spell books ---------------------------- */
-            for (Book book : mapper.readValue(booksStream, Book[].class)) {
-                ITEMS.put(book.getName(), book);
-            }
+            /* helper that stores an item in both maps */
+            java.util.function.Consumer<Item> store = it -> {
+                ITEMS_BY_NAME.put(it.getName(), it);
+                ITEMS_BY_ID.put(it.getId(), it);
+            };
 
-            /* ---------- 🛡️ / ⚔️ Equipment ------------------------ */
+            /* 🔑 key items */
+            for (KeyItem k : mapper.readValue(keyStream, KeyItem[].class)) store.accept(k);
+
+            /* 📚 books */
+            for (Book b : mapper.readValue(booksStream, Book[].class)) store.accept(b);
+
+            /* 🛡⚔ equipment */
             for (JsonNode raw : mapper.readTree(equipStream)) {
                 ObjectNode node = (ObjectNode) raw;
                 String type = node.remove("type").asText();
@@ -48,10 +55,10 @@ public final class ItemRegistry {
                     case "armor" -> mapper.treeToValue(node, Armor.class);
                     default -> throw new IllegalArgumentException("Unknown equipment type: " + type);
                 };
-                ITEMS.put(item.getName(), item);
+                store.accept(item);
             }
 
-            /* ---------- 💊 Consumables --------------------------- */
+            /* 💊 consumables */
             for (JsonNode raw : mapper.readTree(consStream)) {
                 ObjectNode node = (ObjectNode) raw;
                 String type = node.remove("type").asText();
@@ -60,10 +67,10 @@ public final class ItemRegistry {
                     case "statEnhancer" -> mapper.treeToValue(node, StatEnhancer.class);
                     default -> throw new IllegalArgumentException("Unknown consumable type: " + type);
                 };
-                ITEMS.put(item.getName(), item);
+                store.accept(item);
             }
 
-            DeveloperLogger.log("✅ Loaded " + ITEMS.size() + " items from JSON.");
+            DeveloperLogger.log("✅ Loaded " + ITEMS_BY_ID.size() + " items.");
 
         } catch (IOException e) {
             DeveloperLogger.log("❌ Failed to load item JSON files: " + e.getMessage());
@@ -71,15 +78,21 @@ public final class ItemRegistry {
         }
     }
 
+    /* ---------- look-ups ---------- */
 
     public static Item getByName(String name) {
-        return ITEMS.get(name);
+        return ITEMS_BY_NAME.get(name);
+    }
+
+    public static Item getItemById(String id) {
+        return ITEMS_BY_ID.get(id);
     }
 
     public static Collection<Item> getAllItems() {
-        return ITEMS.values(); // Returns all registered items
+        return ITEMS_BY_ID.values();
     }
 
-
-    private ItemRegistry() { /* utility class – no instances */ }
+    private ItemRegistry() { /* utility */ }
 }
+
+

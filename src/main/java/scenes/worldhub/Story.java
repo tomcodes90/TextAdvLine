@@ -22,13 +22,19 @@ public class Story implements Scene {
     @Override
     public void enter() {
         DeveloperLogger.log("Mission flag at story entry: " + GameState.get().getMissionFlag());
-        window = new BasicWindow("📖 Story Mode");
+        window = new BasicWindow("Story Mode");
         MissionType flag = GameState.get().getMissionFlag();
 
         Scene nextMission = switch (flag) {
-            case null -> new Mission1(gui, GameState.get().getPlayer());
-            case MISSION_1, MISSION_2, MISSION_3, MISSION_4, MISSION_5, MISSION_6, MISSION_7 -> null;
-            case MISSION_8 -> null; // No more missions
+            case TUTORIAL -> new Mission1((MultiWindowTextGUI) gui);
+            case MISSION_1 -> new Mission2((MultiWindowTextGUI) gui);
+            case MISSION_2 -> new Mission3((MultiWindowTextGUI) gui);
+            case MISSION_3 -> new Mission4((MultiWindowTextGUI) gui);
+            case MISSION_4 -> new Mission5((MultiWindowTextGUI) gui);
+            case MISSION_5 -> new Mission6((MultiWindowTextGUI) gui);
+            case MISSION_6 -> new Mission7((MultiWindowTextGUI) gui);
+            case MISSION_7 -> new Mission8((MultiWindowTextGUI) gui);
+            case MISSION_8 -> new WorldHub(gui, GameState.get().getPlayer());
         };
 
         if (nextMission != null) {

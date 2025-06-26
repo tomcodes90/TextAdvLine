@@ -8,6 +8,7 @@ import dialogues.*;
 import lombok.Lombok;
 import scenes.menu.MainMenu;
 import spells.ElementalType;
+import spells.SpellType;
 import state.GameState;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
@@ -60,7 +61,8 @@ public class Tutorial implements Scene {
 
     private void showIntroDialogue() {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator", "Italy... a land divided. The great families — the Ricottelli, the Parmesani, and above all, the Linguini — fight for culinary supremacy."),
+                new Dialogue("Narrator", "Italy... a land divided. The great families — the " +
+                        " — fight for culinary supremacy."),
                 new Dialogue("Narrator", "From north to south, the scent of betrayal and tomato sauce fills the air."),
                 new Dialogue("Narrator", "But you... you only care about one thing: making it home in time for Nonna's dinner.")
         ), this::nextStep);
@@ -78,6 +80,7 @@ public class Tutorial implements Scene {
                     askForStatPreference();
                     askForWeakness();
                     GameState.get().setPlayer(new Player(pendingName, statsPreference, weakness));
+                    GameState.get().getPlayer().equipSpell(0, SpellType.FIREBALL);
                     DeveloperLogger.log("Creating player " + pendingName + " with boost " + statsPreference + ", Weak to " + weakness);
                     nextStep();// go to next step
                 })),
@@ -147,7 +150,7 @@ public class Tutorial implements Scene {
     }
 
     private void startBattle() {
-        Battle battle = new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createBandit());
+        Battle battle = new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createBandit(GameState.get().getPlayer().getLevel()));
 
         battle.setOnBattleEnd(result -> {
             switch (result) {
@@ -155,6 +158,7 @@ public class Tutorial implements Scene {
                 // Resume the tutorial sequence
                 {
                     DeveloperLogger.log("Player won");
+                    GameState.get().setMissionFlag(MissionType.TUTORIAL);
                     SceneManager.get().switchTo(this);
                 }
 
@@ -166,7 +170,7 @@ public class Tutorial implements Scene {
                 case FLED ->
                     // Show alternate dialogue and go to WorldHub
                         dialogueService.runDialogues(List.of(
-                                new Dialogue("Narrator", "You... runned.")
+                                new Dialogue("Narrator", "You... escaped from the Tutorial?! Get out of Here!!!")
                         ), () -> SceneManager.get().switchTo(new MainMenu(gui)));
 
                 default -> throw new IllegalStateException("Unexpected value: " + result);
