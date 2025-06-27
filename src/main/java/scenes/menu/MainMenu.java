@@ -36,10 +36,7 @@ public class MainMenu implements Scene {
                 SceneManager.get().switchTo(new WorldHub(gui, GameState.get().getPlayer()));
             }
         }));
-
-        panel.addComponent(new Button("Options", () -> {
-            DeveloperLogger.log("Start Game Clicked");// or switch scene
-        }));
+        
         panel.addComponent(new Button("Exit", () -> {
             DeveloperLogger.log("Start Game Clicked");// or switch scene
         }));

@@ -56,9 +56,8 @@ public class Player extends Entity {
         if (statBoost == STRENGTH) modifyStat(STRENGTH, 100);
         if (statBoost == INTELLIGENCE) modifyStat(INTELLIGENCE, 5);
 
-        setWeapon((Weapon) ItemRegistry.getByName("Iron Sword"));
-        setArmor((Armor) ItemRegistry.getByName("Leather Armor"));
-        // default spell
+        setWeapon((Weapon) ItemRegistry.getItemById("iron_sword"));
+        setArmor((Armor) ItemRegistry.getItemById("leather_armor"));
     }
 
     /**

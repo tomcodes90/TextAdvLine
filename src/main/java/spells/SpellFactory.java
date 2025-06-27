@@ -23,9 +23,9 @@ public class SpellFactory {
         template.put(SpellType.VINEWHIP, new Spell(SpellType.VINEWHIP, ElementalType.NATURE, 7, 1));
         template.put(SpellType.THORNSURGE, new Spell(SpellType.THORNSURGE, ElementalType.NATURE, 15, 2));
 
-        // Healing / Utility
-        template.put(SpellType.HEAL, new Spell(SpellType.HEAL, ElementalType.NONE, 0, 2));
-        template.put(SpellType.CURESTATUS, new Spell(SpellType.CURESTATUS, ElementalType.NONE, 0, 3));
+        // Lol
+        template.put(SpellType.MEATBALLMETEOR, new Spell(SpellType.MEATBALLMETEOR, ElementalType.NONE, 30, 2));
+        template.put(SpellType.GARLICNOVA, new Spell(SpellType.GARLICNOVA, ElementalType.NONE, 30, 3));
     }
 
     /**

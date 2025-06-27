@@ -2,69 +2,69 @@
   {
     "type": "weapon",
     "id": "iron_sword",
-    "name": "Iron Sword",
+    "name": "Rusty Slicer",
     "price": 100,
-    "description": "A sturdy blade for melee combat",
+    "description": "Still slices... probably. Just don’t lick it.",
     "damage": 35,
     "damageMultiplier": "STRENGTH"
   },
   {
     "type": "armor",
     "id": "leather_armor",
-    "name": "Leather Armor",
+    "name": "Dry Jacket",
     "price": 100,
-    "description": "Basic protection gear",
+    "description": "Smells weird, but hey, it blocks a punch or two.",
     "defensePoints": 10
   },
   {
     "type": "weapon",
     "id": "steel_sword",
-    "name": "Steel Sword",
+    "name": "Tagliatello",
     "price": 250,
-    "description": "Forged from hardened steel, this blade cuts deeper.",
+    "description": "Sharper than Nonna’s tongue at dinner.",
     "damage": 35,
     "damageMultiplier": "STRENGTH"
   },
   {
     "type": "armor",
     "id": "chainmail_armor",
-    "name": "Chainmail Armor",
+    "name": "Parmesuit",
     "price": 250,
-    "description": "Provides solid defensePoints against blades and claws.",
+    "description": "Smells like cheese. Tastes like victory.",
     "defensePoints": 20
   },
   {
     "type": "weapon",
     "id": "crimson_blade",
-    "name": "Crimson Blade",
+    "name": "Spicy Red",
     "price": 500,
-    "description": "A blood-red sword once wielded by a knight commander.",
+    "description": "One slice and they’ll be cryin’ arrabbiata.",
     "damage": 50,
     "damageMultiplier": "STRENGTH"
   },
   {
     "type": "armor",
     "id": "plate_armor",
-    "name": "Plate Armor",
+    "name": "Lasagna Layer",
     "price": 500,
-    "description": "Heavy armor offering maximum body protection.",
+    "description": "Heavy, delicious, and stacked with defense.",
     "defensePoints": 35
   },
   {
     "type": "weapon",
     "id": "dragonfang_sword",
-    "name": "Dragonfang Sword",
+    "name": "Dragon Noodle",
     "price": 800,
-    "description": "Forged with dragon tooth — few can wield its full might.",
+    "description": "A legendary blade that slurps back.",
     "damage": 70,
     "damageMultiplier": "STRENGTH"
   },
   {
     "type": "armor",
     "id": "dragon_scale_armor",
-    "name": "Dragon Scale Armor",
+    "name": "Nonna's Dress",
     "price": 800,
-    "description": "Armor crafted from rare dragon scales. Incredibly durable.",
+    "description": "Woven with love and dragon rage. Don’t spill sauce on it.",
     "defensePoints": 50
   }
 ]

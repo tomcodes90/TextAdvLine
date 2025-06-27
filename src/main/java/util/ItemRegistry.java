@@ -29,10 +29,10 @@ public final class ItemRegistry {
     public static void loadAllItems() {
         ObjectMapper mapper = new ObjectMapper();
 
-        try (InputStream keyStream = ItemRegistry.class.getResourceAsStream("/items/key_items.json");
-             InputStream equipStream = ItemRegistry.class.getResourceAsStream("/items/equipment.json");
-             InputStream consStream = ItemRegistry.class.getResourceAsStream("/items/consumables.json");
-             InputStream booksStream = ItemRegistry.class.getResourceAsStream("/items/books.json")) {
+        try (
+                InputStream equipStream = ItemRegistry.class.getResourceAsStream("/items/equipment.json");
+                InputStream consStream = ItemRegistry.class.getResourceAsStream("/items/consumables.json");
+                InputStream booksStream = ItemRegistry.class.getResourceAsStream("/items/books.json")) {
 
             /* helper that stores an item in both maps */
             java.util.function.Consumer<Item> store = it -> {
@@ -40,8 +40,6 @@ public final class ItemRegistry {
                 ITEMS_BY_ID.put(it.getId(), it);
             };
 
-            /* 🔑 key items */
-            for (KeyItem k : mapper.readValue(keyStream, KeyItem[].class)) store.accept(k);
 
             /* 📚 books */
             for (Book b : mapper.readValue(booksStream, Book[].class)) store.accept(b);

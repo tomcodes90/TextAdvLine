@@ -2,9 +2,11 @@
 package scenes.worldhub;
 
 import characters.Player;
+import characters.StatsType;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import scenes.menu.MainMenu;
@@ -34,7 +36,7 @@ public class WorldHub implements Scene {
         // Outer root panel to center everything
         Panel outer = new Panel();
         outer.setLayoutManager(new LinearLayout(Direction.VERTICAL));
-        outer.setPreferredSize(new TerminalSize(70, 12)); // Optional, adjust as needed
+        outer.setPreferredSize(new TerminalSize(70, 15)); // Optional, adjust as needed
 
         // Add vertical spacing
         outer.addComponent(new EmptySpace());
@@ -42,19 +44,19 @@ public class WorldHub implements Scene {
         // Inner panel to hold content centered horizontally
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
         root.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        root.setPreferredSize(new TerminalSize(60, 10));
+        root.setPreferredSize(new TerminalSize(60, 15));
 
         /* ---------- INFO Column ---------- */
         Panel infoInner = new Panel(new LinearLayout(Direction.VERTICAL));
         infoInner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         infoInner.addComponent(textBlock("Name", player.getName()));
         infoInner.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
-        infoInner.addComponent(textBlock("Mission", GameState.get().getMissionFlag() != null
+        infoInner.addComponent(textBlock("Completed", GameState.get().getMissionFlag() != null
                 ? GameState.get().getMissionFlag().toString()
                 : "—"));
 
         Panel infoPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        infoPanel.setPreferredSize(new TerminalSize(20, 10));
+        infoPanel.setPreferredSize(new TerminalSize(20, 15));
         infoPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         infoPanel.addComponent(new EmptySpace());
         infoPanel.addComponent(infoInner);
@@ -88,13 +90,28 @@ public class WorldHub implements Scene {
             MessageDialog.showMessageDialog(gui, "Save Game",
                     success ? "Game saved successfully!" : "Failed to save game.");
         }));
+        menuInner.addComponent(new Button("Boost Strength +200", () -> {
+            MessageDialogButton result = MessageDialog.showMessageDialog(
+                    gui,
+                    "Confirm Boost",
+                    "Do you want to increase Strength by 200?",
+                    MessageDialogButton.Yes,
+                    MessageDialogButton.No
+            );
+
+            if (result == MessageDialogButton.Yes) {
+                player.setStat(StatsType.STRENGTH, 200);
+                MessageDialog.showMessageDialog(gui, "Boost Applied", "Strength increased by 200!");
+            }
+        }));
+
         menuInner.addComponent(new Button("Exit to Main Menu", () -> {
             window.close();
             SceneManager.get().switchTo(new MainMenu((MultiWindowTextGUI) gui));
         }));
 
         Panel menuButtons = new Panel(new LinearLayout(Direction.VERTICAL));
-        menuButtons.setPreferredSize(new TerminalSize(40, 10));
+        menuButtons.setPreferredSize(new TerminalSize(40, 15));
         menuButtons.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         menuButtons.addComponent(new EmptySpace()); // Top spacing
         menuButtons.addComponent(menuInner);

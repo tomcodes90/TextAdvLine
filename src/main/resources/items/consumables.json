@@ -2,7 +2,7 @@
   {
     "type": "potion",
     "id": "healing_potion",
-    "name": "Healing Potion",
+    "name": "Espresso Shot",
     "price": 50,
     "description": "Restores 50 HP",
     "pointsToApply": 50
@@ -10,7 +10,7 @@
   {
     "type": "statEnhancer",
     "id": "sage_elixir",
-    "name": "Sage Elixir",
+    "name": "Brain Pop",
     "price": 50,
     "description": "Temporarily boosts intelligence",
     "pointsToApply": 5,
@@ -20,7 +20,7 @@
   {
     "type": "statEnhancer",
     "id": "power_elixir",
-    "name": "Power Elixir",
+    "name": "Muscle Milk",
     "price": 50,
     "description": "Temporarily boosts strength",
     "pointsToApply": 5,
@@ -30,7 +30,7 @@
   {
     "type": "potion",
     "id": "greater_healing_potion",
-    "name": "Greater Healing Potion",
+    "name": "Espresso Martini",
     "price": 100,
     "description": "Restores 100 HP",
     "pointsToApply": 100
@@ -38,7 +38,7 @@
   {
     "type": "statEnhancer",
     "id": "fortitude_tonic",
-    "name": "Fortitude Tonic",
+    "name": "Shell Shot",
     "price": 80,
     "description": "Temporarily boosts defense",
     "pointsToApply": 5,
@@ -48,17 +48,17 @@
   {
     "type": "statEnhancer",
     "id": "swift_draught",
-    "name": "Swift Draught",
+    "name": "Zippy Sip",
     "price": 80,
     "description": "Temporarily boosts speed",
-    "pointsToApply": 5,
+    "pointsToApply": 10,
     "statToBoost": "SPEED",
     "length": 3
   },
   {
     "type": "potion",
     "id": "elixir_of_life",
-    "name": "Elixir of Life",
+    "name": "Mama’s Kiss",
     "price": 150,
     "description": "Fully restores HP",
     "pointsToApply": 999
@@ -66,7 +66,7 @@
   {
     "type": "statEnhancer",
     "id": "mind_elixir",
-    "name": "Mind Elixir",
+    "name": "Mega Brain",
     "price": 120,
     "description": "Greatly boosts intelligence",
     "pointsToApply": 10,
@@ -76,7 +76,7 @@
   {
     "type": "statEnhancer",
     "id": "rage_brew",
-    "name": "Rage Brew",
+    "name": "Angry Juice",
     "price": 120,
     "description": "Greatly boosts strength",
     "pointsToApply": 10,

@@ -4,6 +4,7 @@ package scenes.worldhub;
 import characters.Player;
 import characters.StatsType;
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import items.consumables.Consumable;
 import scenes.manager.Scene;
@@ -53,12 +54,12 @@ public class CharacterOverview implements Scene {
 
         /* ─ Outer vertical wrapper ─ */
         Panel outer = new Panel(new LinearLayout(Direction.VERTICAL));
-        outer.setPreferredSize(new TerminalSize(65, 40));
+        outer.setPreferredSize(new TerminalSize(55, 30));
         outer.addComponent(new EmptySpace());
 
         /* ─ Root H-panel ─ */
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        root.setPreferredSize(new TerminalSize(60, 40));
+        root.setPreferredSize(new TerminalSize(50, 35));
         root.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
         /* -------------------- common boxes -------------------- */
@@ -80,7 +81,7 @@ public class CharacterOverview implements Scene {
         menuInner.addComponent(new Button("Equip Weapon",
                 () -> openSubmenu(new EquipWeaponMenu(gui, player), window)));
         menuInner.addComponent(new Button("Learn Spells",
-                () -> openSubmenu(new LearnSpellsMenu(gui, player), window)));
+                () -> openSubmenu(new EquipSpellsMenu(gui, player), window)));
         menuInner.addComponent(new Button("Equip Items",
                 () -> openSubmenu(new EquipItemsMenu(gui, player), window)));
         menuInner.addComponent(new EmptySpace());
@@ -99,25 +100,46 @@ public class CharacterOverview implements Scene {
         statsInner.addComponent(textBlock("DEF", String.valueOf(player.getStat(StatsType.DEFENSE))));
         statsInner.addComponent(textBlock("SPD", String.valueOf(player.getStat(StatsType.SPEED))));
         statsInner.addComponent(textBlock("Weakness", player.getElementalWeakness().toString()));
-        Component statsBox = withBorder("Stats", centreBox(statsInner, 25, 13));
+        Component statsBox = withBorder("Stats", centreBox(statsInner, 25, 15));
 
         // Equipment
         Panel equipInner = new Panel(new LinearLayout(Direction.VERTICAL));
-        equipInner.addComponent(textBlock("  Armor",
-                player.getArmor() != null ? player.getArmor().getName() : "None"));
-        equipInner.addComponent(textBlock("  Weapon",
-                player.getWeapon() != null ? player.getWeapon().getName() : "None"));
-        equipInner.addComponent(verticalListBlock("  Spells Equipped",
+        // Armor
+        Panel armorBlock = new Panel(new LinearLayout(Direction.VERTICAL));
+        Label armorLabel = new Label("Armor");
+        armorLabel.setForegroundColor(TextColor.ANSI.BLUE);
+        armorLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+        armorBlock.addComponent(armorLabel);
+
+        Label armorValue = new Label(player.getArmor() != null ? player.getArmor().getName() : "None");
+        armorValue.setForegroundColor(TextColor.ANSI.BLACK);
+        armorValue.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+        armorBlock.addComponent(armorValue);
+        equipInner.addComponent(armorBlock);
+
+        Panel weaponBlock = new Panel(new LinearLayout(Direction.VERTICAL));
+        Label weaponLabel = new Label("Weapon");
+        weaponLabel.setForegroundColor(TextColor.ANSI.BLUE);
+        weaponLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+        weaponBlock.addComponent(weaponLabel);
+
+        Label weaponValue = new Label(player.getWeapon() != null ? player.getWeapon().getName() : "None");
+        weaponValue.setForegroundColor(TextColor.ANSI.BLACK);
+        weaponValue.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+        weaponBlock.addComponent(weaponValue);
+
+        equipInner.addComponent(weaponBlock);
+        equipInner.addComponent(verticalListBlock(" Spells Equipped",
                 Arrays.stream(player.getSpellsEquipped())
                         .filter(Objects::nonNull)
                         .map(sp -> sp.getName().toString())
                         .collect(Collectors.toList())));
-        equipInner.addComponent(verticalListBlock("Consumables Equipped",
+        equipInner.addComponent(verticalListBlock("Items Equipped",
                 Arrays.stream(player.getConsumablesEquipped())
                         .filter(Objects::nonNull)
                         .map(Consumable::getName)
                         .collect(Collectors.toList())));
-        Component equipBox = withBorder("Equipment", centreBox(equipInner, 25, 13));
+        Component equipBox = withBorder("Equipment", centreBox(equipInner, 25, 15));
 
         /* ========== LEFT COLUMN (Equipment + Menu) ========== */
         Panel leftCol = new Panel(new LinearLayout(Direction.VERTICAL));

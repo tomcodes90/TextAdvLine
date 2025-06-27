@@ -2,24 +2,24 @@ package spells;
 
 public enum SpellType {
     // Non-elemental
-    ENERGYBLAST("Energy Blast"),
-    FLARE("Flare"),
+    ENERGYBLAST("BoomaZap"),
+    FLARE("SugoFlare"),
 
     // Fire
-    FIREBALL("Fireball"),
-    INFERNO("Inferno"),
+    FIREBALL("FireMeatball"),
+    INFERNO("InfernoGrana"),
 
     // Ice
-    FROSTBITE("Frostbite"),
-    GLACIALSPIKE("Glacial Spike"),
+    FROSTBITE("BrrrGelato"),
+    GLACIALSPIKE("FrozenPeas"),
 
     // Nature
-    VINEWHIP("Vine Whip"),
-    THORNSURGE("Thorn Surge"),
+    VINEWHIP("GreenSlap"),
+    THORNSURGE("SicilianRoses"),
 
-    // Healing / Utility
-    HEAL("Heal"),
-    CURESTATUS("Cure Status");
+    // Replacing utility with new damage spells
+    MEATBALLMETEOR("PizzaRevenge"),
+    GARLICNOVA("GarlicNova O_O");
 
     private final String displayName;
 
@@ -32,4 +32,3 @@ public enum SpellType {
         return displayName;
     }
 }
-

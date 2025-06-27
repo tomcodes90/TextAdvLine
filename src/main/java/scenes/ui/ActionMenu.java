@@ -45,8 +45,8 @@ public class ActionMenu {
                 .forEach(spell -> {
                     boolean ready = spell.isReady();
                     String label = ready
-                            ? spell.getName().name()
-                            : spell.getName().name() + " (Cooldown: " + spell.getCooldownCounter() + ")";
+                            ? spell.getName().toString()
+                            : spell.getName().toString() + " (Cooldown: " + spell.getCooldownCounter() + ")";
 
                     Runnable itemAction = () -> {
                         if (!spell.isReady()) {

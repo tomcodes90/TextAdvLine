@@ -3,6 +3,7 @@ package scenes.missions;
 import battle.actions.BattleResult;
 import characters.EnemyFactory;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import dialogues.*;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
@@ -10,6 +11,7 @@ import scenes.ui.Battle;
 import scenes.ui.DialogueUI;
 import state.GameState;
 import util.DeveloperLogger;
+import util.ItemRegistry;
 
 import java.util.List;
 
@@ -54,11 +56,12 @@ public class Mission3 implements Scene {
     }
 
     private void introDialogue() {
+        String name = GameState.get().getPlayer().getName();
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", "You descend into the Parmigiano Mines — where cheese crystals grow in darkness."),
-                        new Dialogue("Narrator", "Nonna swears the lasagna’s base lies deep below."),
-                        new Dialogue("Nonna", "Watch your step. One wrong move and you’re grated like mozzarella.")),
-                this::nextStep);
+                new Dialogue("Narrator", "You descend into the Parmigiano Mines — where cheese crystals grow in darkness."),
+                new Dialogue("Narrator", "Nonna swears the lasagna’s base lies deep below."),
+                new Dialogue("Nonna", "Watch your step. One wrong move and you’re grated like mozzarella.")
+        ), this::nextStep);
     }
 
     private void infiltrationChoice() {
@@ -81,53 +84,90 @@ public class Mission3 implements Scene {
     }
 
     private void routeBattle() {
-        Battle battle = switch (route) {
-            case STEALTH -> new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createParmesaniGoon(playerLevel));
-            case DISTRACTION ->
-                    new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createParmesaniCaptain(playerLevel));
+        String name = GameState.get().getPlayer().getName();
+
+        List<Dialogue> preBattleDialogue = switch (route) {
+            case STEALTH -> List.of(
+                    new Dialogue("Narrator", "You sneak through the shafts and drop behind a lone guard."),
+                    new Dialogue("Parmesani Goon", "Huh? Who goes th— *urk*!")
+            );
+            case DISTRACTION -> List.of(
+                    new Dialogue("Narrator", "The elevator crashes down. A guard captain storms toward the noise."),
+                    new Dialogue("Parmesani Captain", "Intruder! You'll regret bringing noise to the mines!")
+            );
         };
 
-        battle.setOnBattleEnd(r -> {
-            if (r == BattleResult.VICTORY) {
-                DeveloperLogger.log("Infiltration successful via " + route);
-                SceneManager.get().switchTo(this);
-            } else {
-                failAndKick(r);
-            }
+        dialogueService.runDialogues(preBattleDialogue, () -> {
+            Battle battle = switch (route) {
+                case STEALTH ->
+                        new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createParmesaniGoon(playerLevel));
+                case DISTRACTION ->
+                        new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createParmesaniCaptain(playerLevel));
+            };
+
+            battle.setOnBattleEnd(r -> {
+                if (r == BattleResult.VICTORY) {
+                    DeveloperLogger.log("Infiltration successful via " + route);
+                    List<Dialogue> postRoute = switch (route) {
+                        case STEALTH -> List.of(
+                                new Dialogue("Narrator", "You slip past the curdled guards, unseen."),
+                                new Dialogue("Nonna", "Smooth as melted provola, " + name + ".")
+                        );
+                        case DISTRACTION -> List.of(
+                                new Dialogue("Narrator", "The guards are scattered like grated cheese."),
+                                new Dialogue("Nonna", "Subtle as a parm hammer, but it works.")
+                        );
+                    };
+                    dialogueService.runDialogues(postRoute, this::nextStep);
+                } else {
+                    failAndKick(r);
+                }
+            });
+
+            SceneManager.get().switchTo(battle);
         });
-        SceneManager.get().switchTo(battle);
     }
 
-    private void bossBattle() {
-        Battle battle = new Battle(gui,
-                GameState.get().getPlayer(),
-                EnemyFactory.createCheeseGuardian(playerLevel));
 
-        battle.setOnBattleEnd(r -> {
-            if (r == BattleResult.VICTORY) {
-                GameState.get().setMissionFlag(MissionType.MISSION_3);
-                DeveloperLogger.log("Boss defeated");
-                SceneManager.get().switchTo(this);
-            } else {
-                failAndKick(r);
-            }
+    private void bossBattle() {
+        String name = GameState.get().getPlayer().getName();
+        dialogueService.runDialogues(List.of(
+                new Dialogue("Narrator", "A massive rind-encrusted creature looms ahead — its breath smells of age... and glory."),
+                new Dialogue("Cheese Guardian", "You shall not take the Sacred Wedge, mortal."),
+                new Dialogue(name, "Great. A lactose-intolerant gatekeeper."),
+                new Dialogue("Nonna", "Mind your manners, " + name + ". That thing’s older than my sourdough starter.")
+        ), () -> {
+            Battle battle = new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createCheeseGuardian(playerLevel));
+            battle.setOnBattleEnd(r -> {
+                if (r == BattleResult.VICTORY) {
+                    GameState.get().setMissionFlag(MissionType.MISSION_3);
+                    MessageDialog.showMessageDialog(gui, "Item Found", "You found the Frozen Peas book!");
+                    GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_glacialspike"));
+                    DeveloperLogger.log("Boss defeated");
+                    SceneManager.get().switchTo(this);
+                } else {
+                    failAndKick(r);
+                }
+            });
+            SceneManager.get().switchTo(battle);
         });
-        SceneManager.get().switchTo(battle);
     }
 
     private void outroDialogue() {
+        String name = GameState.get().getPlayer().getName();
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", "The crystals crackle behind you. In your hands, a golden wedge of Parmigiano."),
-                        new Dialogue("Hero", "One more step toward Nonna's ultimate lasagna."),
-                        new Dialogue("Nonna", "Bravissimo. Now all we need is the sauce thick enough to silence a debate.")),
-                this::nextStep);
+                new Dialogue("Narrator", "The crystals crackle behind you. In your hands, a golden wedge of Parmigiano."),
+                new Dialogue(name, "One more step toward Nonna's ultimate lasagna."),
+                new Dialogue("Nonna", "Bravissimo. Now all we need is a sauce thick enough to silence a debate.")
+        ), this::nextStep);
     }
 
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", r == BattleResult.DEFEAT ?
-                                "You fall in the cheese caverns, buried under regret and rind." :
-                                "You flee the Parmigiano Mines, empty-handed. Nonna will not forget this.")),
-                () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
+                new Dialogue("Narrator", r == BattleResult.DEFEAT ?
+                        "You fall in the cheese caverns, buried under regret and rind." :
+                        "You flee the Parmigiano Mines, empty-handed. Nonna will not forget this.")
+        ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
+
 }

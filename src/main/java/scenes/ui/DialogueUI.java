@@ -4,6 +4,7 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.*;
 import dialogues.ChoiceOption;
+import state.GameState;
 import util.PortraitRegistry;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class DialogueUI {
         Panel rightContent = new Panel(new LinearLayout(Direction.VERTICAL));
 
         Label dialogueLabel = new Label("");
-        Label speakerLabel = new Label(speaker);
+        Label speakerLabel = new Label(resolveDisplayName(speaker));
         speakerLabel.setForegroundColor(TextColor.ANSI.YELLOW);
         speakerLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         rightContent.addComponent(speakerLabel);
@@ -200,5 +201,12 @@ public class DialogueUI {
 
     private String wrapText(String input, int width) {
         return input.replaceAll("(.{1," + width + "})(\\s+|$)", "$1\n");
+    }
+
+    private String resolveDisplayName(String speaker) {
+        if ("Hero".equals(speaker)) {
+            return GameState.get().getPlayer().getName(); // assumes GameState is your singleton
+        }
+        return speaker;
     }
 }

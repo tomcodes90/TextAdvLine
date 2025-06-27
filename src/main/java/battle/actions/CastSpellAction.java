@@ -17,7 +17,7 @@ public class CastSpellAction implements BattleAction {
 
     @Override
     public String name() {
-        return "Cast " + spell.getName();
+        return "Cast " + spell.getName().toString();
     }
 
     @Override

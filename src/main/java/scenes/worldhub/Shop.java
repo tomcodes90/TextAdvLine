@@ -1,25 +1,29 @@
 package scenes.worldhub;
 
 import characters.Player;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import items.Item;
-import util.ItemRegistry;
-import scenes.missions.MissionType;
+import items.consumables.Potion;
+import items.consumables.StatEnhancer;
+import items.equip.Armor;
+import items.equip.Weapon;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
+import scenes.missions.MissionType;
 import state.GameState;
+import util.ItemRegistry;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 public class Shop implements Scene {
-
     private final WindowBasedTextGUI gui;
     private final Player player;
     private BasicWindow window;
+    private static final int ITEMS_PER_PAGE = 5;
 
     public Shop(WindowBasedTextGUI gui, Player player) {
         this.gui = gui;
@@ -29,7 +33,6 @@ public class Shop implements Scene {
     @Override
     public void enter() {
         window = new BasicWindow("Item Shop");
-
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(new Label("Welcome to the Item Shop!"));
         panel.addComponent(new EmptySpace());
@@ -47,60 +50,51 @@ public class Shop implements Scene {
     }
 
     private void openBuyMenu() {
-        BasicWindow buyWindow = new BasicWindow("Buy Items");
-        Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
+        showPaginatedItemMenu("Buy Items", true);
+    }
 
+    private void openSellMenu() {
+        showPaginatedItemMenu("Sell Items", false);
+    }
+
+    private void showPaginatedItemMenu(String title, boolean isBuying) {
+        BasicWindow menuWindow = new BasicWindow(title);
+        Panel mainPanel = new Panel(new LinearLayout(Direction.VERTICAL));
         Label goldLabel = new Label("Gold: " + player.getGold());
-        panel.addComponent(goldLabel);
-        panel.addComponent(new EmptySpace());
+        mainPanel.addComponent(goldLabel);
+        mainPanel.addComponent(new EmptySpace());
 
-        Label nameLabel = new Label("Item: ");
-        Label descriptionLabel = new Label("Description: ");
-        Label effectLabel = new Label("Effect: ");
-
-        panel.addComponent(nameLabel);
-        panel.addComponent(descriptionLabel);
-        panel.addComponent(effectLabel);
-
-        panel.addComponent(new EmptySpace());
-
-        ItemRegistry.getAllItems().stream()
+        List<Item> allItems = isBuying ?
+                ItemRegistry.getAllItems().stream()
+                        .filter(item -> item.getPrice() > 0 && isItemUnlocked(item, GameState.get().getMissionFlag()))
+                        .sorted(Comparator.comparing(Item::getName))
+                        .toList()
+                : player.getInventory().keySet().stream()
                 .filter(item -> item.getPrice() > 0)
-                .filter(item -> {
-                    MissionType currentMission = GameState.get().getMissionFlag();
-                    String id = item.getId();
-
-                    return switch (id) {
-                        // Always available
-                        case "healing_potion", "sage_elixir", "power_elixir" -> true;
-
-                        // Unlocked at MISSION_2
-                        case "greater_healing_potion", "fortitude_tonic", "swift_draught" ->
-                                currentMission != null && currentMission.ordinal() >= MissionType.MISSION_2.ordinal();
-
-                        // Unlocked at MISSION_4
-                        case "elixir_of_life", "mind_elixir", "rage_brew" ->
-                                currentMission != null && currentMission.ordinal() >= MissionType.MISSION_4.ordinal();
-
-                        // Equipment logic (from before)
-                        case "iron_sword", "leather_armor" -> true;
-                        case "steel_sword", "chainmail_armor" ->
-                                currentMission != null && currentMission.ordinal() >= MissionType.MISSION_3.ordinal();
-                        case "crimson_blade", "plate_armor" ->
-                                currentMission != null && currentMission.ordinal() >= MissionType.MISSION_5.ordinal();
-                        case "dragonfang_sword", "dragon_scale_armor" ->
-                                currentMission != null && currentMission.ordinal() >= MissionType.MISSION_7.ordinal();
-
-                        default -> {
-                            System.out.println("❌ Unknown item id: " + id);
-                            yield false;
-                        }
-                    };
-                })
                 .sorted(Comparator.comparing(Item::getName))
-                .forEach(item -> {
-                    String label = String.format("%s - %dg", item.getName(), item.getPrice());
-                    panel.addComponent(new Button(label, () -> {
+                .toList();
+
+        int totalPages = (int) Math.ceil(allItems.size() / (double) ITEMS_PER_PAGE);
+        final int[] currentPage = {0};
+
+        Panel itemListPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        mainPanel.addComponent(itemListPanel);
+
+        Runnable updatePage = () -> {
+            itemListPanel.removeAllComponents();
+            int start = currentPage[0] * ITEMS_PER_PAGE;
+            int end = Math.min(start + ITEMS_PER_PAGE, allItems.size());
+
+            for (int i = start; i < end; i++) {
+                Item item = allItems.get(i);
+
+                Panel itemPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+                itemPanel.addComponent(new Label(item.getName() + (isBuying ? " - " + item.getPrice() + "g" : " x" + player.getInventory().getOrDefault(item, 0) + " - " + item.getPrice() + "g")));
+                itemPanel.addComponent(new Label(item.getDescription()));
+                itemPanel.addComponent(new Label(getEffectText(item)));
+
+                Button actionButton = new Button(isBuying ? "Buy" : "Sell", () -> {
+                    if (isBuying) {
                         if (player.getGold() >= item.getPrice()) {
                             player.decreaseGold(item.getPrice());
                             player.addItemToInventory(item);
@@ -109,97 +103,84 @@ public class Shop implements Scene {
                         } else {
                             MessageDialog.showMessageDialog(gui, "Not enough gold", "You can't afford this item.");
                         }
-                    }) {
-                        {
-                            // Hover listener
-                            addListener((Button.Listener) b -> {
-                                nameLabel.setText("Item: " + item.getName());
-                                descriptionLabel.setText("Description: " + item.getDescription());
-                                effectLabel.setText("Effect: " + getEffectText(item));
-                            });
+                    } else {
+                        MessageDialogButton res = MessageDialog.showMessageDialog(gui, "Confirm",
+                                "Sell " + item.getName() + " for " + item.getPrice() + "g?",
+                                MessageDialogButton.Yes, MessageDialogButton.No);
+                        if (res == MessageDialogButton.Yes) {
+                            player.removeItemFromInventory(item);
+                            player.collectGold(item.getPrice());
+                            goldLabel.setText("Gold: " + player.getGold());
+                            menuWindow.close();
+                            showPaginatedItemMenu(title, false);
                         }
-                    });
+                    }
                 });
 
-        panel.addComponent(new EmptySpace());
-        panel.addComponent(new Button("Back", buyWindow::close));
-        buyWindow.setComponent(panel);
-        buyWindow.setHints(List.of(Window.Hint.CENTERED));
-        gui.addWindowAndWait(buyWindow);
+                itemPanel.addComponent(actionButton);
+                itemPanel.addComponent(new EmptySpace());
+
+                itemListPanel.addComponent(itemPanel);
+            }
+        };
+
+        Panel paginationPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        Button prev = new Button("< Prev", () -> {
+            if (currentPage[0] > 0) {
+                currentPage[0]--;
+                updatePage.run();
+            }
+        });
+        Button next = new Button("Next >", () -> {
+            if (currentPage[0] < totalPages - 1) {
+                currentPage[0]++;
+                updatePage.run();
+            }
+        });
+
+        paginationPanel.addComponent(prev);
+        paginationPanel.addComponent(new EmptySpace(new TerminalSize(1, 0)));
+        paginationPanel.addComponent(next);
+
+        mainPanel.addComponent(new EmptySpace());
+        mainPanel.addComponent(paginationPanel);
+        mainPanel.addComponent(new Button("Back", menuWindow::close));
+
+        updatePage.run();
+        menuWindow.setComponent(mainPanel);
+        menuWindow.setHints(List.of(Window.Hint.CENTERED));
+        gui.addWindowAndWait(menuWindow);
+    }
+
+    private boolean isItemUnlocked(Item item, MissionType currentMission) {
+        String id = item.getId();
+        return switch (id) {
+            case "healing_potion", "sage_elixir", "power_elixir",
+                 "iron_sword", "leather_armor" -> true;
+            case "greater_healing_potion", "fortitude_tonic", "swift_draught" ->
+                    currentMission != null && currentMission.ordinal() >= MissionType.MISSION_2.ordinal();
+            case "elixir_of_life", "mind_elixir", "rage_brew" ->
+                    currentMission != null && currentMission.ordinal() >= MissionType.MISSION_4.ordinal();
+            case "steel_sword", "chainmail_armor" ->
+                    currentMission != null && currentMission.ordinal() >= MissionType.MISSION_3.ordinal();
+            case "crimson_blade", "plate_armor" ->
+                    currentMission != null && currentMission.ordinal() >= MissionType.MISSION_5.ordinal();
+            case "dragonfang_sword", "dragon_scale_armor" ->
+                    currentMission != null && currentMission.ordinal() >= MissionType.MISSION_7.ordinal();
+            default -> false;
+        };
     }
 
     private String getEffectText(Item item) {
-        if (item instanceof items.consumables.Potion p) {
-            return "+" + p.getPointsToApply() + " HP";
+        if (item instanceof StatEnhancer s) {
+            return "+" + s.getPointsToApply() + " for " + s.getLength() + " turns";
+        } else if (item instanceof Weapon w) {
+            return "Dmg: " + w.getDamage();
+        } else if (item instanceof Armor a) {
+            return "Def: " + a.getDefensePoints();
         }
-        if (item instanceof items.consumables.StatEnhancer s) {
-            return "Boosts " + s.getStatToBoost() + " by " + s.getPointsToApply() + " for " + s.getLength() + " turns";
-        }
-        return "-"; // Default fallback
+        return " ";
     }
-
-    private void openSellMenu() {
-        BasicWindow sellWindow = new BasicWindow("Sell Items");
-        Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
-
-        /* ── Player gold at top ───────────────────────── */
-        Label goldLabel = new Label("Gold: " + player.getGold());
-        panel.addComponent(goldLabel);
-        panel.addComponent(new EmptySpace());
-
-        /* ── Dynamic info area (name + price) ─────────── */
-        Label nameLabel = new Label("Item: ");
-        Label priceLabel = new Label("Sale price: ");
-        panel.addComponent(nameLabel);
-        panel.addComponent(priceLabel);
-        panel.addComponent(new EmptySpace());
-
-        /* ── Item list ─────────────────────────────────── */
-        if (player.getInventory().isEmpty()) {
-            panel.addComponent(new Label("You have nothing to sell."));
-        } else {
-            player.getInventory().keySet().stream()
-                    .filter(item -> item.getPrice() > 0)
-                    .sorted(Comparator.comparing(Item::getName))
-                    .forEach(item -> {
-                        int quantity = player.getInventory().get(item);
-                        String btnText = String.format("%s x%d - %dg", item.getName(), quantity, item.getPrice());
-
-                        Button btn = new Button(btnText, () -> {
-                            // Confirm sale
-                            MessageDialogButton res = MessageDialog.showMessageDialog(
-                                    gui, "Confirm",
-                                    "Sell " + item.getName() + " for " + item.getPrice() + "g?",
-                                    MessageDialogButton.Yes, MessageDialogButton.No
-                            );
-                            if (res == MessageDialogButton.Yes) {
-                                player.removeItemFromInventory(item);
-                                player.collectGold(item.getPrice());
-                                goldLabel.setText("Gold: " + player.getGold());
-                                sellWindow.close();
-                                openSellMenu(); // refresh list
-                            }
-                        });
-
-                        // Hover/select listener updates info labels
-                        btn.addListener(b -> {
-                            nameLabel.setText("Item: " + item.getName());
-                            priceLabel.setText("Sale price: " + item.getPrice() + "g");
-                        });
-
-                        panel.addComponent(btn);
-                    });
-        }
-
-        /* ── Footer ───────────────────────────────────── */
-        panel.addComponent(new EmptySpace());
-        panel.addComponent(new Button("Back", sellWindow::close));
-
-        sellWindow.setComponent(panel);
-        sellWindow.setHints(List.of(Window.Hint.CENTERED));
-        gui.addWindowAndWait(sellWindow);
-    }
-
 
     @Override
     public void handleInput() {

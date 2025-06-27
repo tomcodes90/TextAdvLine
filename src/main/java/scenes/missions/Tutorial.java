@@ -4,6 +4,7 @@ import characters.EnemyFactory;
 import characters.Player;
 import characters.StatsType;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import dialogues.*;
 import lombok.Lombok;
 import scenes.menu.MainMenu;
@@ -16,6 +17,7 @@ import scenes.worldhub.WorldHub;
 import scenes.ui.Battle;
 import scenes.ui.DialogueUI;
 import util.DeveloperLogger;
+import util.ItemRegistry;
 
 
 import java.util.List;
@@ -159,6 +161,14 @@ public class Tutorial implements Scene {
                 {
                     DeveloperLogger.log("Player won");
                     GameState.get().setMissionFlag(MissionType.TUTORIAL);
+                    MessageDialog.showMessageDialog(gui, "Item Found", "You found the Booma Zap book!");
+                    GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_energyblast"));
+                    MessageDialog.showMessageDialog(gui, "Item Found", "You found the Fire Meatball book!");
+                    GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_fireball"));
+                    MessageDialog.showMessageDialog(gui, "Item Found", "You found the Brrr Gelato book!");
+                    GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_frostbite"));
+                    MessageDialog.showMessageDialog(gui, "Item Found", "You found the Green Finger Slap book!");
+                    GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_vinewhip"));
                     SceneManager.get().switchTo(this);
                 }
 

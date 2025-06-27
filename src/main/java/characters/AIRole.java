@@ -2,6 +2,7 @@ package characters;
 
 import battle.actions.*;
 import items.consumables.Consumable;
+import items.consumables.Potion;
 import items.consumables.StatEnhancer;
 import spells.ElementalType;
 import spells.Spell;
@@ -9,8 +10,6 @@ import spells.Spell;
 import java.util.Arrays;
 
 import static characters.StatsType.HP;
-import static spells.ElementalType.NONE;
-import static spells.SpellType.HEAL;
 
 public enum AIRole {
 
@@ -24,29 +23,59 @@ public enum AIRole {
     MAGE {
         @Override
         public BattleAction play(Entity self, Entity target) {
-            ElementalType weakness = target.getElementalWeakness();
+            return resolveSpellAction(self, target);
+        }
+    },
+    MAGE_BOOSTER {
+        @Override
+        public BattleAction play(Entity self, Entity target) {
+            Consumable enhancer = Arrays.stream(self.getConsumablesEquipped())
+                    .filter(c -> c instanceof StatEnhancer)
+                    .findFirst()
+                    .orElse(null);
+            if (enhancer != null) {
+                return new UseItemAction(self, enhancer);
+            }
 
-            Spell best = Arrays.stream(self.getSpellsEquipped())
-                    .filter(s -> s != null && s.isReady() && s.getElement() == weakness)
+            return resolveSpellAction(self, target);
+        }
+    },
+    MAGE_HEALER {
+        @Override
+        public BattleAction play(Entity self, Entity target) {
+            Consumable potion = Arrays.stream(self.getConsumablesEquipped())
+                    .filter(c -> c instanceof Potion)
                     .findFirst()
                     .orElse(null);
 
-            if (best == null) {
-                best = Arrays.stream(self.getSpellsEquipped())
-                        .filter(s -> s != null && s.isReady())
-                        .findFirst()
-                        .orElse(null);
+            if (self.getStat(HP) < 50 && potion != null) {
+                return new UseItemAction(self, potion);
             }
 
-            if (best != null) {
-                return new CastSpellAction(self, best, target);
+            return resolveSpellAction(self, target);
+        }
+    },
+
+    FIGHTER_HEALER {
+        @Override
+        public BattleAction play(Entity self, Entity target) {
+            if (target.getStat(HP) < target.getStat(StatsType.MAX_HP) / 2) {
+                return new AttackAction(self, target);
+            }
+
+            Consumable potion = Arrays.stream(self.getConsumablesEquipped())
+                    .filter(c -> c instanceof Potion)
+                    .findFirst()
+                    .orElse(null);
+
+            if (self.getStat(HP) < 50 && potion != null) {
+                return new UseItemAction(self, potion);
             } else {
                 return new AttackAction(self, target);
             }
         }
     },
-
-    KNIGHT {
+    FIGHTER_BOOSTER {
         @Override
         public BattleAction play(Entity self, Entity target) {
             if (target.getStat(HP) < target.getStat(StatsType.MAX_HP) / 2) {
@@ -65,6 +94,28 @@ public enum AIRole {
             }
         }
     };
+
+    private static BattleAction resolveSpellAction(Entity self, Entity target) {
+        ElementalType weakness = target.getElementalWeakness();
+
+        Spell best = Arrays.stream(self.getSpellsEquipped())
+                .filter(s -> s != null && s.isReady() && s.getElement() == weakness)
+                .findFirst()
+                .orElse(null);
+
+        if (best == null) {
+            best = Arrays.stream(self.getSpellsEquipped())
+                    .filter(s -> s != null && s.isReady())
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (best != null) {
+            return new CastSpellAction(self, best, target);
+        } else {
+            return new AttackAction(self, target);
+        }
+    }
 
     public abstract BattleAction play(Entity self, Entity target);
 }

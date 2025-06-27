@@ -1,72 +1,72 @@
 [
   {
     "id": "book_energyblast",
-    "name": "Book of Energyblast",
+    "name": "BoomaZap",
     "price": 0,
-    "description": "A crackling tome that teaches the Energyblast spell.",
+    "description": "A crackling book infused with pure zap-zap.",
     "spellType": "ENERGYBLAST"
   },
   {
     "id": "book_flare",
-    "name": "Book of Flare",
+    "name": "SugoFlare",
     "price": 0,
-    "description": "A radiant scroll that teaches the Flare spell.",
+    "description": "Radiates hotter than Nonna’s oven at Christmas.",
     "spellType": "FLARE"
   },
   {
     "id": "book_fireball",
-    "name": "Book of Fireball",
+    "name": "FireMeatball",
     "price": 0,
-    "description": "A scorched book that teaches the Fireball spell.",
+    "description": "Launches a spicy meatball of doom.",
     "spellType": "FIREBALL"
   },
   {
     "id": "book_inferno",
-    "name": "Book of Inferno",
+    "name": "InfernoGrana",
     "price": 0,
-    "description": "An ominous volume containing the Inferno spell.",
+    "description": "Unleashes a molten cheese storm from hell.",
     "spellType": "INFERNO"
   },
   {
     "id": "book_frostbite",
-    "name": "Book of Frostbite",
+    "name": "BrrrGelato",
     "price": 0,
-    "description": "An icy grimoire inscribed with the Frostbite spell.",
+    "description": "Freezes your enemies like Nonna’s basement fridge.",
     "spellType": "FROSTBITE"
   },
   {
     "id": "book_glacialspike",
-    "name": "Book of Glacial Spike",
+    "name": "FrozenPeas",
     "price": 0,
-    "description": "A chilling tome teaching the Glacial Spike spell.",
+    "description": "Stabs with the cold fury of winter in Napoli.",
     "spellType": "GLACIALSPIKE"
   },
   {
     "id": "book_vinewhip",
-    "name": "Book of Vinewhip",
+    "name": "GreenFingerSlap",
     "price": 0,
-    "description": "A nature-bound volume containing the Vinewhip spell.",
+    "description": "Slaps your foe with basil-powered rage.",
     "spellType": "VINEWHIP"
   },
   {
     "id": "book_thornsurge",
-    "name": "Book of Thornsurge",
+    "name": "SicilianRoses",
     "price": 0,
-    "description": "A leafy tome that teaches the Thornsurge spell.",
+    "description": "Thorns explode like mamma’s pressure cooker.",
     "spellType": "THORNSURGE"
   },
   {
-    "id": "book_heal",
-    "name": "Book of Heal",
+    "id": "book_meatballmeteor",
+    "name": "PizzaRevenge",
     "price": 0,
-    "description": "A glowing manual that teaches the healing spell Heal.",
-    "spellType": "HEAL"
+    "description": "Summons a giant Pizza from the heavens.",
+    "spellType": "MEATBALLMETEOR"
   },
   {
-    "id": "book_curestatus",
-    "name": "Book of Cure Status",
+    "id": "book_garlicnova",
+    "name": "GarlicNova O_O",
     "price": 0,
-    "description": "A cleansing scroll that teaches how to cure ailments.",
-    "spellType": "CURESTATUS"
+    "description": "Blinds and burns with holy garlic fury.",
+    "spellType": "GARLICNOVA"
   }
 ]

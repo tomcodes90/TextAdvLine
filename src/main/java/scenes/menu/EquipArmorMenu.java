@@ -1,23 +1,25 @@
-package scenes.menu;// File: scenes/character/EquipArmorMenu.java
-
+package scenes.menu;
 
 import characters.Player;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
-import items.equip.Armor;
 import items.Item;
+import items.equip.Armor;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import scenes.worldhub.CharacterOverview;
 
-
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EquipArmorMenu implements Scene {
     private final WindowBasedTextGUI gui;
     private final Player player;
     private BasicWindow window;
+
+    private static final int ITEMS_PER_PAGE = 6;
 
     public EquipArmorMenu(WindowBasedTextGUI gui, Player player) {
         this.gui = gui;
@@ -27,48 +29,87 @@ public class EquipArmorMenu implements Scene {
     @Override
     public void enter() {
         window = new BasicWindow("🛡 Equip Armor");
-        Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
+        Panel mainPanel = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        // Show currently equipped armor
         Armor currentArmor = player.getArmor();
         String equippedText = (currentArmor != null) ? currentArmor.getName() : "None";
-        panel.addComponent(new Label("Currently Equipped: " + equippedText));
-        panel.addComponent(new EmptySpace());
+        mainPanel.addComponent(new Label("Currently Equipped: " + equippedText));
+        mainPanel.addComponent(new EmptySpace());
 
-        // Show list of armor in inventory
-        List<Item> armorInInventory = new ArrayList<>();
-        for (Item item : player.getInventory().keySet()) {
-            if (item instanceof Armor) {
-                armorInInventory.add(item);
-            }
-        }
+        List<Armor> armorList = player.getInventory().keySet().stream()
+                .filter(item -> item instanceof Armor)
+                .map(item -> (Armor) item)
+                .sorted(Comparator.comparing(Item::getName))
+                .collect(Collectors.toList());
 
-        if (armorInInventory.isEmpty()) {
-            panel.addComponent(new Label("No armor available in inventory."));
+        if (armorList.isEmpty()) {
+            mainPanel.addComponent(new Label("No armor available in inventory."));
         } else {
-            for (Item item : armorInInventory) {
-                int quantity = player.getInventory().get(item);
-                String label = item.getName() + " x" + quantity;
-                panel.addComponent(new Button(label, () -> {
-                    player.setArmor((Armor) item);
-                    player.removeItemFromInventory(item);
-                    if (currentArmor != null) {
-                        player.addItemToInventory(currentArmor); // Swap old armor back into inventory
-                    }
-                    MessageDialog.showMessageDialog(gui, "Equipped", "You equipped: " + item.getName());
-                    window.close();
-                    SceneManager.get().switchTo(new EquipArmorMenu(gui, player)); // Refresh
-                }));
-            }
+            int totalPages = (int) Math.ceil(armorList.size() / (double) ITEMS_PER_PAGE);
+            final int[] currentPage = {0};
+
+            Panel itemListPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+            mainPanel.addComponent(itemListPanel);
+
+            Runnable updatePage = () -> {
+                itemListPanel.removeAllComponents();
+                int start = currentPage[0] * ITEMS_PER_PAGE;
+                int end = Math.min(start + ITEMS_PER_PAGE, armorList.size());
+
+                for (int i = start; i < end; i++) {
+                    Armor armor = armorList.get(i);
+                    int quantity = player.getInventory().getOrDefault(armor, 0);
+
+                    Panel itemBlock = new Panel(new LinearLayout(Direction.VERTICAL));
+                    itemBlock.setPreferredSize(new TerminalSize(50, 4));
+                    itemBlock.addComponent(new Label(armor.getName() + " x" + quantity));
+                    itemBlock.addComponent(new Label(armor.getDescription()));
+                    itemBlock.addComponent(new Label("Def: " + armor.getDefensePoints()));
+                    itemBlock.addComponent(new Button("Equip", () -> {
+                        player.setArmor(armor);
+                        player.removeItemFromInventory(armor);
+                        if (currentArmor != null) {
+                            player.addItemToInventory(currentArmor);
+                        }
+                        MessageDialog.showMessageDialog(gui, "Equipped", "You equipped: " + armor.getName());
+                        window.close();
+                        SceneManager.get().switchTo(new EquipArmorMenu(gui, player));
+                    }));
+                    itemListPanel.addComponent(itemBlock);
+                    itemListPanel.addComponent(new EmptySpace());
+                }
+            };
+
+            Panel paginationPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
+            Button prev = new Button("< Prev", () -> {
+                if (currentPage[0] > 0) {
+                    currentPage[0]--;
+                    updatePage.run();
+                }
+            });
+            Button next = new Button("Next >", () -> {
+                if (currentPage[0] < totalPages - 1) {
+                    currentPage[0]++;
+                    updatePage.run();
+                }
+            });
+
+            paginationPanel.addComponent(prev);
+            paginationPanel.addComponent(new EmptySpace(new TerminalSize(1, 0)));
+            paginationPanel.addComponent(next);
+
+            updatePage.run();
+            mainPanel.addComponent(new EmptySpace());
+            mainPanel.addComponent(paginationPanel);
         }
 
-        panel.addComponent(new EmptySpace());
-        panel.addComponent(new Button("⬅ Back", () -> {
+        mainPanel.addComponent(new EmptySpace());
+        mainPanel.addComponent(new Button("⬅ Back", () -> {
             window.close();
             SceneManager.get().switchTo(new CharacterOverview(gui, player));
         }));
 
-        window.setComponent(panel);
+        window.setComponent(mainPanel);
         window.setHints(List.of(Window.Hint.CENTERED));
         gui.addWindowAndWait(window);
     }
@@ -79,8 +120,6 @@ public class EquipArmorMenu implements Scene {
 
     @Override
     public void exit() {
-        if (window != null) {
-            gui.removeWindow(window);
-        }
+        if (window != null) gui.removeWindow(window);
     }
 }

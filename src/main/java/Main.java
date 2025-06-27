@@ -1,6 +1,5 @@
-
-
 import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.DefaultWindowManager;
 import com.googlecode.lanterna.gui2.EmptySpace;
 import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
@@ -8,6 +7,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 import scenes.manager.SceneManager;
 import scenes.menu.MainMenu;
 import scenes.ui.DevLogOverlay;
@@ -29,26 +29,34 @@ public class Main {
             DefaultTerminalFactory factory = new DefaultTerminalFactory()
                     .setTerminalEmulatorFontConfiguration(fontConfig)
                     .setPreferTerminalEmulator(true)
+                    .setInitialTerminalSize(new TerminalSize(200, 60))
                     .setTerminalEmulatorTitle("Text Adventure");
 
             Terminal terminal = factory.createTerminal();
+
+            // ⬇️ Maximize the Swing terminal window
+            if (terminal instanceof SwingTerminalFrame swingTerminal) {
+                swingTerminal.setExtendedState(Frame.MAXIMIZED_BOTH);
+                swingTerminal.setVisible(true);
+            }
+
             Screen screen = factory.createScreen();
             screen.startScreen();
 
             MultiWindowTextGUI gui = new MultiWindowTextGUI(
                     screen,
                     new DefaultWindowManager(),
-                    new EmptySpace(TextColor.ANSI.WHITE_BRIGHT) // background filler
+                    new EmptySpace(TextColor.ANSI.WHITE_BRIGHT)
             );
 
             // Load content
             ItemRegistry.loadAllItems();
             PortraitRegistry.loadAllPortraits();
 
-            //Display Developer Log
-            //DevLogOverlay.attach(gui);
+            // Developer overlay (optional)
+            // DevLogOverlay.attach(gui);
 
-            // Start main menu
+            // Launch main menu
             SceneManager.get().switchTo(new MainMenu(gui));
 
         } catch (Exception e) {
