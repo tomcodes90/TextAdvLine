@@ -30,10 +30,18 @@ public class UIHelper {
     }
 
     public static Panel textBlock(String label, String value) {
-        Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
-        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        block.addComponent(centeredLabel(label));
-        block.addComponent(valueLabel(value));
+        Panel block = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+
+        Label key = new Label(label + ": ");
+        key.setForegroundColor(TextColor.ANSI.BLUE);
+
+        Label val = new Label(value);
+        val.setForegroundColor(TextColor.ANSI.BLACK); // or TextColor.ANSI.DEFAULT for adaptive color
+
+        block.addComponent(key);
+        block.addComponent(val);
+
         return block;
     }
 
@@ -44,17 +52,24 @@ public class UIHelper {
 
     }
 
-
     public static Panel verticalListBlock(String title, List<String> items) {
         Panel block = new Panel(new LinearLayout(Direction.VERTICAL));
-        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
-        block.addComponent(centeredLabel(title));
+        block.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+
+        Label titleLabel = new Label(title);
+        titleLabel.setForegroundColor(TextColor.ANSI.BLUE);
+        titleLabel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        block.addComponent(titleLabel);
 
         for (String item : items) {
-            block.addComponent(valueLabel(item));
+            Label value = new Label("- " + item);
+            value.setForegroundColor(TextColor.ANSI.BLACK); // black on light terminals, white on dark
+            value.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Beginning));
+            block.addComponent(value);
         }
 
         return block;
     }
+
 
 }

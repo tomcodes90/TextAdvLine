@@ -26,29 +26,27 @@ public class LearnSpellsMenu implements Scene {
 
     @Override
     public void enter() {
-        window = new BasicWindow("-> Learn Spells");
+        window = new BasicWindow("Learn Spells");
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
 
-        panel.addComponent(new Label("Select a spellbook to learn from:"));
+        panel.addComponent(new Label("Select a spell-book:"));
         panel.addComponent(new EmptySpace());
 
         boolean hasBooks = false;
         for (Item item : player.getInventory().keySet()) {
             if (item instanceof Book book) {
                 hasBooks = true;
-                SpellType spellType = book.getSpellType();
-                Spell spell = SpellFactory.create(spellType);
-
-                panel.addComponent(new Button("📖 " + spell.getName(), () -> openSlotSelector(spell)));
+                panel.addComponent(new Button(
+                        "x " + book.getSpell().getName(),
+                        () -> openSlotSelector(book)
+                ));
             }
         }
 
-        if (!hasBooks) {
-            panel.addComponent(new Label("You don't have any books."));
-        }
+        if (!hasBooks) panel.addComponent(new Label("You don't have any books."));
 
         panel.addComponent(new EmptySpace());
-        panel.addComponent(new Button("⬅ Back", () -> {
+        panel.addComponent(new Button("← Back", () -> {
             window.close();
             SceneManager.get().switchTo(new CharacterOverview(gui, player));
         }));
@@ -58,50 +56,48 @@ public class LearnSpellsMenu implements Scene {
         gui.addWindowAndWait(window);
     }
 
-    private void openSlotSelector(Spell newSpell) {
-        BasicWindow selectWindow = new BasicWindow("🧠 Choose Slot");
+    /* -------- choose slot window -------- */
+    private void openSlotSelector(Book book) {
+        Spell newSpell = book.getSpell();
+
+        BasicWindow select = new BasicWindow("Choose Slot");
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
-        panel.addComponent(new Label("Choose a slot to equip:"));
+        panel.addComponent(new Label("Equip " + newSpell.getName() + " in which slot?"));
 
-        for (int i = 0; i < player.getSpellsEquipped().length; i++) {
+        for (int i = 0; i < 3; i++) {
             int slot = i;
-            String label = String.format("Slot %d: %s", slot + 1,
-                    player.getSpellsEquipped()[i] == null ? "(empty)" : player.getSpellsEquipped()[i].getName());
+            String current = player.getSpellsEquipped()[i] == null
+                    ? "(empty)" : String.valueOf(player.getSpellsEquipped()[i].getName());
 
+            String label = "Slot " + (slot + 1) + ": " + current;
             panel.addComponent(new Button(label, () -> {
-                // Prevent equipping duplicate spells in other slots
-                for (int j = 0; j < player.getSpellsEquipped().length; j++) {
-                    if (j != slot && newSpell.getName().equals(player.getSpellsEquipped()[j] != null
-                            ? player.getSpellsEquipped()[j].getName() : null)) {
-                        MessageDialog.showMessageDialog(gui, "Already Learned",
-                                "This spell is already equipped in another slot.");
+                /* ---- duplicate check ---- */
+                for (int j = 0; j < 3; j++) {
+                    if (j != slot && player.getSpellsEquipped()[j] != null &&
+                            player.getSpellsEquipped()[j].getName() == newSpell.getName()) {
+                        MessageDialog.showMessageDialog(gui, "Already equipped",
+                                "That spell is already in another slot.");
                         return;
                     }
                 }
+                /* ---- equip via book ---- */
+                book.use(player, slot);
 
-                // Prevent reassigning the same spell to the same slot
-                if (newSpell.getName().equals(player.getSpellsEquipped()[slot] != null
-                        ? player.getSpellsEquipped()[slot].getName() : null)) {
-                    MessageDialog.showMessageDialog(gui, "No Change",
-                            "This spell is already equipped in this slot.");
-                    return;
-                }
-
-                player.getSpellsEquipped()[slot] = newSpell;
                 MessageDialog.showMessageDialog(gui, "Learned",
-                        "Equipped " + newSpell.getName() + " to slot " + (slot + 1));
-                selectWindow.close();
+                        "Equipped " + newSpell.getName() + " in slot " + (slot + 1));
+                select.close();
             }));
         }
 
-        panel.addComponent(new Button("⬅ Cancel", selectWindow::close));
-        selectWindow.setComponent(panel);
-        selectWindow.setHints(List.of(Window.Hint.CENTERED));
-        gui.addWindowAndWait(selectWindow);
+        panel.addComponent(new Button("Cancel", select::close));
+        select.setComponent(panel);
+        select.setHints(List.of(Window.Hint.CENTERED));
+        gui.addWindowAndWait(select);
     }
 
     @Override
-    public void handleInput() {}
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

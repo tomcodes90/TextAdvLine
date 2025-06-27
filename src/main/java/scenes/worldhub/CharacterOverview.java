@@ -1,13 +1,14 @@
+// File: scenes/worldhub/CharacterOverview.java
 package scenes.worldhub;
 
 import characters.Player;
+import characters.StatsType;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import items.consumables.Consumable;
 import scenes.manager.Scene;
 import scenes.manager.SceneManager;
 import scenes.menu.*;
-import spells.Spell;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import static util.UIHelper.*;
 
 public class CharacterOverview implements Scene {
+
     private final WindowBasedTextGUI gui;
     private final Player player;
     private BasicWindow window;
@@ -26,84 +28,125 @@ public class CharacterOverview implements Scene {
         this.player = player;
     }
 
+    /* ───────────────────────────── helper ───────────────────────────── */
+    private static Panel centreBox(Component inner, int w, int h) {
+        Panel v = new Panel(new LinearLayout(Direction.VERTICAL));
+        v.setPreferredSize(new TerminalSize(w, h));
+        v.addComponent(new EmptySpace());
+        inner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        v.addComponent(inner);
+        v.addComponent(new EmptySpace());
+
+        Panel hWrap = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        hWrap.setPreferredSize(new TerminalSize(w, h));
+        v.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        hWrap.addComponent(v);
+        return hWrap;
+    }
+
+    /* ───────────────────────────── enter ────────────────────────────── */
     @Override
     public void enter() {
-        /* ------------ root window ------------ */
+
         window = new BasicWindow("Character Overview");
+        window.setHints(List.of(Window.Hint.CENTERED));
 
-        Panel mainPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        /* ─ Outer vertical wrapper ─ */
+        Panel outer = new Panel(new LinearLayout(Direction.VERTICAL));
+        outer.setPreferredSize(new TerminalSize(65, 40));
+        outer.addComponent(new EmptySpace());
 
-        /* ========== LEFT COLUMN (Info + Menu) ========== */
-        Panel infoPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        infoPanel.setPreferredSize(new TerminalSize(25, 23));
-        infoPanel.addComponent(textBlock("Name", player.getName()));
-        infoPanel.addComponent(textBlock("Level", String.valueOf(player.getLevel())));
-        infoPanel.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
+        /* ─ Root H-panel ─ */
+        Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
+        root.setPreferredSize(new TerminalSize(60, 40));
+        root.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-        Panel menuPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        menuPanel.setPreferredSize(new TerminalSize(25, 23));
-        menuPanel.addComponent(new Button("Inventory", () -> openSubmenu(new InventoryMenu(gui, player), window)));
-        menuPanel.addComponent(new Button("Equip Armor", () -> openSubmenu(new EquipArmorMenu(gui, player), window)));
-        menuPanel.addComponent(new Button("Equip Weapon", () -> openSubmenu(new EquipWeaponMenu(gui, player), window)));
-        menuPanel.addComponent(new Button("Learn Spells", () -> openSubmenu(new LearnSpellsMenu(gui, player), window)));
-        menuPanel.addComponent(new Button("Equip Items", () -> openSubmenu(new EquipItemsMenu(gui, player), window)));
-        menuPanel.addComponent(new EmptySpace());
-        menuPanel.addComponent(new Button("Back", () -> {
+        /* -------------------- common boxes -------------------- */
+        // Info
+        Panel infoInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        infoInner.addComponent(textBlock("Name", player.getName()));
+        infoInner.addComponent(textBlock("Level", String.valueOf(player.getLevel())));
+        infoInner.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
+        infoInner.addComponent(textBlock("EXP", String.valueOf(player.getExp())));
+        infoInner.addComponent(textBlock("Next Level", String.valueOf(player.getExpToLevelUp())));
+        Component infoBox = withBorder("Info", centreBox(infoInner, 25, 9));
+
+        // Menu
+        Panel menuInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        menuInner.addComponent(new Button("Inventory",
+                () -> openSubmenu(new InventoryMenu(gui, player), window)));
+        menuInner.addComponent(new Button("Equip Armor",
+                () -> openSubmenu(new EquipArmorMenu(gui, player), window)));
+        menuInner.addComponent(new Button("Equip Weapon",
+                () -> openSubmenu(new EquipWeaponMenu(gui, player), window)));
+        menuInner.addComponent(new Button("Learn Spells",
+                () -> openSubmenu(new LearnSpellsMenu(gui, player), window)));
+        menuInner.addComponent(new Button("Equip Items",
+                () -> openSubmenu(new EquipItemsMenu(gui, player), window)));
+        menuInner.addComponent(new EmptySpace());
+        menuInner.addComponent(new Button("Back", () -> {
             window.close();
             SceneManager.get().switchTo(new WorldHub(gui, player));
         }));
+        Component menuBox = withBorder("Menu", centreBox(menuInner, 25, 9));
 
-        Panel leftColumn = new Panel(new LinearLayout(Direction.VERTICAL));
-        leftColumn.setPreferredSize(new TerminalSize(25, 23));
-        leftColumn.addComponent(withBorder("Info", infoPanel));
-        leftColumn.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        leftColumn.addComponent(withBorder("Menu", menuPanel));
+        // Stats
+        Panel statsInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        statsInner.addComponent(textBlock("HP",
+                player.getStat(StatsType.HP) + "/" + player.getStat(StatsType.MAX_HP)));
+        statsInner.addComponent(textBlock("STR", String.valueOf(player.getStat(StatsType.STRENGTH))));
+        statsInner.addComponent(textBlock("INT", String.valueOf(player.getStat(StatsType.INTELLIGENCE))));
+        statsInner.addComponent(textBlock("DEF", String.valueOf(player.getStat(StatsType.DEFENSE))));
+        statsInner.addComponent(textBlock("SPD", String.valueOf(player.getStat(StatsType.SPEED))));
+        statsInner.addComponent(textBlock("Weakness", player.getElementalWeakness().toString()));
+        Component statsBox = withBorder("Stats", centreBox(statsInner, 25, 13));
 
-        /* ========== RIGHT COLUMN (Stats + Equipment) ========== */
-        Panel statsPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        statsPanel.setPreferredSize(new TerminalSize(25, 23));
-        statsPanel.addComponent(textBlock("HP", player.getStat(characters.StatsType.HP) + "/" +
-                player.getStat(characters.StatsType.MAX_HP)));
-        statsPanel.addComponent(textBlock("STR", String.valueOf(player.getStat(characters.StatsType.STRENGTH))));
-        statsPanel.addComponent(textBlock("INT", String.valueOf(player.getStat(characters.StatsType.INTELLIGENCE))));
-        statsPanel.addComponent(textBlock("DEF", String.valueOf(player.getStat(characters.StatsType.DEFENSE))));
-        statsPanel.addComponent(textBlock("SPD", String.valueOf(player.getStat(characters.StatsType.SPEED))));
-        statsPanel.addComponent(textBlock("Weakness", player.getElementalWeakness().toString()));
-
-        Panel equipPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        equipPanel.setPreferredSize(new TerminalSize(25, 23));
-        equipPanel.addComponent(textBlock("Armor",
+        // Equipment
+        Panel equipInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        equipInner.addComponent(textBlock("  Armor",
                 player.getArmor() != null ? player.getArmor().getName() : "None"));
-        equipPanel.addComponent(textBlock("Weapon",
+        equipInner.addComponent(textBlock("  Weapon",
                 player.getWeapon() != null ? player.getWeapon().getName() : "None"));
-        equipPanel.addComponent(verticalListBlock("Spells Equipped",
+        equipInner.addComponent(verticalListBlock("  Spells Equipped",
                 Arrays.stream(player.getSpellsEquipped())
                         .filter(Objects::nonNull)
-                        .map(spell -> spell.getName().toString())
+                        .map(sp -> sp.getName().toString())
                         .collect(Collectors.toList())));
-        equipPanel.addComponent(verticalListBlock("Consumables Equipped",
+        equipInner.addComponent(verticalListBlock("Consumables Equipped",
                 Arrays.stream(player.getConsumablesEquipped())
                         .filter(Objects::nonNull)
                         .map(Consumable::getName)
                         .collect(Collectors.toList())));
+        Component equipBox = withBorder("Equipment", centreBox(equipInner, 25, 13));
 
-        Panel rightColumn = new Panel(new LinearLayout(Direction.VERTICAL));
-        rightColumn.setPreferredSize(new TerminalSize(45, 25));
-        rightColumn.addComponent(withBorder("Stats", statsPanel));
-        rightColumn.addComponent(new EmptySpace(new TerminalSize(1, 1)));
-        rightColumn.addComponent(withBorder("Equipment", equipPanel));
+        /* ========== LEFT COLUMN (Equipment + Menu) ========== */
+        Panel leftCol = new Panel(new LinearLayout(Direction.VERTICAL));
+        leftCol.setPreferredSize(new TerminalSize(25, 40));
+        Panel rightCol = new Panel(new LinearLayout(Direction.VERTICAL));
+        rightCol.setPreferredSize(new TerminalSize(45, 40));
 
-        /* ------------ assemble & show ------------ */
-        mainPanel.addComponent(leftColumn);
-        mainPanel.addComponent(rightColumn);
+        rightCol.addComponent(menuBox);        // <-- swapped here
+        rightCol.addComponent(new EmptySpace());
+        rightCol.addComponent(equipBox);
+        leftCol.addComponent(infoBox);       // now on top
+        leftCol.addComponent(new EmptySpace());
+        leftCol.addComponent(statsBox);        // now on bottom
 
-        window.setComponent(mainPanel);
-        window.setHints(List.of(Window.Hint.CENTERED));
+        /* assemble */
+        root.addComponent(leftCol);
+        root.addComponent(rightCol);
+
+        outer.addComponent(root);
+        outer.addComponent(new EmptySpace());
+
+        window.setComponent(outer);
         gui.addWindowAndWait(window);
     }
 
+    /* ───────────────────────────── boilerplate ─────────────────────── */
     @Override
-    public void handleInput() { /* none */ }
+    public void handleInput() {
+    }
 
     @Override
     public void exit() {

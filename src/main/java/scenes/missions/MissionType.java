@@ -9,5 +9,13 @@ public enum MissionType {
     MISSION_5,
     MISSION_6,
     MISSION_7,
-    MISSION_8,
+    MISSION_8;
+
+    @Override
+    public String toString() {
+        if (this == TUTORIAL) {
+            return "Tutorial";
+        }
+        return name().replace("MISSION_", "Mission ");
+    }
 }

@@ -28,70 +28,97 @@ public class WorldHub implements Scene {
 
     @Override
     public void enter() {
-        /* ---------- Window ---------- */
         window = new BasicWindow("World Hub");
         window.setHints(List.of(Window.Hint.CENTERED));
 
-        /* ---------- Root (horizontal) ---------- */
+        // Outer root panel to center everything
+        Panel outer = new Panel();
+        outer.setLayoutManager(new LinearLayout(Direction.VERTICAL));
+        outer.setPreferredSize(new TerminalSize(70, 12)); // Optional, adjust as needed
+
+        // Add vertical spacing
+        outer.addComponent(new EmptySpace());
+
+        // Inner panel to hold content centered horizontally
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        root.setPreferredSize(new TerminalSize(60, 18));   // more space
+        root.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        root.setPreferredSize(new TerminalSize(60, 10));
 
         /* ---------- INFO Column ---------- */
-        Panel infoPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-        infoPanel.addComponent(centeredLabel("Player Info"));
-        infoPanel.addComponent(textBlock("Name", player.getName()));
-        infoPanel.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
-        infoPanel.addComponent(textBlock("Mission", GameState.get().getMissionFlag() != null
-                ? GameState.get().getMissionFlag().name()
+        Panel infoInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        infoInner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        infoInner.addComponent(textBlock("Name", player.getName()));
+        infoInner.addComponent(textBlock("Gold", String.valueOf(player.getGold())));
+        infoInner.addComponent(textBlock("Mission", GameState.get().getMissionFlag() != null
+                ? GameState.get().getMissionFlag().toString()
                 : "—"));
+
+        Panel infoPanel = new Panel(new LinearLayout(Direction.VERTICAL));
+        infoPanel.setPreferredSize(new TerminalSize(20, 10));
+        infoPanel.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        infoPanel.addComponent(new EmptySpace());
+        infoPanel.addComponent(infoInner);
+        infoPanel.addComponent(new EmptySpace());
+
         Component borderedInfo = withBorder("Info", infoPanel);
 
         /* ---------- MENU Column ---------- */
-        Panel menuButtons = new Panel(new LinearLayout(Direction.VERTICAL));
-        menuButtons.addComponent(new Button("Continue Story", () -> {
+        Panel menuInner = new Panel(new LinearLayout(Direction.VERTICAL));
+        menuInner.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        menuInner.addComponent(new Button("Continue Story", () -> {
             window.close();
-            SceneManager.get().switchTo(new Story(gui));   // replace if you have chapter selector
+            SceneManager.get().switchTo(new Story(gui));
         }));
-        menuButtons.addComponent(new Button("Explore (Random Battle)", () -> {
+        menuInner.addComponent(new Button("Explore (Random Battle)", () -> {
             window.close();
             SceneManager.get().switchTo(new Exploration((MultiWindowTextGUI) gui, player));
         }));
-        menuButtons.addComponent(new Button("Visit Shop", () -> {
+        menuInner.addComponent(new Button("Visit Shop", () -> {
             window.close();
             SceneManager.get().switchTo(new Shop(gui, player));
         }));
-        menuButtons.addComponent(new Button("Character Overview", () -> {
+        menuInner.addComponent(new Button("Character Overview", () -> {
             window.close();
             SceneManager.get().switchTo(new CharacterOverview(gui, player));
         }));
-
-        menuButtons.addComponent(new Button("Save Game", () -> {
-            GameState.get().getPlayer().rebuildSpellsFromIds();       // ensure arrays in sync
-            GameState.get().getPlayer().rebuildConsumablesFromIds();  // (not mandatory if already synced)W
+        menuInner.addComponent(new Button("Save Game", () -> {
+            GameState.get().getPlayer().rebuildSpellsFromIds();
+            GameState.get().getPlayer().rebuildConsumablesFromIds();
             boolean success = GameState.get().saveToFile();
             MessageDialog.showMessageDialog(gui, "Save Game",
                     success ? "Game saved successfully!" : "Failed to save game.");
         }));
-        menuButtons.addComponent(new Button("Exit to Main Menu", () -> {
+        menuInner.addComponent(new Button("Exit to Main Menu", () -> {
             window.close();
             SceneManager.get().switchTo(new MainMenu((MultiWindowTextGUI) gui));
         }));
+
+        Panel menuButtons = new Panel(new LinearLayout(Direction.VERTICAL));
+        menuButtons.setPreferredSize(new TerminalSize(40, 10));
+        menuButtons.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
+        menuButtons.addComponent(new EmptySpace()); // Top spacing
+        menuButtons.addComponent(menuInner);
+        menuButtons.addComponent(new EmptySpace()); // Bottom spacing
+
         Component borderedMenu = withBorder("Menu", menuButtons);
 
-        /* ---------- Assemble ---------- */
+
         root.addComponent(borderedInfo);
-        root.addComponent(new EmptySpace(new TerminalSize(2, 1)));
         root.addComponent(borderedMenu);
 
-        window.setComponent(root);
+        // Add root to outer, with vertical alignment
+        outer.addComponent(root);
+        outer.addComponent(new EmptySpace()); // Bottom spacing
+
+        window.setComponent(outer);
         gui.addWindowAndWait(window);
 
-        // Debug log
         DeveloperLogger.log("WorldHub entered, mission flag: "
                 + (GameState.get().getMissionFlag() != null
                 ? GameState.get().getMissionFlag()
                 : "NONE"));
     }
+
 
     @Override
     public void handleInput() { /* blocking */ }

@@ -24,8 +24,7 @@ public class Book extends Item {
     }
 
     public void use(Entity entity, int slot) {
-        // You can improve this logic later to assign to next available slot
-        entity.getSpellsEquipped()[slot] = spell;
+        entity.equipSpell(slot, spellType);  // one-liner now
     }
 
     public Spell getSpell() {
