@@ -1,3 +1,24 @@
+/**
+ * 🏪 Shop: The item purchasing and selling screen.
+ * Lets the player buy items unlocked by mission progress or sell items in their inventory.
+ * <p>
+ * 🧩 Features:
+ * - Displays item list in pages (5 items per page).
+ * - Dynamically filters available items depending on mission progression.
+ * - Shows effects depending on item type (e.g., stat boosts, damage, defense).
+ * - Handles gold updates and inventory adjustments for purchases/sales.
+ * <p>
+ * 📘 UI Notes:
+ * - Menu built using Lanterna panels and buttons.
+ * - Pagination supported via Prev/Next buttons.
+ * - Includes confirmation dialog when selling.
+ * <p>
+ * 🧠 Dev Notes:
+ * - Item unlocks are hardcoded in `isItemUnlocked()` based on mission flag.
+ * - This shop is non-persistent: no vendor stock or quantity limits.
+ * - BasicWindow is reused per section (buy/sell) with `gui.addWindowAndWait()`.
+ */
+
 package scenes.worldhub;
 
 import characters.Player;
@@ -6,7 +27,6 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialog;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogButton;
 import items.Item;
-import items.consumables.Potion;
 import items.consumables.StatEnhancer;
 import items.equip.Armor;
 import items.equip.Weapon;
@@ -57,6 +77,9 @@ public class Shop implements Scene {
         showPaginatedItemMenu("Sell Items", false);
     }
 
+    /**
+     * Renders a paginated list of items (either buying or selling mode).
+     */
     private void showPaginatedItemMenu(String title, boolean isBuying) {
         BasicWindow menuWindow = new BasicWindow(title);
         Panel mainPanel = new Panel(new LinearLayout(Direction.VERTICAL));
@@ -64,11 +87,11 @@ public class Shop implements Scene {
         mainPanel.addComponent(goldLabel);
         mainPanel.addComponent(new EmptySpace());
 
-        List<Item> allItems = isBuying ?
-                ItemRegistry.getAllItems().stream()
-                        .filter(item -> item.getPrice() > 0 && isItemUnlocked(item, GameState.get().getMissionFlag()))
-                        .sorted(Comparator.comparing(Item::getName))
-                        .toList()
+        List<Item> allItems = isBuying
+                ? ItemRegistry.getAllItems().stream()
+                .filter(item -> item.getPrice() > 0 && isItemUnlocked(item, GameState.get().getMissionFlag()))
+                .sorted(Comparator.comparing(Item::getName))
+                .toList()
                 : player.getInventory().keySet().stream()
                 .filter(item -> item.getPrice() > 0)
                 .sorted(Comparator.comparing(Item::getName))
@@ -89,7 +112,9 @@ public class Shop implements Scene {
                 Item item = allItems.get(i);
 
                 Panel itemPanel = new Panel(new LinearLayout(Direction.VERTICAL));
-                itemPanel.addComponent(new Label(item.getName() + (isBuying ? " - " + item.getPrice() + "g" : " x" + player.getInventory().getOrDefault(item, 0) + " - " + item.getPrice() + "g")));
+                itemPanel.addComponent(new Label(item.getName() + (isBuying
+                        ? " - " + item.getPrice() + "g"
+                        : " x" + player.getInventory().getOrDefault(item, 0) + " - " + item.getPrice() + "g")));
                 itemPanel.addComponent(new Label(item.getDescription()));
                 itemPanel.addComponent(new Label(getEffectText(item)));
 
@@ -119,11 +144,11 @@ public class Shop implements Scene {
 
                 itemPanel.addComponent(actionButton);
                 itemPanel.addComponent(new EmptySpace());
-
                 itemListPanel.addComponent(itemPanel);
             }
         };
 
+        // === Pagination Buttons ===
         Panel paginationPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
         Button prev = new Button("< Prev", () -> {
             if (currentPage[0] > 0) {
@@ -137,7 +162,6 @@ public class Shop implements Scene {
                 updatePage.run();
             }
         });
-
         paginationPanel.addComponent(prev);
         paginationPanel.addComponent(new EmptySpace(new TerminalSize(1, 0)));
         paginationPanel.addComponent(next);
@@ -152,6 +176,9 @@ public class Shop implements Scene {
         gui.addWindowAndWait(menuWindow);
     }
 
+    /**
+     * Determines if the given item is available for purchase based on mission progress.
+     */
     private boolean isItemUnlocked(Item item, MissionType currentMission) {
         String id = item.getId();
         return switch (id) {
@@ -171,6 +198,9 @@ public class Shop implements Scene {
         };
     }
 
+    /**
+     * Returns a short description of an item’s effect based on its type.
+     */
     private String getEffectText(Item item) {
         if (item instanceof StatEnhancer s) {
             return "+" + s.getPointsToApply() + " for " + s.getLength() + " turns";
@@ -180,10 +210,6 @@ public class Shop implements Scene {
             return "Def: " + a.getDefensePoints();
         }
         return " ";
-    }
-
-    @Override
-    public void handleInput() {
     }
 
     @Override

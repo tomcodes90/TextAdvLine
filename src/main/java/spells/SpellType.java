@@ -1,5 +1,13 @@
 package spells;
 
+/**
+ * Enum: SpellType
+ * <p>
+ * Purpose:
+ * Defines all the types of spells available in the game.
+ * Used for spell selection, book creation, and factory instantiation.
+ * Each spell has a fun, thematic display name.
+ */
 public enum SpellType {
     // Non-elemental
     ENERGYBLAST("BoomaZap"),
@@ -17,7 +25,7 @@ public enum SpellType {
     VINEWHIP("GreenSlap"),
     THORNSURGE("SicilianRoses"),
 
-    // Replacing utility with new damage spells
+    // Special
     MEATBALLMETEOR("PizzaRevenge"),
     GARLICNOVA("GarlicNova O_O");
 

@@ -5,6 +5,22 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.gui2.ActionListBox;
 
+/**
+ * ===============================
+ * SafeActionListBox
+ * ===============================
+ * <p>
+ * Purpose:
+ * Custom ActionListBox that safely handles up/down key strokes.
+ * Prevents the user from moving above the first item or below the last item,
+ * avoiding the default Lanterna behavior that makes the selection "disappear"
+ * when pressing arrow keys at the boundaries.
+ * <p>
+ * Usage:
+ * Replace `new ActionListBox(...)` with `new SafeActionListBox(...)` in any menu
+ * that uses arrow navigation for a more user-friendly experience.
+ */
+
 public class SafeActionListBox extends ActionListBox {
 
     public SafeActionListBox(TerminalSize size) {

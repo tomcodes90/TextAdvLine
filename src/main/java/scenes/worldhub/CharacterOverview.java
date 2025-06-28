@@ -18,6 +18,25 @@ import java.util.stream.Collectors;
 
 import static util.UIHelper.*;
 
+/**
+ * 🧍 CharacterOverview: Displays a full summary of the player's status.
+ * This screen is accessible from the WorldHub and acts as a character profile hub.
+ * <p>
+ * 🧩 Layout Overview:
+ * - Horizontal root with two vertical columns:
+ * 🔹 Left Column: Info (name, gold, exp), Stats (HP, STR, etc.)
+ * 🔹 Right Column: Menu (equip, inventory, etc.), Equipment (gear + spells/items equipped)
+ * <p>
+ * 📘 UI Notes:
+ * - Uses `centreBox()` and `withBorder()` helpers to wrap sections consistently.
+ * - Stats are dynamically pulled from the Player instance.
+ * - Menu buttons open respective submenus using the common openSubmenu pattern.
+ * <p>
+ * 🧠 Dev Notes:
+ * - This screen is read-only; all interactions route to dedicated submenus.
+ * - Uses `EmptySpace()` liberally for spacing and alignment.
+ */
+
 public class CharacterOverview implements Scene {
 
     private final WindowBasedTextGUI gui;
@@ -166,12 +185,26 @@ public class CharacterOverview implements Scene {
     }
 
     /* ───────────────────────────── boilerplate ─────────────────────── */
-    @Override
-    public void handleInput() {
-    }
 
     @Override
     public void exit() {
         if (window != null) gui.removeWindow(window);
     }
 }
+/*
+  🧩 Layout Overview:
+  ┌────────────────────────────┬─────────────────────────────┐
+  │        INFO BOX            │          MENU BOX           │
+  │  - Name, Level, Gold       │  - Inventory                │
+  │  - EXP, Next Level         │  - Equip Armor              │
+  ├────────────────────────────┤  - Equip Weapon             │
+  │        STATS BOX           │  - Learn Spells             │
+  │  - HP, STR, INT, DEF, SPD  │  - Equip Items              │
+  │  - Weakness                │                             │
+  └────────────────────────────┼─────────────────────────────┘
+  │        EQUIPMENT BOX        │
+  │  - Armor / Weapon           │
+  │  - Spells Equipped          │
+  │  - Items Equipped           │
+  └─────────────────────────────┘
+ */

@@ -1,3 +1,4 @@
+// File: scenes/missions/Mission4.java
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -15,36 +16,52 @@ import util.ItemRegistry;
 
 import java.util.List;
 
+/**
+ * Mission4 – San Marzano Groves
+ * <p>
+ * This scene represents the fourth mission of the game.
+ * The player makes a branching path decision (stealthy tunnel or frontal assault),
+ * fights enemies depending on the choice, and finally confronts a boss (Ricottelli Chef).
+ * <p>
+ * The class uses Lanterna's `MultiWindowTextGUI` to safely show battle and dialogue screens.
+ * ⚠️ Lanterna UI rules: Windows must be added/removed from the same GUI thread, and transitions
+ * must happen using SceneManager to prevent UI freezing or race conditions.
+ */
 public class Mission4 implements Scene {
-    private final MultiWindowTextGUI gui;
-    private final DialogueService dialogueService;
-    private int step = 0;
-    private Path path;
-    private int playerLevel;
-    private final String playerName;
+    private final MultiWindowTextGUI gui;             // Lanterna GUI controller
+    private final DialogueService dialogueService;    // Manages running dialogues
+    private int step = 0;                             // Current step in mission flow
+    private Path path;                                // Chosen path by player
+    private final int playerLevel = GameState.get().getPlayer().getLevel();
+    private final String name = GameState.get().getPlayer().getName();
 
+    // Internal enum to track player's chosen route
     private enum Path {SMUGGLER_ROUTE, FRONT_GATE}
 
     public Mission4(MultiWindowTextGUI gui) {
         this.gui = gui;
         this.dialogueService = DialogueService.getInstance();
-        this.playerName = GameState.get().getPlayer().getName();
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // Scene lifecycle methods
+    // ──────────────────────────────────────────────────────────────
 
     @Override
     public void enter() {
+        // Attach GUI to dialogue UI before starting
         dialogueService.setUI(new DialogueUI(gui));
-        playerLevel = GameState.get().getPlayer().getLevel();
         nextStep();
     }
 
     @Override
-    public void handleInput() {
+    public void exit() {
+        // No cleanup necessary
     }
 
-    @Override
-    public void exit() {
-    }
+    // ──────────────────────────────────────────────────────────────
+    // Step-by-step mission flow controller
+    // ──────────────────────────────────────────────────────────────
 
     private void nextStep() {
         switch (step++) {
@@ -59,16 +76,24 @@ public class Mission4 implements Scene {
         }
     }
 
+    // ──────────────────────────────────────────────────────────────
+    // Step 0: Mission intro
+    // ──────────────────────────────────────────────────────────────
+
     private void introDialogue() {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "San Marzano – where the ground bubbles with sauce and tomatoes ripen in volcanic ash."),
-                new Dialogue("Narrator", "Nonna says the secret to the perfect lasagna lies in these lands."),
-                new Dialogue("Nonna", String.format("%s, these tomatoes aren't your supermarket garbage. They're blessed by fire and forged in flavor.", playerName)),
+                new Dialogue("Narrator", "Nonna says the secret to perfection lies in these lands."),
+                new Dialogue("Nonna", String.format("%s, these tomatoes aren't your every day garbage. They're blessed by fire and forged in flavor.", name)),
                 new Dialogue("Nonna", "If you ruin this, don't bother coming home. Even the basil will judge you."),
-                new Dialogue(playerName, "Got it. No pressure, right?"),
+                new Dialogue("Hero", "Got it. No pressure, right?"),
                 new Dialogue("Nonna", "Pressure? Please. This is a tomato, not your sad little ego.")
         ), this::nextStep);
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // Step 1: Branching path choice (affects enemy + dialog)
+    // ──────────────────────────────────────────────────────────────
 
     private void pathChoice() {
         DialogueWithInput choice = new DialogueWithInput(
@@ -89,6 +114,10 @@ public class Mission4 implements Scene {
         dialogueService.runDialogueWithInput(choice);
     }
 
+    // ──────────────────────────────────────────────────────────────
+    // Step 2: Path-based flavor dialogue before battle
+    // ──────────────────────────────────────────────────────────────
+
     private void preBattleDialogue() {
         if (path == Path.SMUGGLER_ROUTE) {
             dialogueService.runDialogues(List.of(
@@ -105,11 +134,15 @@ public class Mission4 implements Scene {
         }
     }
 
+    // ──────────────────────────────────────────────────────────────
+    // Step 3: First enemy battle (depends on chosen path)
+    // ──────────────────────────────────────────────────────────────
+
     private void encounterBattle() {
         Battle battle = switch (path) {
             case SMUGGLER_ROUTE -> new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createBandit(playerLevel));
             case FRONT_GATE ->
-                    new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createRicottelliScout(playerLevel + 1));
+                    new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createRicottelliScout(playerLevel));
         };
 
         battle.setOnBattleEnd(r -> {
@@ -120,17 +153,26 @@ public class Mission4 implements Scene {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // Step 4: Flavor dialog before boss fight
+    // ──────────────────────────────────────────────────────────────
 
     private void preBossDialogue() {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "You reach the heart of the grove: a bubbling sauce forge guarded by..."),
                 new Dialogue("Narrator", "A Ricottelli Chef – muscles glazed with oil, wielding a spoon like a mace."),
                 new Dialogue("Hero", "Let's turn up the heat."),
-                new Dialogue("Nonna", String.format("Make me proud, %s. Show that impostore what real sauce tastes like!", playerName))
+                new Dialogue("Nonna", String.format("Make me proud, %s. Show that impostore what real sauce tastes like!", name))
         ), this::nextStep);
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // Step 5: Boss fight vs Ricottelli Chef
+    // ──────────────────────────────────────────────────────────────
 
     private void bossBattle() {
         Battle battle = new Battle(gui,
@@ -148,25 +190,34 @@ public class Mission4 implements Scene {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
+
+    // ──────────────────────────────────────────────────────────────
+    // Step 6: Closing dialogue and transition to hub
+    // ──────────────────────────────────────────────────────────────
 
     private void outroDialogue() {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "You bottle the sacred San Marzano sauce. The air is thick with spice and triumph."),
-                new Dialogue(playerName, "Nonna, I’ve got it. Still hot. Still pure."),
-                new Dialogue("Nonna", String.format("Don’t spill a drop, %s, or I’ll make you lick it off the lava rocks.", playerName)),
-                new Dialogue(playerName, "Understood."),
+                new Dialogue("Hero", "Nonna, I’ve got it. Still hot. Still pure."),
+                new Dialogue("Nonna", String.format("Don’t spill a drop, %s, or I’ll make you lick it off the lava rocks.", name)),
+                new Dialogue("Hero", "Understood."),
                 new Dialogue("Nonna", "Good. You're finally starting to cook with passion. Not talent – we’re not there yet."),
-                new Dialogue("Narrator", "The lasagna nears completion. But the greatest challenge lies ahead...")
+                new Dialogue("Narrator", "The dish nears completion. But the greatest challenge lies ahead...")
         ), this::nextStep);
     }
 
+    // ──────────────────────────────────────────────────────────────
+    // Utility: Handle loss or fleeing
+    // ──────────────────────────────────────────────────────────────
+
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", r == BattleResult.DEFEAT ?
-                                "You collapse into a pool of bubbling sauce. Your journey ends medium-rare." :
-                                "You flee, leaving the sacred tomatoes behind. Nonna is... disappointed.")),
-                () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
+                new Dialogue("Narrator", r == BattleResult.DEFEAT ?
+                        "You collapse into a pool of bubbling sauce. Your journey ends medium-rare." :
+                        "You flee, leaving the sacred tomatoes behind. Nonna is... disappointed.")
+        ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
 }

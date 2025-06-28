@@ -1,3 +1,27 @@
+// File: scenes/missions/Mission2.java
+
+/*
+ * Mission 2 – “The Emerald Basil Crown”
+ *
+ * In this mission, the player infiltrates Santa Verde to retrieve a legendary basil relic.
+ * It features:
+ *  1. Intro with Nonna's warning
+ *  2. Infiltration choice: stealth (tunnel) or distraction (cart crash)
+ *  3. Route-based battle (Basil Cultist or Ricottelli Priest)
+ *  4. Encounter and battle with boss (Pesto Monk)
+ *  5. Reward: player receives the Sugo Flare book
+ *  6. Outro and transition back to World Hub
+ *
+ * Implementation notes:
+ *  - Mission flow is tracked by `step` and routed through `nextStep()`
+ *  - Infiltration path is tracked via the `Route` enum
+ *  - Rewards are handled directly after boss victory using GameState and ItemRegistry
+ *
+ * ⚠ Lanterna notes:
+ *  - Asynchronous transitions (battle → resume) must always call SceneManager.switchTo(this)
+ *  - GUI message dialogs are used for item pickup notifications
+ */
+
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -16,6 +40,7 @@ import util.ItemRegistry;
 import java.util.List;
 
 public class Mission2 implements Scene {
+
     private final MultiWindowTextGUI gui;
     private final DialogueService dialogueService;
     private int step = 0;
@@ -37,12 +62,10 @@ public class Mission2 implements Scene {
     }
 
     @Override
-    public void handleInput() {
-    }
-
-    @Override
     public void exit() {
     }
+
+    // ───────────────────────────── Step Routing ─────────────────────────────
 
     private void nextStep() {
         switch (step++) {
@@ -57,6 +80,8 @@ public class Mission2 implements Scene {
         }
     }
 
+    // ───────────────────────────── Step 0 – Intro ─────────────────────────────
+
     private void introDialogue() {
         String name = GameState.get().getPlayer().getName();
 
@@ -68,6 +93,8 @@ public class Mission2 implements Scene {
                 new Dialogue("Nonna", "Save the cake talk for dessert. Now move!")
         ), this::nextStep);
     }
+
+    // ──────────────── Step 1 – Infiltration Path Selection ────────────────
 
     private void infiltrationChoice() {
         DialogueWithInput choice = new DialogueWithInput(
@@ -88,22 +115,26 @@ public class Mission2 implements Scene {
         dialogueService.runDialogueWithInput(choice);
     }
 
-    private void preRouteBattleDialogue() {
-        String name = GameState.get().getPlayer().getName();
+    // ───────────── Step 2 – Pre-Battle Flavor for Route ─────────────
 
+    private void preRouteBattleDialogue() {
         List<Dialogue> dialogues = switch (route) {
             case STEALTH -> List.of(
                     new Dialogue("Narrator", "You slide into the tunnels, damp and mossy. The scent of basil is overwhelming."),
                     new Dialogue("Hero", "Stealth mode activated. Let's just hope there's no guard enjoying a tunnel stroll."),
-                    new Dialogue("Narrator", "A hooded figure blocks the way — a Basil Cultist!"));
+                    new Dialogue("Narrator", "A hooded figure blocks the way — a Basil Cultist!")
+            );
             case DISTRACTION -> List.of(
                     new Dialogue("Narrator", "You roll the sauce cart downhill. It crashes spectacularly. Guards rush over in chaos."),
                     new Dialogue("Hero", "Nonna’s tomato special — now weaponized."),
-                    new Dialogue("Narrator", "Amid the confusion, a Ricottelli Priest steps forward, suspicious and armed."));
+                    new Dialogue("Narrator", "Amid the confusion, a Ricottelli Priest steps forward, suspicious and armed.")
+            );
         };
 
         dialogueService.runDialogues(dialogues, this::nextStep);
     }
+
+    // ───────────── Step 3 – Route Battle (Cultist or Priest) ─────────────
 
     private void routeBattle() {
         Battle battle = switch (route) {
@@ -120,20 +151,24 @@ public class Mission2 implements Scene {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
 
+    // ───────────── Step 4 – Boss Battle Intro Dialogue ─────────────
+
     private void preBossBattleDialogue() {
-        String name = GameState.get().getPlayer().getName();
 
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "You slip into the inner sanctum. At its center: the Emerald Basil Crown on a velvet pillow."),
                 new Dialogue("Hero", "There it is..."),
                 new Dialogue("Narrator", "Before you can grab it, the doors slam shut. A figure emerges — the Pesto Monk."),
-                new Dialogue("Pesto Monk", "You dare trespass in Santa Verde's sacred garden? Prepare to be blended, intruder."),
+                new Dialogue("Pestomonk", "You dare trespass in Santa Verde's sacred garden? Prepare to be blended, intruder."),
                 new Dialogue("Hero", "Not before I pluck that basil and season your defeat.")
         ), this::nextStep);
     }
+
+    // ───────────── Step 5 – Boss Battle vs. Pesto Monk ─────────────
 
     private void bossBattle() {
         Battle battle = new Battle(gui,
@@ -144,15 +179,21 @@ public class Mission2 implements Scene {
             if (r == BattleResult.VICTORY) {
                 DeveloperLogger.log("Boss defeated");
                 GameState.get().setMissionFlag(MissionType.MISSION_2);
+
+                // Reward: Sugo Flare book
                 MessageDialog.showMessageDialog(gui, "Item Found", "You found the Sugo Flare book!");
                 GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_flare"));
+
                 SceneManager.get().switchTo(this);
             } else {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
+
+    // ───────────── Step 6 – Outro and Transition ─────────────
 
     private void outroDialogue() {
         String name = GameState.get().getPlayer().getName();
@@ -168,11 +209,13 @@ public class Mission2 implements Scene {
         ), this::nextStep);
     }
 
+    // ───────────── Battle Loss / Flee Consequence ─────────────
+
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", r == BattleResult.DEFEAT ?
-                                "You fall in the basil fields, choking on herbs and regret." :
-                                "You flee Santa Verde, empty-handed. Nonna will not forget this.")),
-                () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
+                new Dialogue("Narrator", r == BattleResult.DEFEAT
+                        ? "You fall in the basil fields, choking on herbs and regret."
+                        : "You flee Santa Verde, empty-handed. Nonna will not forget this.")
+        ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
 }

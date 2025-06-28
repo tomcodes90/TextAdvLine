@@ -14,6 +14,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Scene for equipping consumable items to quick-access slots.
+ * <p>
+ * === Lanterna Notes ===
+ * - We use `Panel`, `Label`, and `Button` from Lanterna to create structured terminal UIs.
+ * - `WindowBasedTextGUI` manages windows and modal dialogues (`addWindowAndWait` blocks until the user closes the window).
+ * - Threading is important: all GUI manipulations must happen in the Lanterna thread.
+ * If misused, it can cause deadlocks or unresponsive interfaces.
+ * - Lanterna requires manual state cleanup (`removeWindow()`, `setHints()`) to prevent stack buildup.
+ */
 public class EquipItemsMenu implements Scene {
     private final WindowBasedTextGUI gui;
     private final Player player;
@@ -28,11 +38,14 @@ public class EquipItemsMenu implements Scene {
 
     @Override
     public void enter() {
-        window = new BasicWindow("🧪 Equip Consumables");
+        window = new BasicWindow("Equip Consumables");
+
+        // === Main vertical layout container ===
         Panel mainPanel = new Panel(new LinearLayout(Direction.VERTICAL));
         mainPanel.addComponent(new Label("Select a consumable to equip:"));
         mainPanel.addComponent(new EmptySpace());
 
+        // === Get list of consumables from inventory ===
         List<Consumable> consumables = player.getInventory().keySet().stream()
                 .filter(item -> item instanceof Consumable)
                 .map(item -> (Consumable) item)
@@ -42,6 +55,7 @@ public class EquipItemsMenu implements Scene {
         if (consumables.isEmpty()) {
             mainPanel.addComponent(new Label("You have no consumables in your inventory."));
         } else {
+            // === Pagination Setup ===
             int totalPages = (int) Math.ceil(consumables.size() / (double) ITEMS_PER_PAGE);
             final int[] currentPage = {0};
 
@@ -67,6 +81,7 @@ public class EquipItemsMenu implements Scene {
                 }
             };
 
+            // === Page Navigation Controls ===
             Panel paginationPanel = new Panel(new LinearLayout(Direction.HORIZONTAL));
             Button prev = new Button("< Prev", () -> {
                 if (currentPage[0] > 0) {
@@ -85,23 +100,29 @@ public class EquipItemsMenu implements Scene {
             paginationPanel.addComponent(new EmptySpace(new TerminalSize(1, 0)));
             paginationPanel.addComponent(next);
 
-            updatePage.run();
+            updatePage.run(); // Initial render
             mainPanel.addComponent(paginationPanel);
         }
 
+        // === Back Button ===
         mainPanel.addComponent(new EmptySpace());
-        mainPanel.addComponent(new Button("⬅ Back", () -> {
+        mainPanel.addComponent(new Button("<- Back", () -> {
             window.close();
             SceneManager.get().switchTo(new CharacterOverview(gui, player));
         }));
 
+        // === Final window setup ===
         window.setComponent(mainPanel);
-        window.setHints(List.of(Window.Hint.CENTERED));
-        gui.addWindowAndWait(window);
+        window.setHints(List.of(Window.Hint.CENTERED)); // Center the window on screen
+        gui.addWindowAndWait(window); // Blocks until window is closed
     }
 
+    /**
+     * Prompts the user to select a slot (1–3) to equip the selected consumable.
+     * Enforces no duplicates across slots and handles inventory logic.
+     */
     private void openSlotSelector(Consumable consumable) {
-        BasicWindow slotWindow = new BasicWindow("🎯 Choose Slot");
+        BasicWindow slotWindow = new BasicWindow("Choose Slot");
         Panel panel = new Panel(new LinearLayout(Direction.VERTICAL));
 
         panel.addComponent(new Label("Choose a slot to equip:"));
@@ -115,6 +136,7 @@ public class EquipItemsMenu implements Scene {
             String label = String.format("Slot %d: %s", slot + 1, current);
 
             panel.addComponent(new Button(label, () -> {
+                // Prevent duplicates
                 for (int j = 0; j < player.getConsumablesEquipped().length; j++) {
                     if (j != slot && consumable.equals(player.getConsumablesEquipped()[j])) {
                         MessageDialog.showMessageDialog(gui, "Already Equipped", "This item is already equipped in another slot.");
@@ -127,39 +149,38 @@ public class EquipItemsMenu implements Scene {
                     return;
                 }
 
+                // Check if enough in inventory
                 int count = player.getInventory().getOrDefault(consumable, 0);
                 if (count < 1) {
                     MessageDialog.showMessageDialog(gui, "Unavailable", "You don't have any more of this item.");
                     return;
                 }
 
+                // Swap out old item if needed
                 Consumable old = player.getConsumablesEquipped()[slot];
                 if (old != null) {
                     player.addItemToInventory(old);
                 }
 
+                // Equip new item
                 player.removeItemFromInventory(consumable);
                 player.assignConsumableToSlot(consumable, slot);
 
                 MessageDialog.showMessageDialog(gui, "Equipped", consumable.getName() + " equipped to slot " + (slot + 1));
                 slotWindow.close();
                 window.close();
-                SceneManager.get().switchTo(new EquipItemsMenu(gui, player));
+                SceneManager.get().switchTo(new EquipItemsMenu(gui, player)); // Refresh scene
             }));
         }
 
-        panel.addComponent(new Button("⬅ Cancel", slotWindow::close));
+        panel.addComponent(new Button("<- Cancel", slotWindow::close));
         slotWindow.setComponent(panel);
         slotWindow.setHints(List.of(Window.Hint.CENTERED));
         gui.addWindowAndWait(slotWindow);
     }
 
     @Override
-    public void handleInput() {
-    }
-
-    @Override
     public void exit() {
-        if (window != null) gui.removeWindow(window);
+        if (window != null) gui.removeWindow(window); // Make sure to clean up
     }
 }

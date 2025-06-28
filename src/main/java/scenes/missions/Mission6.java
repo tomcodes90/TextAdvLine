@@ -1,3 +1,4 @@
+// File: scenes/missions/Mission6.java
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -15,55 +16,74 @@ import util.ItemRegistry;
 
 import java.util.List;
 
+/**
+ * Mission6 – Cinta Noble Pig Hunt
+ * <p>
+ * In this mission, the player travels to Monte Prosciutto in search of the legendary
+ * Cinta Noble Pig needed to perfect the Bolognese. They must battle a hunter and a guardian beast
+ * before securing the sacred pork. Story, choices, and UI handled via Lanterna.
+ */
 public class Mission6 implements Scene {
-    private final MultiWindowTextGUI gui;
-    private final DialogueService dialogueService;
-    private int step = 0;
-    private int playerLevel;
+    private final MultiWindowTextGUI gui;             // Main Lanterna GUI manager
+    private final DialogueService dialogueService;    // Singleton for handling dialogue flow
+    private int step = 0;                             // Step tracker for mission progress
+    private int playerLevel = GameState.get().getPlayer().getLevel(); // Cache player level
+    private final String name = GameState.get().getPlayer().getName(); // Cache player name
 
     public Mission6(MultiWindowTextGUI gui) {
         this.gui = gui;
         this.dialogueService = DialogueService.getInstance();
     }
 
-    @Override
-    public void enter() {
-        dialogueService.setUI(new DialogueUI(gui));
-        playerLevel = GameState.get().getPlayer().getLevel();
-        nextStep();
-    }
+    // ──────────────────────────────────────────────────────
+    // Scene lifecycle
+    // ──────────────────────────────────────────────────────
 
     @Override
-    public void handleInput() {
+    public void enter() {
+        dialogueService.setUI(new DialogueUI(gui));   // Attach Lanterna UI for dialogues
+        nextStep();                                   // Begin mission logic
     }
 
     @Override
     public void exit() {
+        // No cleanup necessary for this scene
     }
+
+    // ──────────────────────────────────────────────────────
+    // Step controller
+    // ──────────────────────────────────────────────────────
 
     private void nextStep() {
         switch (step++) {
-            case 0 -> introDialogue();
-            case 1 -> firstBattle();
-            case 2 -> pigTrackingDialogue();
-            case 3 -> trackPigBattle();
-            case 4 -> outroDialogue();
-            case 5 -> SceneManager.get().switchTo(new scenes.worldhub.WorldHub(gui, GameState.get().getPlayer()));
+            case 0 -> introDialogue();           // Nonna sends player on pig-fetch quest
+            case 1 -> firstBattle();             // Fight against a wild boar hunter
+            case 2 -> pigTrackingDialogue();     // More dialogue after victory
+            case 3 -> trackPigBattle();          // Boss fight against pig guardian
+            case 4 -> outroDialogue();           // Wrap-up and reward
+            case 5 -> SceneManager.get().switchTo(
+                    new scenes.worldhub.WorldHub(gui, GameState.get().getPlayer())); // Return to world hub
         }
     }
 
-    private void introDialogue() {
-        String name = GameState.get().getPlayer().getName();
+    // ──────────────────────────────────────────────────────
+    // Step 0 – Intro from Nonna
+    // ──────────────────────────────────────────────────────
 
+    private void introDialogue() {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", "The Bolognese must be perfect. And for that, you need meat — not just any, but the legendary Cinta Noble Pig."),
-                        new Dialogue("Nonna", "You don’t just chase pigs, " + name + ". You court them. These swine have standards."),
-                        new Dialogue(name, "You want me to impress a pig?"),
-                        new Dialogue("Nonna", "If it runs cleaner than your knife skills, yes."),
-                        new Dialogue("Narrator", "The forests of Monte Prosciutto await. And they don’t like visitors with empty spice jars."),
-                        new Dialogue("Nonna", "Bring garlic. Bring charm. And for the love of mozzarella, don’t step in anything."))
-                , this::nextStep);
+                new Dialogue("Narrator", "The Bolognese must be perfect. And for that, you need meat — not just any, but the legendary Cinta Noble Pig."),
+                new Dialogue("Nonna", "You don’t just chase pigs, " + name + ". You court them. These swine have standards."),
+                new Dialogue("Hero", "You want me to impress a pig?"),
+                new Dialogue("Nonna", "If it runs cleaner than your knife skills, yes."),
+                new Dialogue("Narrator", "The forests of Monte Prosciutto await. And they don’t like visitors with empty spice jars."),
+                new Dialogue("Nonna", "Bring garlic. Bring charm. And for the love of mozzarella, don’t step in anything.")
+        ), this::nextStep);
     }
+
+    // ──────────────────────────────────────────────────────
+    // Step 1 – Fight the Boar Hunter
+    // ──────────────────────────────────────────────────────
 
     private void firstBattle() {
         Battle battle = new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createBoarHunter(playerLevel));
@@ -71,7 +91,7 @@ public class Mission6 implements Scene {
         battle.setOnBattleEnd(r -> {
             if (r == BattleResult.VICTORY) {
                 DeveloperLogger.log("Defeated Wild Boar Hunter");
-                SceneManager.get().switchTo(this);
+                SceneManager.get().switchTo(this);  // Progress to next step
             } else {
                 failAndKick(r);
             }
@@ -80,28 +100,34 @@ public class Mission6 implements Scene {
         SceneManager.get().switchTo(battle);
     }
 
-    private void pigTrackingDialogue() {
-        String name = GameState.get().getPlayer().getName();
+    // ──────────────────────────────────────────────────────
+    // Step 2 – Tracking the noble pig
+    // ──────────────────────────────────────────────────────
 
+    private void pigTrackingDialogue() {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "The hunter lies defeated, but the trail ahead is muddy and wild."),
-                new Dialogue(name, "Alright, noble pig... show yourself."),
+                new Dialogue("Hero", "Alright, noble pig... show yourself."),
                 new Dialogue("Nonna", "Talk sweet, " + name + ". Pigs don’t trust people who rush the sauce."),
                 new Dialogue("Narrator", "You spot hoofprints — and beside them, truffle shavings. It’s close."),
                 new Dialogue("Narrator", "But guarding the trail is no ordinary creature...")
         ), this::nextStep);
     }
 
+    // ──────────────────────────────────────────────────────
+    // Step 3 – Boss fight: Pig Guardian
+    // ──────────────────────────────────────────────────────
+
     private void trackPigBattle() {
         Battle battle = new Battle(gui, GameState.get().getPlayer(), EnemyFactory.createPigGuardian(playerLevel));
 
         battle.setOnBattleEnd(r -> {
             if (r == BattleResult.VICTORY) {
-                GameState.get().setMissionFlag(MissionType.MISSION_6);
+                GameState.get().setMissionFlag(MissionType.MISSION_6); // Advance story flag
                 MessageDialog.showMessageDialog(gui, "Item Found", "You found the Pizza Revenge book!");
-                GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_meatballmeteor"));
+                GameState.get().getPlayer().addItemToInventory(ItemRegistry.getItemById("book_meatballmeteor")); // Grant spell book
                 DeveloperLogger.log("Secured Cinta Noble Pig");
-                SceneManager.get().switchTo(this);
+                SceneManager.get().switchTo(this); // Proceed to outro
             } else {
                 failAndKick(r);
             }
@@ -110,23 +136,29 @@ public class Mission6 implements Scene {
         SceneManager.get().switchTo(battle);
     }
 
-    private void outroDialogue() {
-        String name = GameState.get().getPlayer().getName();
+    // ──────────────────────────────────────────────────────
+    // Step 4 – Outro wrap-up with rewards
+    // ──────────────────────────────────────────────────────
 
+    private void outroDialogue() {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "With cunning, courage, and a bit of garlic, you’ve captured the prized Cinta Noble Pig."),
-                new Dialogue(name, "Nonna, we’ve got pork."),
+                new Dialogue("Hero", "Nonna, we’ve got pork."),
                 new Dialogue("Nonna", "Good. Half the Bolognese is ready. The other half? Let’s just say it moos."),
                 new Dialogue("Nonna", "Now wash your hands and your conscience — that pig had better lived a good life."),
                 new Dialogue("Narrator", "The journey continues, as the ragù demands its second sacrifice...")
         ), this::nextStep);
     }
 
+    // ──────────────────────────────────────────────────────
+    // Fallback – on defeat or retreat
+    // ──────────────────────────────────────────────────────
+
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", r == BattleResult.DEFEAT ?
-                                "You are trampled by a herd of insulted pigs. Nonna is not pleased." :
-                                "You flee Monte Prosciutto with only shame and mud on your boots."))
-                , () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
+                new Dialogue("Narrator", r == BattleResult.DEFEAT ?
+                        "You are trampled by a herd of insulted pigs. Nonna is not pleased." :
+                        "You flee Monte Prosciutto with only shame and mud on your boots.")
+        ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
 }

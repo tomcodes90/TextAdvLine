@@ -20,7 +20,44 @@ import util.PlayerLogger;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
+/*
+  ⚔️ Battle Scene: Handles turn-based combat between the player and a single enemy.
+  <p>
+  🧩 Structure Overview:
+  - Root Layout: Horizontal panel with three parts:
+  🔹 PlayerCard (left) → displays player's stats/portrait
+  🔹 Middle panel (center) → includes battle log and action menu
+  🔹 EnemyCard (right) → displays enemy's stats/portrait
+  <p>
+  🔁 Combat Flow:
+  - Uses {@link TurnManager} to control turn order and execute player/enemy actions.
+  - UI updates and input run on the main thread (Lanterna restriction),
+  while battle logic runs in a separate thread ("battle-loop").
+  <p>
+  💬 Log + UI:
+  - logBox shows text updates during battle using {@link PlayerLogger}.
+  - action panel is dynamically filled with buttons depending on available actions.
+  <p>
+  ✅ Battle Ends:
+  - On end, shows modal with result (Victory/Fled/Defeat).
+  - If won or fled → returns to {@link scenes.worldhub.WorldHub}.
+  - If defeated → returns to {@link scenes.menu.MainMenu}.
+  - Optional: `onBattleEnd` callback allows mission progression logic to override post-battle behavior.
+  <p>
+  🎁 Rewards:
+  - On victory, displays earned EXP, gold, and any dropped items.
+  - Automatically heals the player (except on defeat).
+  <p>
+  🧠 Notes:
+  - Do not touch the `onBattleEnd` logic block; it is needed by missions.
+  - Uses {@link EntityCard} to render the player/enemy display.
+  - {@code restorePlayerHealth()} is static for reuse after battles.
+ */
 
+
+/**
+ * ⚔️ Battle Scene: Handles turn-based combat between the player and a single enemy.
+ */
 public class Battle implements Scene {
 
     private final MultiWindowTextGUI gui;
@@ -30,9 +67,13 @@ public class Battle implements Scene {
     private final BasicWindow win = new BasicWindow("Battle");
     private final TextBox logBox = new TextBox(new TerminalSize(50, 3), TextBox.Style.MULTI_LINE);
     private final Panel action = new Panel(new LinearLayout(Direction.VERTICAL));
-    @Setter
-    private Consumer<BattleResult> onBattleEnd;
 
+    @Setter
+    private Consumer<BattleResult> onBattleEnd; // Optional callback to control post-battle behavior
+
+    /**
+     * Constructor initializes GUI components and logger.
+     */
     public Battle(MultiWindowTextGUI gui, Player player, Enemy enemy) {
         this.gui = gui;
         this.player = player;
@@ -43,8 +84,10 @@ public class Battle implements Scene {
         PlayerLogger.init(logBox, gui, () -> ActionMenu.refreshSafe(gui));
     }
 
+    /**
+     * Entry point for the battle scene. Creates UI layout, sets up turn manager and starts logic thread.
+     */
     @Override
-
     public void enter() {
         DeveloperLogger.log("entered battle");
 
@@ -59,57 +102,56 @@ public class Battle implements Scene {
                 )
         );
         tm.setOnBattleEnd(result ->
-
                 gui.getGUIThread().invokeLater(() -> finishBattle(result, enemy))
         );
 
-
-        new Thread(tm::startBattle, "battle-loop").start(); // ✅ logic thread
-
-        // 👇 This MUST stay on the main thread!
-        gui.addWindowAndWait(win); // ✅ actual UI loop
-    }
-
-    @Override
-    public void handleInput() {
+        new Thread(tm::startBattle, "battle-loop").start(); // Launch turn logic in separate thread
+        gui.addWindowAndWait(win); // Start the GUI loop
     }
 
     @Override
     public void exit() {
-
+        // Currently no exit logic needed
     }
 
+    /**
+     * Constructs the full UI layout for the battle window.
+     */
     private Component buildRoot() {
         Panel root = new Panel(new LinearLayout(Direction.HORIZONTAL));
-        root.addComponent(EntityCard.getPCard());
-        root.addComponent(buildMiddlePane());
-        root.addComponent(EntityCard.getECard());
+        root.addComponent(EntityCard.getPCard()); // Player info card
+        root.addComponent(buildMiddlePane());     // Log + action buttons
+        root.addComponent(EntityCard.getECard()); // Enemy info card
         return root;
     }
 
+    /**
+     * Constructs the middle panel with battle log and action area.
+     */
     private Component buildMiddlePane() {
         Panel mid = new Panel(new LinearLayout(Direction.VERTICAL));
 
         Label logLabel = new Label("Battle Log");
         logLabel.setForegroundColor(TextColor.ANSI.WHITE);
         mid.addComponent(logLabel);
-
-        mid.addComponent(logBox);
+        mid.addComponent(logBox); // Multi-line combat log
         mid.addComponent(new Separator(Direction.HORIZONTAL));
 
         action.setPreferredSize(new TerminalSize(50, 4));
-        mid.addComponent(action);
+        mid.addComponent(action); // Dynamic action buttons go here
 
         return mid;
     }
 
+    /**
+     * Finishes the battle and shows a modal with the result and rewards.
+     */
     @SneakyThrows
     private void finishBattle(BattleResult result, Enemy defeated) {
-
         String msg = switch (result) {
-            case FLED -> "\n🏃  You fled the battle.";
-            case VICTORY -> "\n🏆  " + player.getName() + " wins!";
-            case DEFEAT -> "\n💀  " + enemy.getName() + " wins!";
+            case FLED -> "\n\uD83C\uDFC3  You fled the battle.";
+            case VICTORY -> "\n\uD83C\uDFC6  " + player.getName() + " wins!";
+            case DEFEAT -> "\n\uD83D\uDC80  " + enemy.getName() + " wins!";
         };
         PlayerLogger.logBlocking(msg);
 
@@ -118,33 +160,33 @@ public class Battle implements Scene {
                 try {
                     gui.updateScreen();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(e); // re-wrap
                 }
             });
         } catch (Exception ignored) {
         }
+
 
         win.close();
 
         boolean playerWon = result == BattleResult.VICTORY;
         boolean fled = result == BattleResult.FLED;
 
+        // Result modal UI
         String title = playerWon ? "Victory" : fled ? "Fled" : "Defeat";
         BasicWindow resultWin = new BasicWindow(title);
 
         Panel pane = new Panel(new LinearLayout(Direction.VERTICAL));
-        pane.setPreferredSize(new TerminalSize(40, 12)); // Fixed size
+        pane.setPreferredSize(new TerminalSize(40, 12));
 
-// Create a vertically centered inner panel
         Panel content = new Panel(new LinearLayout(Direction.VERTICAL));
         content.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
 
-// === Add centered content to `content` panel ===
         content.addComponent(centeredLabel(playerWon ? "You win!" : fled ? "You fled the battle." : "You lose."));
         content.addComponent(new EmptySpace());
 
         if (playerWon) {
-            addExpAndLootToPanel(content, defeated);
+            addExpAndLootToPanel(content, defeated); // Show rewards
             content.addComponent(new EmptySpace());
         }
 
@@ -152,41 +194,43 @@ public class Battle implements Scene {
         cont.takeFocus();
         content.addComponent(cont);
 
-// === Add the content panel to the outer pane ===
-        pane.addComponent(new EmptySpace()); // top padding
+        pane.addComponent(new EmptySpace());
         pane.addComponent(content);
-        pane.addComponent(new EmptySpace()); // bottom padding
-
+        pane.addComponent(new EmptySpace());
 
         resultWin.setComponent(pane);
         resultWin.setHints(List.of(Window.Hint.CENTERED, Window.Hint.MODAL));
         resultWin.setFixedSize(new TerminalSize(40, 12));
 
         gui.addWindowAndWait(resultWin);
+
+        // Heal only if player survived
         if (result != BattleResult.DEFEAT && player.isAlive()) {
             restorePlayerHealth(player);
         }
 
-        // ✅ Go back to MainMenu
+        // Go back to next screen depending on outcome
         switch (result) {
             case VICTORY, FLED -> {
                 restorePlayerHealth(player);
                 if (onBattleEnd != null) {
-                    onBattleEnd.accept(result); // don't touch
+                    onBattleEnd.accept(result); // Callback for mission chaining
                 } else {
                     SceneManager.get().switchTo(new WorldHub(gui, player));
                 }
             }
-            case DEFEAT -> {
-                SceneManager.get().switchTo(new MainMenu(gui)); // ✅ Game Over → Main Menu
-            }
+            case DEFEAT -> SceneManager.get().switchTo(new MainMenu(gui));
         }
     }
 
+    /**
+     * Appends gained EXP, gold and item drops to the result modal.
+     */
     private void addExpAndLootToPanel(Panel pane, Enemy defeated) {
         int xp = defeated.getExpReward();
         pane.addComponent(new Label("EXP +" + xp));
         player.collectExp(xp);
+
         int gold = defeated.getGoldReward();
         pane.addComponent(new Label("GOLD +" + gold));
         pane.addComponent(new Label(" "));
@@ -205,14 +249,19 @@ public class Battle implements Scene {
         }
     }
 
+    /**
+     * Fully heals the player after a battle.
+     */
     public static void restorePlayerHealth(Player p) {
         p.setStat(StatsType.HP, p.getStat(StatsType.MAX_HP));
     }
 
+    /**
+     * Utility method for centering labels in UI.
+     */
     private Label centeredLabel(String text) {
         Label label = new Label(text);
         label.setLayoutData(LinearLayout.createLayoutData(LinearLayout.Alignment.Center));
         return label;
     }
-
 }

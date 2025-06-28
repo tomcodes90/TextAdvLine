@@ -1,3 +1,26 @@
+// File: scenes/missions/Mission1.java
+
+/*
+ * Mission 1 – “The Golden Garlic of Belmonte”
+ *
+ * This mission builds on the tutorial by introducing branching story paths.
+ * It includes:
+ *  1. Introductory story and setting (Belmonte, Parmesani goons)
+ *  2. First battle (fixed enemy)
+ *  3. Branching path: player chooses to sneak or fight
+ *  4. Second battle based on chosen route
+ *  5. Outro with flavor text and return to hub
+ *
+ * Implementation details:
+ *  - DialogueService and DialogueUI are used for narration and choices.
+ *  - Player state is retrieved from GameState.
+ *  - Branching state is stored internally to determine second enemy and outro text.
+ *
+ * ⚠ Lanterna notes:
+ *  - Be careful with transitions during battle returns — use SceneManager.switchTo(this)
+ *  - Avoid lingering windows before/after battles
+ */
+
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -14,29 +37,16 @@ import util.DeveloperLogger;
 
 import java.util.List;
 
-/**
- * Mission 1 – “The Golden Garlic of Belmonte”
- * <p>
- * Flow:
- * 0  Intro → step++
- * 1  Battle #1  (Parmesani Goons)
- * 2  Branching dialogue – choose path
- * 3  Battle #2  (enemy depends on choice)
- * 4  Outro → WorldHub
- */
 public class Mission1 implements Scene {
 
     private final MultiWindowTextGUI gui;
     private final DialogueService dialogueService;
 
     private int step = 0;
-
-    /**
-     * Stores which branch the player picked
-     */
     private Branch branch;
     private int playerLevel;
 
+    // Determines second battle and flavor dialogue
     private enum Branch {QUIET_ROUTE, LOUD_ROUTE}
 
     public Mission1(MultiWindowTextGUI gui) {
@@ -44,7 +54,6 @@ public class Mission1 implements Scene {
         this.dialogueService = DialogueService.getInstance();
     }
 
-    // ───────────────────────────────────────── Scene API ──────────────────────────────────────────
     @Override
     public void enter() {
         dialogueService.setUI(new DialogueUI(gui));
@@ -52,38 +61,36 @@ public class Mission1 implements Scene {
     }
 
     @Override
-    public void handleInput() { /* nothing */ }
-
-    @Override
-    public void exit() { /* nothing */ }
+    public void exit() {
+    }
 
     private void nextStep() {
         switch (step++) {
-            case 0 -> introDialogue();
-            case 1 -> firstBattle();
-            case 2 -> branchingDialogue();
-            case 3 -> afterBranchDialogue();
-            case 4 -> secondBattle();
-            case 5 -> outroDialogue();
+            case 0 -> introDialogue();        // Step 0 – Intro
+            case 1 -> firstBattle();          // Step 1 – First Battle
+            case 2 -> branchingDialogue();    // Step 2 – Choice: sneak or fight
+            case 3 -> afterBranchDialogue();  // Step 3 – Pre-battle dialogue
+            case 4 -> secondBattle();         // Step 4 – Second Battle
+            case 5 -> outroDialogue();        // Step 5 – Resolution and reward
             case 6 -> SceneManager.get().switchTo(new WorldHub(gui, GameState.get().getPlayer()));
         }
     }
 
-    // ──────────────────────────────────────── Step 0 – Intro ─────────────────────────────────────
+    // ───────────────────────────────────── Step 0 – Intro ─────────────────────────────────────
+
     private void introDialogue() {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator",
-                        "Belmonte – rolling hills, sun-kissed vines… and the smell of priceless Golden Garlic."),
-                new Dialogue("Narrator",
-                        "You follow Nonna’s directions and soon hear rough voices ahead… Parmesani goons!")
+                new Dialogue("Narrator", "Belmonte – rolling hills, sun-kissed vines… and the smell of priceless Golden Garlic."),
+                new Dialogue("Narrator", "You follow Nonna’s directions and soon hear rough voices ahead… Parmesani goons!")
         ), this::nextStep);
     }
 
-    // ───────────────────────────────────── Step 1 – First Battle ─────────────────────────────────
+    // ───────────────────────────────────── Step 1 – First Battle ──────────────────────────────
+
     private void firstBattle() {
         Battle battle = new Battle(gui,
                 GameState.get().getPlayer(),
-                EnemyFactory.createParmesaniGoon(playerLevel));
+                EnemyFactory.createParmesaniGoon(GameState.get().getPlayer().getLevel()));
 
         battle.setOnBattleEnd(r -> {
             if (r == BattleResult.VICTORY) {
@@ -93,10 +100,12 @@ public class Mission1 implements Scene {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
 
-    // ─────────────────────────────── Step 2 – Branching Dialogue ────────────────────────────────
+    // ────────────────────────────── Step 2 – Choice: Quiet or Loud ─────────────────────────────
+
     private void branchingDialogue() {
         DialogueWithInput choice = new DialogueWithInput(
                 "Narrator",
@@ -105,16 +114,14 @@ public class Mission1 implements Scene {
                         "• Right: the main gate, crawling with guards.\n\n" +
                         "Which way, giovane cuoco?",
                 List.of(
-                        new ChoiceOption("Sneak through the olive grove",
-                                () -> {
-                                    branch = Branch.QUIET_ROUTE;
-                                    nextStep();
-                                }),
-                        new ChoiceOption("Charge the front gate (Nonna would be proud!)",
-                                () -> {
-                                    branch = Branch.LOUD_ROUTE;
-                                    nextStep();
-                                })
+                        new ChoiceOption("Sneak through the olive grove", () -> {
+                            branch = Branch.QUIET_ROUTE;
+                            nextStep();
+                        }),
+                        new ChoiceOption("Charge the front gate (Nonna would be proud!)", () -> {
+                            branch = Branch.LOUD_ROUTE;
+                            nextStep();
+                        })
                 ),
                 DialogueInputType.CHOICE_ONLY
         );
@@ -123,8 +130,6 @@ public class Mission1 implements Scene {
     }
 
     private void afterBranchDialogue() {
-        String playerName = GameState.get().getPlayer().getName();
-
         List<Dialogue> dialogues;
 
         if (branch == Branch.QUIET_ROUTE) {
@@ -144,18 +149,19 @@ public class Mission1 implements Scene {
         dialogueService.runDialogues(dialogues, this::nextStep);
     }
 
-    // ─────────────────────────────────── Step 3 – Second Battle ─────────────────────────────────
+    // ────────────────────────────── Step 4 – Second Battle (Branch) ─────────────────────────────
+
     private void secondBattle() {
         Battle battle;
 
         if (branch == Branch.QUIET_ROUTE) {
             battle = new Battle(gui,
                     GameState.get().getPlayer(),
-                    EnemyFactory.createRicottelliScout(playerLevel));
+                    EnemyFactory.createRicottelliScout(GameState.get().getPlayer().getLevel()));
         } else {
             battle = new Battle(gui,
                     GameState.get().getPlayer(),
-                    EnemyFactory.createParmesaniCaptain(playerLevel + 1));
+                    EnemyFactory.createParmesaniCaptain(GameState.get().getPlayer().getLevel() + 1));
         }
 
         battle.setOnBattleEnd(r -> {
@@ -167,45 +173,36 @@ public class Mission1 implements Scene {
                 failAndKick(r);
             }
         });
+
         SceneManager.get().switchTo(battle);
     }
 
-    // ───────────────────────────────────── Step 4 – Outro ───────────────────────────────────────
+    // ───────────────────────────────────── Step 5 – Outro Dialogue ─────────────────────────────
+
     private void outroDialogue() {
         String name = GameState.get().getPlayer().getName();
 
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator",
-                        "With the guards beaten, you pluck the legendary Golden Garlic. It glows softly, almost humming."),
-                new Dialogue("Hero",
-                        "Nonna’s going to flip the whole table when she sees this!"),
-                new Dialogue("Narrator",
-                        "Mission Complete — you pocket the garlic and head back. Dinner awaits… and so do new adventures!"),
-
-                new Dialogue("Nonna", branch == Branch.LOUD_ROUTE ?
-                        String.format("Finalmente! You smell like sweat and victory, %s. Hand me that garlic before it bruises.", name) :
-                        String.format("The olive grove? Clever move, %s — I taught you well. But next time, don’t shake every tree on the way.", name)),
-
-                new Dialogue("Hero",
-                        "Here it is, still shining."),
-
-                new Dialogue("Nonna",
-                        String.format("Bravissimo, %s! One ingredient down, a pantry full to go. Rest for now — tomorrow we hunt basil.", name)),
-                new Dialogue("Hero",
-                        "Basil? That sounds almost too easy after this…"),
-                new Dialogue("Nonna",
-                        "Ha! Wait until you meet the Pesto Priests. Now sit. Eat. Then off to bed with you.")
-
+                new Dialogue("Narrator", "With the guards beaten, you pluck the legendary Golden Garlic. It glows softly, almost humming."),
+                new Dialogue("Hero", "Nonna’s going to flip the whole table when she sees this!"),
+                new Dialogue("Narrator", "Mission Complete — you pocket the garlic and head back. Dinner awaits… and so do new adventures!"),
+                new Dialogue("Nonna", branch == Branch.LOUD_ROUTE
+                        ? String.format("Finalmente! You smell like sweat and victory, %s. Hand me that garlic before it bruises.", name)
+                        : String.format("The olive grove? Clever move, %s — I taught you well. But next time, don’t shake every tree on the way.", name)),
+                new Dialogue("Hero", "Here it is, still shining."),
+                new Dialogue("Nonna", String.format("Bravissimo, %s! One ingredient down, a pantry full to go. Rest for now — tomorrow we hunt basil.", name)),
+                new Dialogue("Hero", "Basil? That sounds almost too easy after this…"),
+                new Dialogue("Nonna", "Ha! Wait until you meet the Pesto Priests. Now sit. Eat. Then off to bed with you.")
         ), this::nextStep);
     }
 
-    // ─────────────────────────────── Helper – defeat / flee path ────────────────────────────────
+    // ─────────────────────────────────────── Failure Handler ───────────────────────────────────
+
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                new Dialogue("Narrator",
-                        r == BattleResult.DEFEAT
-                                ? "You fall. The last thing you hear is mocking laughter… and your stomach growling."
-                                : "You flee, garlic-less and hungry. Nonna will NOT be amused.")
+                new Dialogue("Narrator", r == BattleResult.DEFEAT
+                        ? "You fall. The last thing you hear is mocking laughter… and your stomach growling."
+                        : "You flee, garlic-less and hungry. Nonna will NOT be amused.")
         ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
 }

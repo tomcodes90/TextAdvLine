@@ -1,3 +1,23 @@
+// File: scenes/missions/Mission3.java
+
+/*
+ * Mission 3 – "The Parmigiano Mines"
+ *
+ * A subterranean journey to retrieve the Sacred Wedge of Parmigiano.
+ * Features:
+ *  1. Humorous intro with Nonna
+ *  2. Infiltration via stealth or distraction
+ *  3. Route-based enemy encounter (Goon or Captain)
+ *  4. Boss battle: the ancient Cheese Guardian
+ *  5. Reward: Glacial Spike spellbook (book_glacialspike)
+ *  6. Outro and transition to World Hub
+ *
+ * Lanterna Considerations:
+ *  - GUI handled by MultiWindowTextGUI (thread-safe GUI container from Lanterna)
+ *  - Scene switching must always use SceneManager.get().switchTo()
+ *  - Dialogues are non-blocking; steps resume through callback to nextStep()
+ */
+
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -36,14 +56,12 @@ public class Mission3 implements Scene {
         nextStep();
     }
 
-    @Override
-    public void handleInput() {
-    }
 
     @Override
     public void exit() {
     }
 
+    // Manages mission progression
     private void nextStep() {
         switch (step++) {
             case 0 -> introDialogue();
@@ -55,15 +73,16 @@ public class Mission3 implements Scene {
         }
     }
 
+    // Introductory cutscene dialogue
     private void introDialogue() {
-        String name = GameState.get().getPlayer().getName();
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "You descend into the Parmigiano Mines — where cheese crystals grow in darkness."),
-                new Dialogue("Narrator", "Nonna swears the lasagna’s base lies deep below."),
+                new Dialogue("Narrator", "Nonna swears what they needF lies deep below."),
                 new Dialogue("Nonna", "Watch your step. One wrong move and you’re grated like mozzarella.")
         ), this::nextStep);
     }
 
+    // Choice of approach: stealth or distraction
     private void infiltrationChoice() {
         DialogueWithInput choice = new DialogueWithInput(
                 "Narrator",
@@ -83,6 +102,7 @@ public class Mission3 implements Scene {
         dialogueService.runDialogueWithInput(choice);
     }
 
+    // Route-specific battle with flavor dialogue
     private void routeBattle() {
         String name = GameState.get().getPlayer().getName();
 
@@ -128,7 +148,7 @@ public class Mission3 implements Scene {
         });
     }
 
-
+    // Boss battle against the Cheese Guardian
     private void bossBattle() {
         String name = GameState.get().getPlayer().getName();
         dialogueService.runDialogues(List.of(
@@ -153,15 +173,17 @@ public class Mission3 implements Scene {
         });
     }
 
+    // Concluding dialogues
     private void outroDialogue() {
         String name = GameState.get().getPlayer().getName();
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "The crystals crackle behind you. In your hands, a golden wedge of Parmigiano."),
-                new Dialogue(name, "One more step toward Nonna's ultimate lasagna."),
+                new Dialogue(name, "One more step toward Nonna's ultimate dish."),
                 new Dialogue("Nonna", "Bravissimo. Now all we need is a sauce thick enough to silence a debate.")
         ), this::nextStep);
     }
 
+    // Handles player defeat or escape
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", r == BattleResult.DEFEAT ?
@@ -169,5 +191,4 @@ public class Mission3 implements Scene {
                         "You flee the Parmigiano Mines, empty-handed. Nonna will not forget this.")
         ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
-
 }

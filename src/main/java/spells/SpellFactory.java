@@ -3,39 +3,50 @@ package spells;
 import java.util.EnumMap;
 import java.util.Map;
 
+/**
+ * Class: SpellFactory
+ * <p>
+ * Purpose:
+ * Centralized creator for spells using a predefined template map.
+ * Ensures all spells are consistent and copied safely with no shared cooldown state.
+ */
 public class SpellFactory {
+
     private static final Map<SpellType, Spell> template = new EnumMap<>(SpellType.class);
 
     static {
-        // Non-elemental
+        // === Non-elemental ===
         template.put(SpellType.ENERGYBLAST, new Spell(SpellType.ENERGYBLAST, ElementalType.NONE, 10, 2));
         template.put(SpellType.FLARE, new Spell(SpellType.FLARE, ElementalType.NONE, 6, 3));
 
-        // Fire
+        // === Fire ===
         template.put(SpellType.FIREBALL, new Spell(SpellType.FIREBALL, ElementalType.FIRE, 12, 2));
         template.put(SpellType.INFERNO, new Spell(SpellType.INFERNO, ElementalType.FIRE, 20, 3));
 
-        // Ice
+        // === Ice ===
         template.put(SpellType.FROSTBITE, new Spell(SpellType.FROSTBITE, ElementalType.ICE, 8, 2));
         template.put(SpellType.GLACIALSPIKE, new Spell(SpellType.GLACIALSPIKE, ElementalType.ICE, 16, 3));
 
-        // Nature
+        // === Nature ===
         template.put(SpellType.VINEWHIP, new Spell(SpellType.VINEWHIP, ElementalType.NATURE, 7, 1));
         template.put(SpellType.THORNSURGE, new Spell(SpellType.THORNSURGE, ElementalType.NATURE, 15, 2));
 
-        // Lol
+        // === Special Meme Spells ===
         template.put(SpellType.MEATBALLMETEOR, new Spell(SpellType.MEATBALLMETEOR, ElementalType.NONE, 30, 2));
         template.put(SpellType.GARLICNOVA, new Spell(SpellType.GARLICNOVA, ElementalType.NONE, 30, 3));
     }
 
     /**
-     * Returns a *new* Spell instance (no shared state).
+     * Creates a new instance of the requested spell type.
+     *
+     * @param type The SpellType to instantiate.
+     * @return A new Spell instance with cooldown = 0
+     * @throws IllegalArgumentException if the type is not registered
      */
     public static Spell create(SpellType type) {
         Spell base = template.get(type);
         if (base == null)
             throw new IllegalArgumentException("Unknown spell type: " + type);
-        return Spell.copyOf(base);              // fresh copy
+        return Spell.copyOf(base);
     }
-
 }

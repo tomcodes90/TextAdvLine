@@ -11,7 +11,30 @@ import state.GameState;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
+
+/**
+ * ============================
+ * UIHelper
+ * ============================
+ * <p>
+ * Purpose:
+ * Central place for building reusable UI components using Lanterna.
+ * Helps reduce boilerplate and unify visual style across screens.
+ * <p>
+ * Key Features:
+ * - `textBlock(label, value)`         → Inline key-value label (e.g., HP: 30)
+ * - `verticalListBlock(title, items)` → Vertical bullet list with a title
+ * - `withBorder(title, panel)`        → Wrap any Panel in a titled border
+ * - `itemListPanel(page, size)`       → Pre-styled inventory listing with name, desc, effect
+ * - `openSubmenu(submenu, window)`    → Utility to switch between scenes (closes current window)
+ * <p>
+ * Integration:
+ * Use this class in any Scene UI to quickly assemble standard blocks.
+ * Makes your code cleaner and consistent.
+ * <p>
+ * Design Note:
+ * - `getEffectText(Item)` adds small descriptors (like "Dmg: 10") for equippables and consumables.
+ */
 
 public class UIHelper {
     public static void openSubmenu(Scene submenu, BasicWindow window) {
@@ -86,6 +109,11 @@ public class UIHelper {
         return block;
     }
 
+    /**
+     * Generates a short effect description based on the item type.
+     * Used in item display cards (e.g., "Dmg: 12" or "+5 for 3 turns").
+     * This is NOT shown in combat—just for UI readability.
+     */
     private static String getEffectText(Item item) {
         if (item instanceof items.consumables.StatEnhancer s) {
             return "+" + s.getPointsToApply() + " for " + s.getLength() + " turns";

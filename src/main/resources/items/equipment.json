@@ -45,7 +45,7 @@
   {
     "type": "armor",
     "id": "plate_armor",
-    "name": "Lasagna Layer",
+    "name": "Rigatoni Layer",
     "price": 500,
     "description": "Heavy, delicious, and stacked with defense.",
     "defensePoints": 35
@@ -64,7 +64,7 @@
     "id": "dragon_scale_armor",
     "name": "Nonna's Dress",
     "price": 800,
-    "description": "Woven with love and dragon rage. Don’t spill sauce on it.",
+    "description": "Woven with love and rage. Don’t spill sauce on it.",
     "defensePoints": 50
   }
 ]

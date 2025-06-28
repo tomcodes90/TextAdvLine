@@ -1,3 +1,4 @@
+// File: scenes/missions/Mission5.java
 package scenes.missions;
 
 import battle.actions.BattleResult;
@@ -15,32 +16,45 @@ import util.ItemRegistry;
 
 import java.util.List;
 
+/**
+ * Mission5 – Infiltrating the Linguini Feast
+ * <p>
+ * The player crashes the Linguini family’s secretive banquet in Al Dente to steal
+ * the legendary “Menu of Dominion.” There are two approach choices (sneak or attack),
+ * each influencing the first battle. Afterward, a boss battle determines the mission outcome.
+ * Uses Lanterna for all UI transitions and display.
+ */
 public class Mission5 implements Scene {
-    private final MultiWindowTextGUI gui;
-    private final DialogueService dialogueService;
-    private int step = 0;
-    private int playerLevel;
-    private int forkChoice = 0;
+    private final MultiWindowTextGUI gui;             // Lanterna UI manager
+    private final DialogueService dialogueService;    // Dialogue handler
+    private int step = 0;                             // Mission progress tracker
+    private int playerLevel;                          // Cached player level
+    private int forkChoice = 0;                       // Player’s infiltration method
 
     public Mission5(MultiWindowTextGUI gui) {
         this.gui = gui;
         this.dialogueService = DialogueService.getInstance();
     }
 
-    @Override
-    public void enter() {
-        dialogueService.setUI(new DialogueUI(gui));
-        playerLevel = GameState.get().getPlayer().getLevel();
-        nextStep();
-    }
+    // ──────────────────────────────────────────────────────
+    // Scene lifecycle
+    // ──────────────────────────────────────────────────────
 
     @Override
-    public void handleInput() {
+    public void enter() {
+        dialogueService.setUI(new DialogueUI(gui));                // Attach the Lanterna-based dialogue UI
+        playerLevel = GameState.get().getPlayer().getLevel();      // Cache level for enemy scaling
+        nextStep();                                                // Begin step sequence
     }
 
     @Override
     public void exit() {
+        // No cleanup needed
     }
+
+    // ──────────────────────────────────────────────────────
+    // Step management logic
+    // ──────────────────────────────────────────────────────
 
     private void nextStep() {
         switch (step++) {
@@ -52,6 +66,10 @@ public class Mission5 implements Scene {
             case 5 -> SceneManager.get().switchTo(new scenes.worldhub.WorldHub(gui, GameState.get().getPlayer()));
         }
     }
+
+    // ──────────────────────────────────────────────────────
+    // Step 0 – Nonna sends you to steal the menu
+    // ──────────────────────────────────────────────────────
 
     private void introDialogue() {
         String name = GameState.get().getPlayer().getName();
@@ -66,6 +84,10 @@ public class Mission5 implements Scene {
         ), this::nextStep);
     }
 
+    // ──────────────────────────────────────────────────────
+    // Step 1 – Infiltration path choice
+    // ──────────────────────────────────────────────────────
+
     private void infiltrationChoice() {
         DialogueWithInput choice = new DialogueWithInput(
                 "Narrator",
@@ -75,7 +97,7 @@ public class Mission5 implements Scene {
                             forkChoice = 1;
                             nextStep();
                         }),
-                        new ChoiceOption("Crash through the front with a flaming cheese wheel", () -> {
+                        new ChoiceOption("Assault with a flaming cheese wheel", () -> {
                             forkChoice = 2;
                             nextStep();
                         })
@@ -85,8 +107,12 @@ public class Mission5 implements Scene {
         dialogueService.runDialogueWithInput(choice);
     }
 
+    // ──────────────────────────────────────────────────────
+    // Step 2 – First encounter, based on path choice
+    // ──────────────────────────────────────────────────────
+
     private void firstBattle() {
-        String name = GameState.get().getPlayer().getName();
+
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", forkChoice == 1 ?
                         "Dressed in a pressed white apron, you blend in — until a suspicious goon points at your boots." :
@@ -109,12 +135,18 @@ public class Mission5 implements Scene {
                     failAndKick(r);
                 }
             });
+
             SceneManager.get().switchTo(battle);
         });
     }
 
+    // ──────────────────────────────────────────────────────
+    // Step 3 – Boss: Linguini Champion guarding the Menu
+    // ──────────────────────────────────────────────────────
+
     private void secondBattle() {
         String name = GameState.get().getPlayer().getName();
+
         dialogueService.runDialogues(List.of(
                 new Dialogue("Narrator", "Deeper inside the palace kitchen, you find it: the Menu of Dominion, guarded by the Linguini Champion."),
                 new Dialogue("Hero", "That’s it. The holy menu... and a giant with marinara in his veins."),
@@ -134,9 +166,14 @@ public class Mission5 implements Scene {
                     failAndKick(r);
                 }
             });
+
             SceneManager.get().switchTo(battle);
         });
     }
+
+    // ──────────────────────────────────────────────────────
+    // Step 4 – Mission outro and reward setup
+    // ──────────────────────────────────────────────────────
 
     private void outroDialogue() {
         String name = GameState.get().getPlayer().getName();
@@ -150,11 +187,15 @@ public class Mission5 implements Scene {
         ), this::nextStep);
     }
 
+    // ──────────────────────────────────────────────────────
+    // Utility – Handle defeat or retreat
+    // ──────────────────────────────────────────────────────
+
     private void failAndKick(BattleResult r) {
         dialogueService.runDialogues(List.of(
-                        new Dialogue("Narrator", r == BattleResult.DEFEAT ?
-                                "You’re tossed into a boiling pot and declared unseasoned." :
-                                "You flee Al Dente in disgrace, empty-stomached and empty-handed.")),
-                () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
+                new Dialogue("Narrator", r == BattleResult.DEFEAT ?
+                        "You’re tossed into a boiling pot and declared unseasoned." :
+                        "You flee Al Dente in disgrace, empty-stomached and empty-handed.")
+        ), () -> SceneManager.get().switchTo(new scenes.menu.MainMenu(gui)));
     }
 }

@@ -46,7 +46,7 @@ public class Main {
             MultiWindowTextGUI gui = new MultiWindowTextGUI(
                     screen,
                     new DefaultWindowManager(),
-                    new EmptySpace(TextColor.ANSI.WHITE_BRIGHT)
+                    new EmptySpace(TextColor.ANSI.BLUE)
             );
 
             // Load content
@@ -54,7 +54,7 @@ public class Main {
             PortraitRegistry.loadAllPortraits();
 
             // Developer overlay (optional)
-            // DevLogOverlay.attach(gui);
+            DevLogOverlay.attach(gui);
 
             // Launch main menu
             SceneManager.get().switchTo(new MainMenu(gui));
